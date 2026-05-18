@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aici-sdk"
+version = "0.1.0"
+description = "Typed Python client for the AI Crypto Index self-serve API."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "AI Crypto Index", email = "aicryptoindex@gmail.com"},
+]
+dependencies = [
+    "httpx>=0.27.0",
+]
+keywords = ["crypto", "api", "sdk", "quant", "aici"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+pandas = ["pandas>=2.0.0"]
+
+[project.urls]
+Repository = "https://github.com/aicryptoindex/aici"
+Documentation = "https://aici.pro/docs"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aici_sdk*"]

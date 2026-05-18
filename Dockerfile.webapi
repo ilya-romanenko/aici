@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1.6
+
+FROM node:20-bookworm AS frontend-builder
+WORKDIR /build
+
+COPY package*.json ./
+RUN npm config set registry https://registry.npmjs.org/ \
+    && set -eux; \
+    attempt=1; \
+    until npm ci --no-audit --no-fund; do \
+      if [ "$attempt" -ge 3 ]; then \
+        echo "npm ci failed after ${attempt} attempts" >&2; \
+        exit 1; \
+      fi; \
+      echo "npm ci failed on attempt ${attempt}; retrying..." >&2; \
+      npm cache clean --force; \
+      attempt=$((attempt + 1)); \
+      sleep $((attempt * 5)); \
+    done
+
+COPY scripts ./scripts
+COPY src/ai_crypto_index/frontend ./src/ai_crypto_index/frontend
+RUN npm run build
+
+
+FROM python:3.10-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/src \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        build-essential \
+        curl \
+        bash \
+        libgl1 \
+        libglib2.0-0 \
+        libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements/ ./requirements/
+RUN pip install --upgrade pip \
+    && pip install -r requirements/pipeline.txt
+
+COPY src ./src
+COPY config ./config
+COPY --from=frontend-builder /build/dist ./dist
+COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN useradd --create-home aici \
+    && mkdir -p /app/data /app/runs \
+    && chown -R aici:aici /app \
+    && chmod +x /app/docker-entrypoint.sh
+
+USER aici
+
+EXPOSE 8000
+
+ENV AI_CRYPTO_CONFIG=/app/config/pipeline.json \
+    AICI_ENABLE_PIPELINE=1 \
+    AICI_RUN_PIPELINE_ON_START=auto
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

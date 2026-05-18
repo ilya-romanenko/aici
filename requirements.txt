@@ -1,0 +1,3 @@
+# Full stack (API + pipeline) retained for compatibility with existing docs.
+# Uses the split requirements under requirements/ for Docker targets.
+-r requirements/pipeline.txt

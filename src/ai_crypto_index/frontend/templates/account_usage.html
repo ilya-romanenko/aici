@@ -1,0 +1,202 @@
+{% extends "account_base.html" %}
+{% block page_title %}Usage & Alerts - AI Crypto Index{% endblock %}
+{% block body_attrs %}
+    data-api-usage-summary-url="{{ api_url('api_usage_summary') }}"
+    data-api-usage-errors-url="{{ api_url('api_usage_errors') }}"
+    data-api-usage-export-url="{{ api_url('api_usage_export') }}"
+    data-api-usage-alerts-url="{{ api_url('api_usage_alerts') }}"
+    data-api-usage-alerts-update-url="{{ api_url('api_usage_alerts_upsert') }}"
+{% endblock %}
+{% block content %}
+<div class="account-container" data-usage-root>
+<section class="usage-hero">
+    <div>
+        <p class="usage-hero__eyebrow">Usage &amp; Alerts</p>
+        <h1>Monitor API usage and configure alerts</h1>
+        <p>30/90 day trends, CSV exports, and alerting for error spikes or traffic surges sent to email or Slack.</p>
+        <div class="usage-hero__actions">
+            <div class="usage-range" role="group" aria-label="Usage range">
+                <button class="usage-range__btn is-active" type="button" data-usage-range="30">30 days</button>
+                <button class="usage-range__btn" type="button" data-usage-range="90">90 days</button>
+            </div>
+            <button class="account-cta account-cta--secondary" type="button" data-usage-export>Export CSV</button>
+        </div>
+        <p class="usage-hero__hint">Usage updates every ~5 minutes. Alerts fire when thresholds are crossed for volume or error rates. Pipeline triggers charge base + parameter add-ons; status checks are free; data reads cost 5 tokens per call.</p>
+    </div>
+    <div class="usage-hero__stats">
+        <div>
+            <span>Total tokens</span>
+            <strong data-usage-total>0</strong>
+        </div>
+        <div>
+            <span>Peak tokens per minute</span>
+            <strong data-usage-max>0</strong>
+        </div>
+        <div>
+            <span>4xx/5xx errors</span>
+            <strong data-usage-errors>0</strong>
+        </div>
+        <div>
+            <span>Month-to-date tokens</span>
+            <strong data-usage-monthly>0</strong>
+        </div>
+    </div>
+</section>
+
+<section class="usage-grid">
+    <article class="usage-card usage-card--chart">
+        <header class="usage-card__header">
+            <h2>Usage trend</h2>
+            <span data-usage-plan>-</span>
+        </header>
+        <div
+            class="usage-chart"
+            data-usage-chart
+            data-usage-sparkline="usage-trend"
+            aria-live="polite"
+        >
+            <svg class="usage-chart__svg" viewBox="0 0 400 160" preserveAspectRatio="none">
+                <polyline
+                    points=""
+                    fill="none"
+                    stroke="rgba(0,229,255,0.8)"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    data-usage-sparkline-line
+                ></polyline>
+                <circle class="usage-chart__marker" cx="0" cy="0" r="4" data-usage-sparkline-marker hidden></circle>
+            </svg>
+            <div class="usage-chart__tooltip" data-usage-sparkline-tooltip hidden>
+                <p class="usage-chart__tooltip-date" data-usage-sparkline-date></p>
+                <div class="usage-chart__tooltip-row">
+                    <span>Tokens</span>
+                    <strong data-usage-sparkline-requests></strong>
+                </div>
+                <div class="usage-chart__tooltip-row">
+                    <span>Errors</span>
+                    <strong data-usage-sparkline-errors></strong>
+                </div>
+                <div class="usage-chart__tooltip-row">
+                    <span>Error rate</span>
+                    <strong data-usage-sparkline-error-rate></strong>
+                </div>
+            </div>
+        </div>
+        <div class="usage-chart__legend">
+            <div>
+                <span>Average tokens in range</span>
+                <strong data-usage-avg>0</strong>
+            </div>
+            <div>
+                <span>Total errors</span>
+                <strong data-usage-errors-total>0</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="usage-card usage-card--alerts">
+        <header class="usage-card__header">
+            <h2>Alerts</h2>
+        </header>
+        <form class="usage-alerts" data-usage-alerts-form>
+            <div class="usage-alerts__list" data-alerts-list></div>
+            <div class="usage-alerts__actions">
+                <button
+                    class="account-cta account-cta--ghost"
+                    type="button"
+                    data-alert-add
+                    title="E-mail or Slack notifications when a threshold is crossed"
+                >Add alert channel</button>
+                <button class="account-cta account-cta--primary" type="submit">Save alerts</button>
+            </div>
+            <p class="usage-alerts__status" data-alert-status role="status" aria-live="polite"></p>
+        </form>
+        <template id="usage-alert-row-template">
+            <div class="usage-alert-row" data-alert="row">
+                <details class="usage-alert">
+                    <summary class="usage-alert__summary">
+                        <span
+                            class="usage-alert__summary-item usage-alert__summary-channel"
+                            data-alert-summary-channel
+                            data-summary-label="Channel"
+                        >Channel</span>
+                        <span
+                            class="usage-alert__summary-item usage-alert__summary-destination"
+                            data-alert-summary-destination
+                            data-summary-label="Destination"
+                        >Add destination</span>
+                        <span
+                            class="usage-alert__summary-item usage-alert__summary-threshold"
+                            data-alert-summary-threshold
+                            data-summary-label="Threshold"
+                        >80%</span>
+                        <span
+                            class="usage-alert__summary-item usage-alert__summary-status"
+                            data-alert-summary-status
+                            data-summary-label="Status"
+                        >Enabled</span>
+                    </summary>
+                    <div class="usage-alert__details">
+                        <label class="usage-alert__field">
+                            <span>Channel</span>
+                            <select class="usage-alert__control usage-alert__control--select" name="channel" data-alert-channel>
+                                {% for channel in alert_channels %}
+                                    <option value="{{ channel.type }}">{{ channel.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="usage-alert__field">
+                            <span>Destination</span>
+                            <input class="usage-alert__control" type="text" name="destination" placeholder="alerts@example.com" data-alert-destination maxlength="255" required>
+                            <span class="usage-alert__error" data-alert-error="destination" aria-live="polite"></span>
+                        </label>
+                        <label class="usage-alert__field">
+                            <span>Threshold %</span>
+                            <input class="usage-alert__control usage-alert__control--number" type="number" name="threshold" min="10" max="1000" step="10" data-alert-threshold value="{{ threshold_presets[1] }}">
+                            <span class="usage-alert__error" data-alert-error="threshold" aria-live="polite"></span>
+                        </label>
+                        <label class="usage-alert__toggle">
+                            <input type="checkbox" data-alert-enabled checked>
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+                </details>
+                <button
+                    class="usage-alert__remove"
+                    type="button"
+                    aria-label="Remove alert"
+                    title="Remove alert"
+                    data-alert-remove
+                    data-confirm="Remove this alert channel?"
+                >&times;</button>
+            </div>
+        </template>
+    </article>
+
+    <article class="usage-card usage-card--table">
+        <header class="usage-card__header">
+            <h2>API errors</h2>
+            <span>Errors for {{ usage_windows[0] }} days</span>
+        </header>
+        <div class="usage-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Status</th>
+                        <th>Error code</th>
+                        <th>Occurrences</th>
+                        <th>Last seen</th>
+                    </tr>
+                </thead>
+                <tbody data-usage-errors-table>
+                    <tr>
+                        <td colspan="5">No endpoint errors for this window. Error log will appear once we detect failures.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+</div>
+{% endblock %}

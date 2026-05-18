@@ -1,0 +1,28 @@
+<svg width="396" height="394" viewBox="0 0 396 394" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line x1="185.729" y1="188.013" x2="185.271" y2="344.016" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<line x1="263.197" y1="259.071" x2="244.071" y2="224.803" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<line x1="317" y1="138" x2="317" y2="201" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<line x1="268" y1="260" x2="268" y2="323" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M126 253V323" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M96.6645 240L74.5 271" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M163.706 113.642L134.5 82.5" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M236 81L206 114" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M317.5 208L268.5 268.5" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M94.4717 192.769L68.9008 164.513" stroke="#18E0FF" stroke-width="10" stroke-linecap="round"/>
+<path d="M186 255.5C192.904 255.5 198.5 261.096 198.5 268C198.5 274.904 192.904 280.5 186 280.5C179.096 280.5 173.5 274.904 173.5 268C173.5 261.096 179.096 255.5 186 255.5Z" fill="#A7F8FF" stroke="#A7F8FF"/>
+<circle cx="317" cy="206" r="17" fill="#A7F8FF"/>
+<circle cx="268" cy="268" r="19" fill="#A7F8FF"/>
+<circle cx="74" cy="271" r="13" fill="#A7F8FF"/>
+<circle cx="13" cy="13" r="13" transform="matrix(0.993412 -0.114594 -0.114594 -0.993412 56.9794 178.975)" fill="#A7F8FF"/>
+<circle cx="134" cy="81" r="17" fill="#A7F8FF"/>
+<circle cx="236" cy="81" r="13" fill="#A7F8FF"/>
+<path d="M185 141L232.5 182.5" stroke="#6CC7FF" stroke-width="14" stroke-linecap="round"/>
+<path d="M233 182L369 45" stroke="#6CC7FF" stroke-width="14" stroke-linecap="round"/>
+<path d="M326.5 50L369 43" stroke="#6CC7FF" stroke-width="14" stroke-linecap="round"/>
+<path d="M369.789 44L369 89" stroke="#6CC7FF" stroke-width="14" stroke-linecap="round"/>
+<line x1="118.433" y1="214.117" x2="183.117" y2="141.567" stroke="#6CC7FF" stroke-width="14" stroke-linecap="round"/>
+<circle cx="117" cy="215" r="19" fill="#6CC7FF"/>
+<circle cx="184" cy="141" r="19" fill="#6CC7FF"/>
+<circle cx="232" cy="181" r="19" fill="#6CC7FF"/>
+<path d="M196.5 0C235.397 0 271.975 11.6884 302.899 31.6826L291.417 46.8955C263.706 29.2789 231.098 19 196.5 19C98.8414 19 19 101.094 19 199.5C19 297.214 98.1504 374.5 196.5 374.5C295.166 374.5 376.5 296.906 376.5 199.5C376.5 172.143 370.117 146.008 358.79 122.538L376.69 115.923C388.736 141.47 395.5 169.829 395.5 199.5C395.5 308.024 305.024 393.5 196.5 393.5C87.976 393.5 0 308.024 0 199.5C0 90.976 87.976 0 196.5 0Z" fill="#18E0FF"/>
+</svg>

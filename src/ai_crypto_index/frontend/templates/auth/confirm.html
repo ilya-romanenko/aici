@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirm your AI Crypto Index account</title>
+    <meta name="description" content="Verify your email to unlock the AI Crypto Index workspace (/app/overview) and API keys.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="auth-page auth-confirm-page">
+    <main
+        class="auth-confirm"
+        data-confirm-root
+        data-confirm-endpoint="{{ api_url('api_auth_confirm') }}"
+        data-profile-endpoint="{{ api_url('api_auth_update_profile') }}"
+        data-resend-endpoint="{{ api_url('api_auth_resend_confirmation') }}"
+        data-confirm-token="{{ token }}"
+    >
+        <section class="auth-confirm__card">
+            <div class="auth-confirm__state" data-confirm-state="loading" aria-live="polite">
+                <h1 class="auth-confirm__title">Activating your workspace</h1>
+                <p class="auth-confirm__description">Hang tight while we verify your link…</p>
+            </div>
+            <div class="auth-confirm__state" data-confirm-state="profile" aria-live="polite" hidden>
+                <h1 class="auth-confirm__title">Email confirmed</h1>
+                <p class="auth-confirm__description">Finish the onboarding (optional) so we can tailor the console.</p>
+                <form class="auth-confirm__form" data-confirm-profile-form novalidate>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Full name</span>
+                        <input class="auth-confirm__input" type="text" name="full_name" maxlength="160" placeholder="Ada Lovelace">
+                    </label>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Role</span>
+                        <select class="auth-confirm__input" name="job_title">
+                            <option value="">Select role</option>
+                            <option value="Developer">Developer</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Founder">Founder</option>
+                            <option value="Product Manager">Product Manager</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </label>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Organization</span>
+                        <input class="auth-confirm__input" type="text" name="organization_name" maxlength="160" placeholder="AICI Labs">
+                    </label>
+                    <label class="auth-confirm__checkbox">
+                        <input class="auth-confirm__checkbox-input" type="checkbox" name="no_company" value="true">
+                        <span class="auth-confirm__checkbox-text">No company — I'm exploring as an individual</span>
+                    </label>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Team size</span>
+                        <select class="auth-confirm__input" name="organization_size">
+                            <option value="">Select size</option>
+                            <option value="1-5">1-5</option>
+                            <option value="6-15">6-15</option>
+                            <option value="16-50">16-50</option>
+                            <option value="51-150">51-150</option>
+                            <option value="150+">150+</option>
+                        </select>
+                    </label>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Primary use case</span>
+                        <select class="auth-confirm__input" name="use_case">
+                            <option value="">Select use case</option>
+                            <option value="Strategy automation">Strategy automation</option>
+                            <option value="Risk and treasury reports">Risk and treasury reports</option>
+                            <option value="Listing or exchange analytics">Listing / exchange analytics</option>
+                            <option value="Portfolio research">Portfolio research</option>
+                            <option value="Fintech product integration">Fintech product integration</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </label>
+                    <div class="auth-confirm__actions">
+                        <button class="landing-cta landing-cta--primary auth-confirm__submit" type="submit" data-confirm-profile-submit>
+                            <span class="landing-cta__text">Continue</span>
+                        </button>
+                        <button class="auth-confirm__skip" type="button" data-confirm-skip>Skip for now</button>
+                    </div>
+                    <p class="auth-confirm__status" role="status" aria-live="polite" data-confirm-profile-status></p>
+                </form>
+            </div>
+            <div class="auth-confirm__state" data-confirm-state="success" aria-live="polite" hidden>
+                <h1 class="auth-confirm__title">You're all set</h1>
+                <p class="auth-confirm__description">We unlocked the workspace for <strong data-confirm-email></strong>. Head to the Overview tab for onboarding, CTA shortcuts, and usage limits.</p>
+                <a class="landing-cta landing-cta--primary auth-confirm__cta" href="/app/overview">
+                    <span class="landing-cta__text">Go to Overview</span>
+                </a>
+                <p class="auth-confirm__support">Questions? <a class="registration-link" href="mailto:support@aici.pro">support@aici.pro</a></p>
+            </div>
+            <div class="auth-confirm__state auth-confirm__state--error" data-confirm-state="error" aria-live="polite" hidden>
+                <h1 class="auth-confirm__title">Link expired or invalid</h1>
+                <p class="auth-confirm__description" data-confirm-error-text>Request a new confirmation email to continue.</p>
+                <form class="auth-confirm__form" data-confirm-resend-form novalidate>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Work email</span>
+                        <input class="auth-confirm__input" type="email" name="email" required maxlength="160" placeholder="you@company.com">
+                    </label>
+                    <div class="auth-confirm__actions">
+                        <button class="landing-cta landing-cta--primary auth-confirm__cta" type="submit">
+                            <span class="landing-cta__text">Resend link</span>
+                        </button>
+                        <a class="auth-confirm__skip" href="/">Back to landing</a>
+                    </div>
+                    <p class="auth-confirm__status" role="status" aria-live="polite" data-confirm-resend-status></p>
+                </form>
+            </div>
+        </section>
+    </main>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

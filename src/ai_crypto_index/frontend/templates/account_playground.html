@@ -1,0 +1,218 @@
+{% extends "account_base.html" %}
+{% block head_extra %}
+    {{ super() }}
+    <script src="{{ url_for('static', path='js/playground.js') }}" defer></script>
+{% endblock %}
+{% block page_title %}Playground - AI Crypto Index{% endblock %}
+{% block body_attrs %}
+    data-playground-share-url="{{ playground_share_url }}"
+    data-playground-snippets-key="aici:account:snippets"
+    data-docs-url="{{ docs_url }}"
+{% endblock %}
+{% block content %}
+<div class="account-container">
+<section class="playground-hero">
+    <div class="playground-hero__intro">
+        <p class="playground-hero__eyebrow">Playground</p>
+        <h1 class="playground-hero__title">Test the API and save SDK snippets</h1>
+        <p class="playground-hero__subtitle">
+            Run live calls, share deep links with teammates, and store reusable snippets for your SDKs.
+        </p>
+        <div class="playground-hero__meta">
+            <span>Rate limit: {{ rate_limit_limit }} tokens / {{ rate_limit_window }} s</span>
+            <span>Billing: pipeline triggers charge base + parameter add-ons; status checks are free; data reads cost 5 tokens.</span>
+        </div>
+    </div>
+</section>
+
+<div class="playground-grid">
+    {% set first_endpoint = playground_config.endpoints[0] if playground_config.endpoints else None %}
+    <div class="developer-playground" data-api-playground data-playground-active>
+        <div class="developer-playground__intro">
+            <div class="developer-playground__topline">
+                <p class="developer-playground__eyebrow">Web playground</p>
+                <span class="developer-playground__status developer-playground__status--top" data-status="idle" data-playground-status aria-hidden="true">Waiting to send</span>
+            </div>
+            <h2 class="developer-playground__title">Send requests and inspect responses in the browser</h2>
+            <p class="developer-playground__subtitle">
+                Tune pipeline parameters or pick any endpoint, send the request, and share a deep link with your team.
+            </p>
+        </div>
+        <div class="developer-playground__grid">
+            <form class="developer-playground__form" data-playground-form novalidate>
+                <div class="developer-playground__field">
+                    <label class="developer-playground__label" for="account-playground-key">API token</label>
+                    <div class="developer-playground__input-wrapper">
+                        <input
+                            class="developer-playground__input"
+                            type="password"
+                            id="account-playground-key"
+                            name="api_key"
+                            placeholder="sk_live_xxxxxx"
+                            data-playground-token
+                            autocomplete="off"
+                            required
+                        >
+                        <button
+                            class="developer-playground__token-toggle"
+                            type="button"
+                            data-playground-token-toggle
+                            data-visibility="hidden"
+                            aria-label="Show API token"
+                            title="Show API token"
+                        >
+                            <img
+                                class="developer-playground__token-toggle-icon developer-playground__token-toggle-icon--show"
+                                src="{{ url_for('static', path='icons/show.svg') }}"
+                                alt=""
+                                aria-hidden="true"
+                                width="20"
+                                height="20"
+                            >
+                            <img
+                                class="developer-playground__token-toggle-icon developer-playground__token-toggle-icon--hide"
+                                src="{{ url_for('static', path='icons/hide.svg') }}"
+                                alt=""
+                                aria-hidden="true"
+                                width="20"
+                                height="20"
+                            >
+                        </button>
+                    </div>
+                    <p class="developer-playground__help">We only use this key in your browser. Use the least privileged token you can.</p>
+                    <label class="developer-playground__remember">
+                        <input type="checkbox" data-playground-remember>
+                        <span>Remember this key on this device</span>
+                    </label>
+                </div>
+                <div class="developer-playground__field">
+                    <label class="developer-playground__label" for="account-playground-endpoint">Endpoint</label>
+                    <select
+                        class="developer-playground__select"
+                        id="account-playground-endpoint"
+                        data-playground-endpoint
+                        aria-label="Choose an endpoint"
+                    >
+                        {% for endpoint in playground_config.endpoints %}
+                            <option value="{{ endpoint.id }}">{{ endpoint.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="developer-playground__help" data-playground-description>
+                        {{ first_endpoint.description if first_endpoint else 'Pick an endpoint to see description and parameters.' }}
+                    </p>
+                </div>
+                <div class="developer-playground__divider" aria-hidden="true"></div>
+                <div class="developer-playground__field developer-playground__field--dynamic" data-playground-fields>
+                    <p class="developer-playground__placeholder">Fields will appear after you pick an endpoint.</p>
+                </div>
+                <p class="developer-playground__error" data-playground-error role="alert" aria-live="polite"></p>
+                <div class="developer-playground__actions">
+                    <button class="account-cta account-cta--primary" type="submit">Send request</button>
+                    <button class="account-cta account-cta--secondary" type="button" data-playground-share>Share link</button>
+                </div>
+            </form>
+            <div class="developer-playground__response" data-playground-response>
+                <div class="developer-playground__meta">
+                    <span class="developer-playground__method" data-playground-method>{{ first_endpoint.method if first_endpoint else 'GET' }}</span>
+                    <div class="developer-playground__url" data-playground-url>
+                        {{ first_endpoint.path if first_endpoint else api_base_url ~ '/weights/latest' }}
+                    </div>
+                <span class="developer-playground__status" data-status="idle" data-playground-status role="status" aria-live="polite">Waiting to send</span>
+            </div>
+            <div class="developer-playground__chart" data-playground-chart>
+                <p class="developer-playground__placeholder">Run a request to see timing charts or JSON below.</p>
+            </div>
+            <div class="developer-playground__json">
+                <div class="developer-playground__json-header">
+                    <h3 class="developer-playground__json-title">JSON response</h3>
+                    <div class="developer-playground__json-actions">
+                        <button
+                            class="developer-icon-btn"
+                            type="button"
+                            data-copy-target="account-playground-json"
+                            data-copy-title="Copy JSON"
+                            data-copied-title="Copied"
+                            aria-label="Copy JSON"
+                            title="Copy JSON"
+                        >
+                            <img
+                                class="developer-icon-btn__icon developer-icon-btn__icon--default"
+                                src="{{ url_for('static', path='icons/copy.svg') }}"
+                                alt=""
+                                aria-hidden="true"
+                                width="20"
+                                height="20"
+                            >
+                            <img
+                                class="developer-icon-btn__icon developer-icon-btn__icon--success"
+                                src="{{ url_for('static', path='icons/copy succes.svg') }}"
+                                alt=""
+                                aria-hidden="true"
+                                width="20"
+                                height="20"
+                            >
+                        </button>
+                        <button
+                            class="developer-icon-btn"
+                            type="button"
+                            data-playground-reset
+                            aria-label="Reset form"
+                            title="Reset form"
+                        >
+                            <img
+                                class="developer-icon-btn__icon"
+                                src="{{ url_for('static', path='icons/clear.svg') }}"
+                                alt=""
+                                aria-hidden="true"
+                                width="20"
+                                height="20"
+                        >
+                        </button>
+                    </div>
+                </div>
+                <pre class="developer-playground__code" id="account-playground-json" data-playground-json aria-live="polite">{}</pre>
+            </div>
+        </div>
+        </div>
+        <script type="application/json" data-playground-config>
+            {{ playground_config | tojson }}
+        </script>
+        <script type="application/json" data-playground-docs>
+            {{ developer_endpoints | tojson }}
+        </script>
+    </div>
+    <article
+        class="playground-card"
+        data-playground-snippets
+        data-icon-copy="{{ url_for('static', path='icons/copy.svg') }}"
+        data-icon-delete="{{ url_for('static', path='icons/delete.svg') }}"
+    >
+        <header class="playground-card__header">
+            <div>
+                <p class="playground-card__eyebrow">SDK snippets</p>
+                <h3>Save and reuse SDK snippets</h3>
+            </div>
+            <button class="account-cta account-cta--ghost" type="button" data-snippet-clear>Clear snippets</button>
+        </header>
+        <form class="playground-snippet-form">
+            <label>
+                <span>Snippet name</span>
+                <input type="text" maxlength="80" placeholder="Weights latest" data-snippet-name>
+            </label>
+            <label>
+                <span>SDK</span>
+                <select data-snippet-language>
+                    <option value="python">Python</option>
+                    <option value="curl">cURL</option>
+                </select>
+            </label>
+            <button class="account-cta account-cta--secondary" type="button" data-snippet-save>Save snippet</button>
+            <p class="playground-snippet-form__status" data-snippet-status role="status" aria-live="polite"></p>
+        </form>
+        <ul class="playground-snippet-list" data-snippet-list>
+            <li class="playground-snippet-list__empty" data-snippet-empty>No snippets saved yet.</li>
+        </ul>
+    </article>
+</div>
+</div>
+{% endblock %}

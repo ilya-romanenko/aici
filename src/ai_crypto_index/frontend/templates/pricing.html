@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index,follow">
+    <title>AI Crypto Index - Pricing</title>
+    <meta
+        name="description"
+        content="Compare AI Crypto Index plans: Free, Pro, Ultra, and Enterprise with token quotas, support terms, and billing options."
+    >
+    <link rel="canonical" href="{{ request.url_for('render_pricing_page') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/apple-touch-icon.png') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/account.css') }}">
+</head>
+<body class="pricing-page" data-cta-endpoint="{{ api_url('api_track_cta_event') }}">
+    {% set pricing_profile_url = account_portal_url or None %}
+    {% set pricing_has_account = pricing_profile_url is not none %}
+    {% set pricing_billing_url = request.url_for('render_account_tab', tab='billing') %}
+    {% set free_plan_copy = "Free is a starter tier with API access, basic rate limits, and up to 500 tokens per month." %}
+    {% set token_model_copy = "Status checks are free; data reads (weights/perf/export) cost 5 tokens per call; pipeline triggers charge base + parameter add-ons." %}
+    <div id="page-start" aria-hidden="true"></div>
+    <a class="visually-hidden" href="#pricing-main" aria-label="Skip to main content">Skip to main content</a>
+    <div class="landing-cta-toast" data-cta-toast role="status" aria-live="polite"></div>
+
+    <header class="landing-header docs-topbar pricing-topbar" data-mobile-header="true">
+        <div class="landing-header__inner docs-topbar__inner">
+            <a class="landing-header__logo docs-logo" href="{{ request.url_for('render_landing_page') }}" aria-label="Open AI Crypto Index homepage">
+                <img class="landing-header__logo-mark" src="{{ url_for('static', path='icons/Logo_AICI_blue-gradient.svg') }}" alt="" aria-hidden="true" width="36" height="36" decoding="async">
+                <span class="landing-header__logo-text" translate="no" data-translate="no" lang="en">AI Crypto Index</span>
+            </a>
+            <button
+                class="landing-header__burger"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="pricing-topbar-drawer"
+                data-menu-trigger="true"
+            >
+                <span class="landing-header__burger-icon" aria-hidden="true">
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                </span>
+            </button>
+            <div class="landing-header__drawer docs-topbar__drawer" id="pricing-topbar-drawer" data-menu-drawer="true">
+                <nav class="landing-header__nav docs-topbar__nav" aria-label="Pricing navigation">
+                    <ul class="landing-header__nav-list docs-topbar__nav-list">
+                        <li>
+                            <a
+                                class="landing-header__nav-link docs-topbar__nav-link docs-btn docs-btn--ghost"
+                                href="{{ request.url_for('render_landing_page') }}"
+                                data-cta-id="pricing_back_to_site"
+                                data-cta-format="link"
+                                data-cta-location="pricing"
+                                data-cta-scenario="navigate_landing"
+                                data-cta-meta='{"section":"topbar"}'
+                            >
+                                Back to site
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                class="landing-header__nav-link docs-topbar__nav-link docs-btn docs-btn--ghost"
+                                href="{{ request.url_for('render_docs') }}"
+                                data-cta-id="pricing_open_docs"
+                                data-cta-format="link"
+                                data-cta-location="pricing"
+                                data-cta-scenario="navigate_docs"
+                                data-cta-meta='{"section":"topbar"}'
+                            >
+                                Docs
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="docs-topbar__actions" role="group" aria-label="Pricing page actions">
+                    {% if pricing_has_account %}
+                    <a
+                        class="docs-btn docs-btn--primary"
+                        href="{{ pricing_profile_url }}"
+                        data-cta-id="pricing_go_to_profile"
+                        data-cta-format="button"
+                        data-cta-location="pricing"
+                        data-cta-scenario="open_profile"
+                        data-cta-meta='{"section":"topbar"}'
+                        data-cta-skip-toast="true"
+                    >
+                        Go to profile
+                    </a>
+                    {% else %}
+                    <a
+                        class="docs-btn docs-btn--ghost"
+                        href="{{ request.url_for('render_auth_login') }}"
+                        data-cta-id="pricing_sign_in"
+                        data-cta-format="link"
+                        data-cta-location="pricing"
+                        data-cta-scenario="open_login"
+                        data-cta-meta='{"section":"topbar"}'
+                    >
+                        Sign in
+                    </a>
+                    <a
+                        class="docs-btn docs-btn--primary"
+                        href="#registration-modal"
+                        data-cta-id="pricing_start_free_plan_topbar"
+                        data-cta-format="button"
+                        data-cta-location="pricing"
+                        data-cta-scenario="start_free_plan"
+                        data-cta-meta='{"section":"topbar"}'
+                        data-modal-trigger="registration"
+                    >
+                        Start free plan
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="landing-header__overlay" data-menu-overlay-for="pricing-topbar-drawer" data-menu-overlay="true" aria-hidden="true"></div>
+
+    <main class="pricing-main" id="pricing-main">
+        <section class="pricing-hero account-container" aria-labelledby="pricing-title">
+            <h1 id="pricing-title">Plan lineup</h1>
+            <p class="pricing-hero__subtitle">
+                Choose a plan on this page, then continue to sign-in/checkout. Every plan uses the same token model and API surface. Upgrade when your monthly token demand grows.
+            </p>
+        </section>
+
+        {% set plan_specs = [
+            {
+                "code": "free",
+                "name": "Free",
+                "badge": "Self-serve",
+                "price_label": "$0 / mo",
+                "quota_label": "Up to 500 tokens per month",
+                "note": free_plan_copy,
+                "self_serve": True,
+                "features": [
+                    "Limited history (about 3 heavy pipeline runs)",
+                    "T+1 data refresh for historical metrics",
+                    "Email support within 48 hours"
+                ],
+                "cta": "Start free plan",
+                "cta_id": "pricing_start_free_plan_card"
+            },
+            {
+                "code": "pro",
+                "name": "Pro",
+                "badge": "Self-serve",
+                "price_label": "$9.99 / mo",
+                "quota_label": "Up to 10k tokens per month",
+                "note": "API-first plan with higher limits, in-app checkout, and standard email support.",
+                "self_serve": True,
+                "features": [
+                    "Priority queueing and higher burst limits",
+                    "Same-day email support",
+                    "Designed for recurring production API usage"
+                ],
+                "cta": "Choose Pro",
+                "cta_id": "pricing_choose_pro_plan_card"
+            },
+            {
+                "code": "ultra",
+                "name": "Ultra",
+                "badge": "Self-serve",
+                "price_label": "$39.99 / mo",
+                "quota_label": "Up to 100k tokens per month",
+                "note": "For production workloads: faster limits, reliability tooling, and richer support.",
+                "self_serve": True,
+                "features": [
+                    "Priority rate limits and latency-focused SLAs",
+                    "Incident webhooks and audit-ready logging",
+                    "Built for high-frequency workloads"
+                ],
+                "cta": "Choose Ultra",
+                "cta_id": "pricing_choose_ultra_plan_card"
+            },
+            {
+                "code": "enterprise",
+                "name": "Enterprise",
+                "badge": "Sales-managed",
+                "price_label": "Custom pricing",
+                "quota_label": "Custom token quotas and terms",
+                "note": "Tailored limits, invoicing, and security reviews for larger teams.",
+                "self_serve": False,
+                "features": [
+                    "Custom SLAs and dedicated support",
+                    "Private endpoints with contractual uptime",
+                    "Security reviews, invoicing, and compliance docs"
+                ],
+                "cta": "Contact sales",
+                "cta_id": "pricing_contact_sales_card"
+            }
+        ] %}
+
+        <section class="pricing-plans account-container" >
+            <div class="billing-carousel" data-plans-carousel data-carousel-mobile-breakpoint="900">
+                <button class="billing-carousel__nav billing-carousel__nav--prev" type="button" aria-label="Previous plan" data-carousel-prev>
+                    &#8249;
+                </button>
+                <div class="billing-carousel__viewport" data-carousel-viewport>
+                    <div class="billing-plans__grid" role="list" data-carousel-track>
+                        {% for spec in plan_specs %}
+                        <article class="billing-plan" role="listitem" aria-label="{{ spec.name }} plan">
+                            <div class="billing-plan__heading">
+                                <h3>{{ spec.name }}</h3>
+                                <span class="billing-plan__badge">{{ spec.badge }}</span>
+                            </div>
+                            <p class="billing-plan__price">{{ spec.price_label }}</p>
+                            <p class="pricing-plan__quota">{{ spec.quota_label }}</p>
+                            <ul class="billing-plan__features">
+                                {% for feature in spec.features %}
+                                <li>{{ feature }}</li>
+                                {% endfor %}
+                            </ul>
+                            <p class="billing-plan__note">{{ spec.note }}</p>
+                            <div class="billing-plan__cta">
+                                {% if pricing_has_account %}
+                                <a
+                                    class="account-cta account-cta--primary"
+                                    href="{{ pricing_billing_url }}"
+                                    data-cta-id="{{ spec.cta_id }}"
+                                    data-cta-format="button"
+                                    data-cta-location="pricing"
+                                    data-cta-scenario="open_billing"
+                                    data-cta-meta='{"section":"plan_card","plan":"{{ spec.code }}"}'
+                                    aria-label="Select {{ spec.name }} plan"
+                                >
+                                    {{ spec.cta }}
+                                </a>
+                                {% else %}
+                                <a
+                                    class="account-cta account-cta--primary"
+                                    href="#registration-modal"
+                                    data-cta-id="{{ spec.cta_id }}"
+                                    data-cta-format="button"
+                                    data-cta-location="pricing"
+                                    data-cta-scenario="{% if spec.self_serve %}select_plan_self_serve{% else %}contact_sales{% endif %}"
+                                    data-cta-meta='{"section":"plan_card","plan":"{{ spec.code }}"}'
+                                    data-modal-trigger="registration"
+                                    aria-label="Select {{ spec.name }} plan"
+                                >
+                                    {{ spec.cta }}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button class="billing-carousel__nav billing-carousel__nav--next" type="button" aria-label="Next plan" data-carousel-next>
+                    &#8250;
+                </button>
+            </div>
+        </section>
+
+        <section class="pricing-matrix account-container" aria-labelledby="pricing-matrix-title">
+            <h2 id="pricing-matrix-title">Pricing matrix</h2>
+            <div class="pricing-matrix__table-wrap">
+                <table class="pricing-matrix__table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Plan</th>
+                            <th scope="col">Billing</th>
+                            <th scope="col">Token quota / month</th>
+                            <th scope="col">Support</th>
+                            <th scope="col">Best fit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Free</th>
+                            <td>$0, no card required</td>
+                            <td>500 tokens</td>
+                            <td>Email within 48 hours</td>
+                            <td>Starter tier with API access</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Pro</th>
+                            <td>Self-serve checkout ($9.99/mo)</td>
+                            <td>10,000 tokens</td>
+                            <td>Same-day email support</td>
+                            <td>Small production teams</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Ultra</th>
+                            <td>Self-serve checkout ($39.99/mo)</td>
+                            <td>100,000 tokens</td>
+                            <td>Priority support + incident hooks</td>
+                            <td>Latency-sensitive workloads</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Enterprise</th>
+                            <td>Invoice / custom contract</td>
+                            <td>Custom quotas</td>
+                            <td>Dedicated support and SLA</td>
+                            <td>Regulated and large-scale teams</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="docs-footer pricing-footer">
+        <div class="docs-footer__inner">
+            <div>
+                <p class="docs-footer__text">Need help choosing a plan? Contact us at <a href="mailto:contact@aici.pro">contact@aici.pro</a>.</p>
+                <p class="docs-footer__text">Token model: {{ token_model_copy }}</p>
+            </div>
+            <div class="docs-footer__actions">
+                <a
+                    class="docs-btn docs-btn--ghost"
+                    href="{{ request.url_for('render_landing_page') }}"
+                    data-cta-id="pricing_back_to_site_footer"
+                    data-cta-format="link"
+                    data-cta-location="pricing"
+                    data-cta-scenario="navigate_landing"
+                    data-cta-meta='{"section":"footer"}'
+                >Back to site</a>
+                {% if pricing_has_account %}
+                <a
+                    class="docs-btn docs-btn--primary"
+                    href="{{ pricing_profile_url }}"
+                    data-cta-id="pricing_go_to_profile_footer"
+                    data-cta-format="button"
+                    data-cta-location="pricing"
+                    data-cta-scenario="open_profile"
+                    data-cta-meta='{"section":"footer"}'
+                    data-cta-skip-toast="true"
+                >
+                    Go to profile
+                </a>
+                {% else %}
+                <a
+                    class="docs-btn docs-btn--primary"
+                    href="#registration-modal"
+                    data-cta-id="pricing_start_free_plan_footer"
+                    data-cta-format="button"
+                    data-cta-location="pricing"
+                    data-cta-scenario="start_free_plan"
+                    data-cta-meta='{"section":"footer"}'
+                    data-modal-trigger="registration"
+                >
+                    Start free plan
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="docs-footer__meta">
+            <a class="docs-footer__text" href="{{ url_for('render_privacy_policy') }}">Privacy policy</a>
+            <a class="docs-footer__text" href="{{ url_for('render_cookie_policy') }}">Cookie policy</a>
+            <a class="docs-footer__text" href="{{ url_for('render_terms_of_service') }}">Terms of service</a>
+            <span class="docs-footer__text">&copy; {{ current_year }} AI Crypto Index</span>
+        </div>
+    </footer>
+
+    {% if not pricing_has_account %}
+    <div
+        class="landing-modal registration-modal"
+        id="registration-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+        aria-labelledby="registration-modal-title"
+        aria-describedby="registration-modal-description"
+        data-modal="registration"
+        data-registration-modal
+        data-signup-endpoint="{{ api_url('api_auth_signup') }}"
+        data-resend-endpoint="{{ api_url('api_auth_resend_confirmation') }}"
+        data-terms-version="2024-10"
+    >
+        <div class="landing-modal__overlay" data-modal-close aria-hidden="true"></div>
+        <div class="landing-modal__content registration-modal__content" role="document">
+            <button class="landing-modal__close" type="button" data-modal-close aria-label="Close dialog">
+                <span class="landing-modal__close-icon" aria-hidden="true">&times;</span>
+            </button>
+            <header class="registration-modal__header">
+                <p class="registration-modal__eyebrow">Self-serve onboarding</p>
+                <h2 class="registration-modal__title" id="registration-modal-title">Create your AICI account</h2>
+                <p class="registration-modal__subtitle" id="registration-modal-description">Confirm email - get API access in under a minute.</p>
+            </header>
+            <div class="registration-modal__progress" role="list" aria-label="Registration steps">
+                <span class="registration-modal__progress-step is-active" data-registration-progress-step="signup">1. Account</span>
+                <span class="registration-modal__progress-step" data-registration-progress-step="verify">2. Confirm email</span>
+            </div>
+            <section class="registration-step" data-registration-step="signup" aria-live="polite">
+                <form class="registration-form" data-registration-form novalidate>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Work email</span>
+                        <input class="registration-input" type="email" name="email" autocomplete="email" required maxlength="160" placeholder="dev@yourcompany.com" data-modal-initial-focus data-registration-email-input>
+                    </label>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Password</span>
+                        <div class="registration-password">
+                            <input class="registration-input" type="password" name="password" autocomplete="new-password" required minlength="10" maxlength="160" placeholder="Minimum 10 characters" data-registration-password-input>
+                            <button
+                                class="registration-password__toggle"
+                                type="button"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                                data-password-toggle
+                                data-show-icon="{{ url_for('static', path='icons/show.svg') }}"
+                                data-hide-icon="{{ url_for('static', path='icons/hide.svg') }}"
+                            >
+                                <img
+                                    class="registration-password__toggle-icon"
+                                    src="{{ url_for('static', path='icons/show.svg') }}"
+                                    alt=""
+                                    aria-hidden="true"
+                                    width="20"
+                                    height="20"
+                                    decoding="async"
+                                >
+                            </button>
+                        </div>
+                        <div class="registration-password__meter" data-password-meter>
+                            <span class="registration-password__strength" data-password-strength-label data-score="0">Weak</span>
+                            <span class="registration-password__hint">Use letters, numbers, and special characters.</span>
+                        </div>
+                    </label>
+                    <div class="registration-options">
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="newsletter_opt_in" value="true">
+                            <span class="registration-checkbox__text">Send me roadmap and product updates</span>
+                        </label>
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="terms" required>
+                            <span class="registration-checkbox__text">I agree to the <a class="registration-link" href="{{ url_for('render_terms_of_service') }}" target="_blank" rel="noopener">Terms</a> and <a class="registration-link" href="{{ url_for('render_privacy_policy') }}" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+                        </label>
+                    </div>
+                    <button class="landing-cta landing-cta--primary registration-form__submit" type="submit" data-registration-submit>
+                        <span class="landing-cta__text">Create account</span>
+                    </button>
+                    <p class="registration-form__legal">By continuing you confirm the accuracy of the data provided.</p>
+                    <p class="registration-form__switch">Already onboarded? <a class="registration-link" href="{{ request.url_for('render_auth_login') }}">Sign in</a>.</p>
+                </form>
+            </section>
+            <section class="registration-step registration-step--verify" data-registration-step="verify" aria-live="polite" hidden>
+                <div class="registration-verify">
+                    <p class="registration-verify__title">Check your inbox</p>
+                    <p class="registration-verify__description">We sent a confirmation link to <strong data-registration-email></strong>. Confirming unlocks the dashboard with your API key and usage limits.</p>
+                    <div class="registration-verify__actions">
+                        <button class="landing-cta landing-cta--ghost registration-verify__cta" type="button" data-registration-open-mail>
+                            <span class="landing-cta__text">Open mail app</span>
+                        </button>
+                        <button class="landing-cta landing-cta--primary registration-verify__cta" type="button" data-registration-resend disabled>
+                            <span class="landing-cta__text">Resend email</span>
+                        </button>
+                    </div>
+                    <p class="registration-verify__note">Resend available in <span data-registration-countdown>60s</span>. Limit 5 per hour.</p>
+                    <div class="registration-verify__footer">
+                        <button class="registration-verify__link" type="button" data-registration-edit-email>Change email</button>
+                        <span class="registration-verify__hint">Need help? <a class="registration-link" href="mailto:support@aici.pro">support@aici.pro</a></span>
+                    </div>
+                </div>
+            </section>
+            <p class="registration-status" role="status" aria-live="polite" data-registration-status></p>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

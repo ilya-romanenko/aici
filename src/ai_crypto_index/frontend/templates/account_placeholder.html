@@ -1,0 +1,10 @@
+{% extends "account_base.html" %}
+{% block page_title %}{{ placeholder.title }} — AI Crypto Index{% endblock %}
+{% block content %}
+<section class="overview-card overview-placeholder-card">
+    <div class="overview-placeholder">
+        <p>{{ placeholder.message }}</p>
+        <a class="account-cta account-cta--secondary" href="{{ placeholder.cta.href }}">{{ placeholder.cta.label }}</a>
+    </div>
+</section>
+{% endblock %}

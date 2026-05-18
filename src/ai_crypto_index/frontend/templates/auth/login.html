@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in to AI Crypto Index</title>
+    <meta name="description" content="Sign in to open the AI Crypto Index workspace (/app/overview), APIs, and billing portal.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="auth-page auth-login-page">
+    <main
+        class="auth-confirm auth-login"
+        data-login-root
+        data-login-endpoint="{{ api_url('api_auth_login') }}"
+        data-forgot-endpoint="{{ api_url('api_auth_forgot_password') }}"
+        data-next-url="{{ next_url }}"
+    >
+        <section class="auth-confirm__card">
+            <div class="auth-confirm__state" data-login-state="form" aria-live="polite">
+                <h1 class="auth-confirm__title">Sign in to your workspace</h1>
+                <p class="auth-confirm__description">Enter your credentials to access the Overview tab, billing portal, and latest allocation snapshots.</p>
+                {% if oauth_error_message %}
+                <p class="auth-confirm__status" role="alert" data-variant="error">{{ oauth_error_message }}</p>
+                {% endif %}
+                <a
+                    class="oauth-btn oauth-btn--google"
+                    href="{{ google_login_url }}"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Continue with Google"
+                >
+                    <img
+                        class="oauth-btn__icon"
+                        src="{{ url_for('static', path='icons/google.svg') }}"
+                        alt=""
+                        aria-hidden="true"
+                        width="18"
+                        height="18"
+                        decoding="async"
+                    >
+                    <span class="oauth-btn__text">Continue with Google</span>
+                </a>
+                <div class="auth-divider" role="separator" aria-hidden="true">
+                    <span class="auth-divider__text">or</span>
+                </div>
+                <form class="auth-confirm__form" data-login-form method="post" novalidate>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Work email</span>
+                        <input class="auth-confirm__input" type="email" name="email" required maxlength="160" placeholder="you@company.com" autocomplete="username">
+                    </label>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Password</span>
+                        <div class="auth-confirm__input-wrapper">
+                            <input
+                                class="auth-confirm__input auth-confirm__input--password"
+                                type="password"
+                                name="password"
+                                required
+                                minlength="8"
+                                maxlength="160"
+                                placeholder="Enter password"
+                                autocomplete="current-password"
+                                data-login-password
+                            >
+                            <button
+                                class="auth-confirm__password-toggle"
+                                type="button"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                                data-login-password-toggle
+                                data-show-icon="{{ url_for('static', path='icons/show.svg') }}"
+                                data-hide-icon="{{ url_for('static', path='icons/hide.svg') }}"
+                            >
+                                <img
+                                    class="auth-confirm__password-toggle-icon"
+                                    src="{{ url_for('static', path='icons/show.svg') }}"
+                                    alt=""
+                                    aria-hidden="true"
+                                    width="20"
+                                    height="20"
+                                    decoding="async"
+                                >
+                            </button>
+                        </div>
+                    </label>
+                    <div class="auth-confirm__actions">
+                        <button class="landing-cta landing-cta--primary auth-confirm__submit" type="submit" data-login-submit>
+                            <span class="landing-cta__text">Sign in</span>
+                        </button>
+                        <a
+                            class="landing-cta landing-cta--ghost auth-confirm__home"
+                            href="{{ request.url_for('render_landing_page') }}"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Return to AI Crypto Index homepage"
+                        >
+                            <span class="landing-cta__text">Back to home</span>
+                        </a>
+                        <button class="auth-confirm__skip" type="button" data-login-forgot-trigger>Forgot password?</button>
+                    </div>
+                    <p class="auth-confirm__status" role="status" aria-live="polite" data-login-status></p>
+                </form>
+            </div>
+            <div class="auth-confirm__state" data-login-state="forgot" aria-live="polite" hidden>
+                <h1 class="auth-confirm__title">Reset your password</h1>
+                <p class="auth-confirm__description">We'll send a reset link to your inbox so you can update the password.</p>
+                <form class="auth-confirm__form" data-login-forgot-form method="post" novalidate>
+                    <label class="auth-confirm__field">
+                        <span class="auth-confirm__label">Work email</span>
+                        <input class="auth-confirm__input" type="email" name="email" required maxlength="160" placeholder="you@company.com" autocomplete="username">
+                    </label>
+                    <div class="auth-confirm__actions">
+                        <button class="landing-cta landing-cta--primary auth-confirm__cta" type="submit" data-login-forgot-submit>
+                            <span class="landing-cta__text">Send reset link</span>
+                        </button>
+                        <button class="auth-confirm__skip" type="button" data-login-back>Back to sign in</button>
+                    </div>
+                    <p class="auth-confirm__status" role="status" aria-live="polite" data-login-forgot-status></p>
+                </form>
+            </div>
+            <div class="auth-confirm__state" data-login-state="success" aria-live="polite" hidden>
+                <h1 class="auth-confirm__title">Signed in</h1>
+                <p class="auth-confirm__description">Redirecting <strong data-login-success-email></strong> to the app.</p>
+                <a class="landing-cta landing-cta--primary auth-confirm__cta" href="/app/overview" data-login-success-cta>
+                    <span class="landing-cta__text">Continue to app</span>
+                </a>
+                <p class="auth-confirm__support">Need help? <a class="registration-link" href="mailto:support@aici.pro">support@aici.pro</a></p>
+            </div>
+        </section>
+    </main>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

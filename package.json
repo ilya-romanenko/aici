@@ -1,0 +1,22 @@
+{
+  "name": "aici-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "preview": "live-server dist --watch=dist --open=templates/landing.html"
+  },
+  "devDependencies": {
+    "browserslist": "^4.23.3",
+    "esbuild": "^0.24.0",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "html-minifier-terser": "^7.2.0",
+    "lightningcss": "^1.27.0",
+    "live-server": "^1.2.2",
+    "rimraf": "^5.0.5",
+    "sharp": "^0.33.5"
+  }
+}

@@ -1,0 +1,31 @@
+# VCS and tooling
+.git
+.gitignore
+.vscode
+.pytest_cache
+.mypy_cache
+.ruff_cache
+__pycache__
+*.py[cod]
+
+# Python environments
+.venv
+env/
+venv/
+
+# Node artifacts
+node_modules/
+npm-debug.log*
+
+# Build outputs and datasets
+dist/
+data/
+runs/
+backtest_data/
+Results_Backup/
+Results/
+docs/update_scripts
+cloudflared.exe
+
+# Docker related
+docker-compose.override.yml

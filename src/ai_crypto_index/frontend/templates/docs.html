@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Crypto Index - Developer documentation</title>
+    <meta name="description" content="Developer docs for the AI Crypto Index API: base URL, auth headers, rate limits, sample run IDs, and SDK downloads.">
+    <link rel="canonical" href="{{ request.url }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/apple-touch-icon.png') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="docs-page" data-cta-endpoint="{{ api_url('api_track_cta_event') }}">
+    {% set docs_profile_url = account_portal_url or None %}
+    {% set docs_has_account = docs_profile_url is not none %}
+    <a class="visually-hidden" href="#docs-main" aria-label="Skip to the documentation content">Skip to docs</a>
+    <header class="landing-header docs-topbar pricing-topbar" data-mobile-header="true">
+        <div class="landing-header__inner docs-topbar__inner">
+            <a class="landing-header__logo docs-logo" href="{{ request.url_for('render_landing_page') }}" aria-label="Open AI Crypto Index homepage">
+                <img class="landing-header__logo-mark" src="{{ url_for('static', path='icons/Logo_AICI_blue-gradient.svg') }}" alt="" aria-hidden="true" width="36" height="36" decoding="async">
+                <span class="landing-header__logo-text" translate="no" data-translate="no" lang="en">AI Crypto Index</span>
+            </a>
+            <button
+                class="landing-header__burger"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="docs-topbar-drawer"
+                data-menu-trigger="true"
+            >
+                <span class="landing-header__burger-icon" aria-hidden="true">
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                </span>
+            </button>
+            <div class="landing-header__drawer docs-topbar__drawer" id="docs-topbar-drawer" data-menu-drawer="true">
+                <nav class="landing-header__nav docs-topbar__nav" aria-label="Documentation navigation">
+                    <ul class="landing-header__nav-list docs-topbar__nav-list">
+                        <li>
+                            <a
+                                class="landing-header__nav-link docs-topbar__nav-link docs-btn docs-btn--ghost"
+                                href="{{ request.url_for('render_landing_page') }}"
+                                data-cta-id="docs_back_to_site_topbar"
+                                data-cta-format="link"
+                                data-cta-location="docs"
+                                data-cta-scenario="navigate_landing"
+                                data-cta-meta='{"section":"topbar"}'
+                            >
+                                Back to site
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="docs-topbar__actions" role="group" aria-label="Docs primary actions">
+                    {% if docs_has_account %}
+                    <a
+                        class="docs-btn docs-btn--primary"
+                        href="{{ docs_profile_url }}"
+                        data-cta-id="docs_open_dashboard_topbar"
+                        data-cta-format="button"
+                        data-cta-location="docs"
+                        data-cta-scenario="open_dashboard"
+                        data-cta-meta='{"section":"topbar"}'
+                        data-cta-skip-toast="true"
+                    >
+                        Go to profile
+                    </a>
+                    {% else %}
+                    <a
+                        class="docs-btn docs-btn--ghost"
+                        href="{{ request.url_for('render_auth_login') }}"
+                        data-cta-id="docs_sign_in_topbar"
+                        data-cta-format="link"
+                        data-cta-location="docs"
+                        data-cta-scenario="open_login"
+                        data-cta-meta='{"section":"topbar"}'
+                    >
+                        Sign in
+                    </a>
+                    <a
+                        class="docs-btn docs-btn--primary"
+                        href="#registration-modal"
+                        data-cta-id="docs_start_free_plan_topbar"
+                        data-cta-format="button"
+                        data-cta-location="docs"
+                        data-cta-scenario="start_free_plan"
+                        data-cta-meta='{"section":"topbar"}'
+                        data-modal-trigger="registration"
+                    >
+                        Start free plan
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="landing-header__overlay" data-menu-overlay-for="docs-topbar-drawer" data-menu-overlay="true" aria-hidden="true"></div>
+    <main class="docs-shell" id="docs-main">
+        {% set base_host = "https://aici.pro" %}
+        {% set base_api_url = base_host ~ api_base %}
+        {% set sample_run_id = "2024-06-15T18-00-00Z" %}
+        <aside class="docs-sidebar" aria-label="Sidebar navigation">
+            <div class="docs-sidebar__head">
+                <p class="docs-eyebrow">AI Crypto Index docs</p>
+                <button
+                    class="docs-sidebar__toggle"
+                    type="button"
+                    data-docs-nav-toggle
+                    aria-expanded="false"
+                    aria-controls="docs-sidebar-nav"
+                >
+                    <span class="docs-sidebar__toggle-label">Sections</span>
+                    <span class="docs-sidebar__toggle-current" data-docs-nav-current>Overview</span>
+                </button>
+            </div>
+            <nav class="docs-sidebar__nav" id="docs-sidebar-nav" data-docs-sidebar-nav aria-label="Navigation by section">
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="overview">
+                    <a class="docs-sidebar__link is-active" href="#overview" data-docs-link data-target="overview">Overview</a>
+                    <div class="docs-sidebar__subnav is-open" data-docs-subnav="overview">
+                        <a class="docs-sidebar__sublink is-active" href="#overview-tldr" data-docs-sub-link data-parent="overview">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#overview-how-it-works" data-docs-sub-link data-parent="overview">How it works</a>
+                        <a class="docs-sidebar__sublink" href="#overview-output" data-docs-sub-link data-parent="overview">Output and reproducibility</a>
+                    </div>
+                </div>
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="run-parameters">
+                    <a class="docs-sidebar__link" href="#run-parameters" data-docs-link data-target="run-parameters">Run parameters</a>
+                    <div class="docs-sidebar__subnav" data-docs-subnav="run-parameters" hidden>
+                        <a class="docs-sidebar__sublink" href="#run-parameters-tldr" data-docs-sub-link data-parent="run-parameters">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#run-parameters-tradeoffs" data-docs-sub-link data-parent="run-parameters">Key tradeoffs</a>
+                        <a class="docs-sidebar__sublink" href="#run-parameters-validation" data-docs-sub-link data-parent="run-parameters">Validation rules</a>
+                        <a class="docs-sidebar__sublink" href="#run-parameters-ranges" data-docs-sub-link data-parent="run-parameters">Validation ranges</a>
+                        <a class="docs-sidebar__sublink" href="#run-parameters-reference" data-docs-sub-link data-parent="run-parameters">Parameter reference</a>
+                    </div>
+                </div>
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="connect">
+                    <a class="docs-sidebar__link" href="#connect" data-docs-link data-target="connect">Connect</a>
+                    <div class="docs-sidebar__subnav" data-docs-subnav="connect" hidden>
+                        <a class="docs-sidebar__sublink" href="#connect-tldr" data-docs-sub-link data-parent="connect">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#connect-base-url" data-docs-sub-link data-parent="connect">Base URL and headers</a>
+                        <a class="docs-sidebar__sublink" href="#connect-endpoints" data-docs-sub-link data-parent="connect">Endpoints</a>
+                        <a class="docs-sidebar__sublink" href="#connect-rate-limits" data-docs-sub-link data-parent="connect">Rate limits and retries</a>
+                    </div>
+                </div>
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="examples">
+                    <a class="docs-sidebar__link" href="#examples" data-docs-link data-target="examples">Examples</a>
+                    <div class="docs-sidebar__subnav" data-docs-subnav="examples" hidden>
+                        <a class="docs-sidebar__sublink" href="#examples-tldr" data-docs-sub-link data-parent="examples">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#examples-curl" data-docs-sub-link data-parent="examples">curl</a>
+                        <a class="docs-sidebar__sublink" href="#examples-sdk" data-docs-sub-link data-parent="examples">SDK</a>
+                    </div>
+                </div>
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="faq">
+                    <a class="docs-sidebar__link" href="#faq" data-docs-link data-target="faq">FAQ</a>
+                    <div class="docs-sidebar__subnav" data-docs-subnav="faq" hidden>
+                        <a class="docs-sidebar__sublink" href="#faq-tldr" data-docs-sub-link data-parent="faq">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#faq-questions" data-docs-sub-link data-parent="faq">Questions</a>
+                    </div>
+                </div>
+                <div class="docs-sidebar__item" data-docs-sidebar-item data-section="glossary">
+                    <a class="docs-sidebar__link" href="#glossary" data-docs-link data-target="glossary">Glossary</a>
+                    <div class="docs-sidebar__subnav" data-docs-subnav="glossary" hidden>
+                        <a class="docs-sidebar__sublink" href="#glossary-tldr" data-docs-sub-link data-parent="glossary">TL;DR</a>
+                        <a class="docs-sidebar__sublink" href="#glossary-terms" data-docs-sub-link data-parent="glossary">Terms</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        <div class="docs-body" role="region">
+            <div class="docs-main">
+                <section class="docs-section" id="overview" data-docs-section data-docs-label="Overview">
+                    <div class="docs-section__header">
+                        <div class="docs-hero__header">
+                            <h1 class="docs-title">AI Crypto Index: weights, sleeves, and risk metrics</h1>
+                            <p class="docs-lead">
+                                Daily refreshed sleeves with transparent run IDs and KPIs, ready to query through the API or SDKs.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <p class="docs-article__lead">The service generates daily and intraday index runs and returns deterministic allocations by <code>run_id</code>. Use one <code>run_id</code> across endpoints to keep weights, KPIs, and charts in sync.</p>
+
+                        <h3 id="overview-tldr">TL;DR</h3>
+                        <p>Weights refresh after 07:00 UTC for daily mode. Each response includes a <code>run_id</code> in format <code>YYYY-MM-DDTHH-MM-SSZ[-suffix]</code> that you can pin across downstream calls.</p>
+                        <p>Three sleeves are available: <em>Classic</em> (balanced growth), <em>Conservative</em> (lower volatility), and <em>Aggressive</em> (higher beta). All sleeves share one cleaned universe and the same run timestamp.</p>
+
+                        <h3 id="overview-how-it-works">How it works</h3>
+                        <ol>
+                            <li>Market quotes are ingested, quality filtered, and aligned into a consistent feature set.</li>
+                            <li>The model layer forecasts return and risk signals for each asset.</li>
+                            <li>The optimizer applies sleeve constraints and produces target weights.</li>
+                            <li>The result is stamped with <code>run_id</code> and published through API endpoints.</li>
+                        </ol>
+
+                        <h3 id="overview-output">Output and reproducibility</h3>
+                        <ul>
+                            <li><code>/weights/latest</code> returns the freshest run.</li>
+                            <li><code>/runs/{run_id}/perf</code> returns CAGR, volatility, max drawdown, and Sharpe for the same run.</li>
+                            <li><code>/runs/{run_id}/mini</code> returns equity-curve summary assets for charting.</li>
+                            <li>Use one <code>run_id</code> end-to-end to avoid cross-run mismatch in reports.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="docs-section" id="run-parameters" data-docs-section data-docs-label="Run parameters">
+                    <div class="docs-section__header">
+                        <h2 class="docs-section__title">Run parameters: theory, validation, impact</h2>
+                        <div class="docs-hero__actions">
+                            <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="run-parameters" aria-label="Copy link to Run parameters" title="Copy link">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <p class="docs-article__lead">These UI parameters control universe size, history depth, forecast horizon, and risk constraints. Validation keeps combinations consistent. Stay within recommended ranges for stable results; move outside only for targeted experiments.</p>
+
+                        <h3 id="run-parameters-tldr">TL;DR</h3>
+                        <p>Defaults are designed for balanced, daily runs. Adjust with the tradeoffs below in mind and keep the validation rules intact.</p>
+
+                        <h3 id="run-parameters-tradeoffs">Key tradeoffs</h3>
+                        <ul>
+                            <li><strong>Diversification vs noise.</strong> Higher <code>n_top_coins</code> and <code>total_assets</code> reduce concentration risk but can add illiquid or noisy assets.</li>
+                            <li><strong>History vs responsiveness.</strong> Earlier <code>start_date</code> and larger <code>lookback_days</code> stabilize estimates but slow regime response.</li>
+                            <li><strong>Horizon vs adaptation.</strong> Higher <code>forecast_horizon</code> implies fewer weight changes; lower values adapt more often.</li>
+                            <li><strong>Constraints vs freedom.</strong> Tighter <code>risk_min_weight</code>, <code>risk_max_weight</code>, and <code>weight_cap</code> reduce concentration but can cap upside.</li>
+                            <li><strong>Forecast conservatism.</strong> <code>advanced_forecast</code> uses a richer model; higher <code>gating_tolerance</code> leans more conservative.</li>
+                            <li><strong>Risk buffer.</strong> Higher <code>vol_floor_ratio</code> inflates risk estimates and makes allocations more defensive.</li>
+                        </ul>
+
+                        <h3 id="run-parameters-validation">Validation rules</h3>
+                        <ul>
+                            <li><code>risk_max_weight &gt;= risk_min_weight</code>.</li>
+                            <li><code>total_assets &lt;= n_top_coins</code>.</li>
+                            <li><code>risk_min_weight * total_assets &lt;= 1</code>.</li>
+                            <li><code>risk_min_weight &lt;= min(0.08, 1 / total_assets)</code>.</li>
+                            <li><code>weight_cap &gt;= max(0.08, 1 / total_assets)</code> and <code>weight_cap &lt;= 0.30</code>.</li>
+                            <li><code>lookback_days &gt;= window_size</code>.</li>
+                            <li><code>forecast_horizon &lt;= window_size</code> and <code>forecast_horizon &lt;= lookback_days</code>.</li>
+                            <li><code>gating_tolerance &lt;= 0.10</code> (technical ceiling <code>0.25</code>).</li>
+                            <li><code>start_date</code> is not in the future, not earlier than <code>2016-01-01</code>, not later than <code>today - max(lookback_days, 120d)</code>, and the available history covers <code>lookback_days</code> from <code>2015-01-01</code>.</li>
+                        </ul>
+                        <p class="docs-article__note"><strong>Plan limits.</strong> Free plan caps <code>n_top_coins</code> at 200 and <code>total_assets</code> at 12. Requests beyond the cap fall back to defaults.</p>
+
+                        <h3 id="run-parameters-ranges">Validation ranges</h3>
+                        <div class="docs-article__table-wrap">
+                            <table class="docs-article__table">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Soft min</th>
+                                        <th>Soft max</th>
+                                        <th>Why it matters</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>n_top_coins</code></td>
+                                        <td>30</td>
+                                        <td>300</td>
+                                        <td>Small universes hurt diversification; large ones add noise and lower liquidity.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>start_date</code></td>
+                                        <td>2016-01-01</td>
+                                        <td>today - max(lookback_days, 120d)</td>
+                                        <td>Older dates increase stability but can surface stale regimes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>lookback_days</code></td>
+                                        <td>90</td>
+                                        <td>720</td>
+                                        <td>Short windows add noise; long windows reduce reactivity.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>window_size</code></td>
+                                        <td>14</td>
+                                        <td>120</td>
+                                        <td>Must stay within <code>lookback_days</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>forecast_horizon</code></td>
+                                        <td>7</td>
+                                        <td>60</td>
+                                        <td>Must stay within <code>window_size</code> and <code>lookback_days</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>total_assets</code></td>
+                                        <td>5</td>
+                                        <td>30</td>
+                                        <td>Must stay within <code>n_top_coins</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>risk_min_weight</code></td>
+                                        <td>0.005</td>
+                                        <td>min(0.08, 1 / total_assets)</td>
+                                        <td>Must satisfy <code>risk_min_weight * total_assets &lt;= 1</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>risk_max_weight</code></td>
+                                        <td>0.12</td>
+                                        <td>0.45</td>
+                                        <td>Must be at least <code>risk_min_weight</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>weight_cap</code></td>
+                                        <td>max(0.08, 1 / total_assets)</td>
+                                        <td>0.30</td>
+                                        <td>Too low conflicts with fixed <code>total_assets</code>.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>vol_floor_ratio</code></td>
+                                        <td>0.25</td>
+                                        <td>0.70</td>
+                                        <td>Higher values are more conservative.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>gating_tolerance</code></td>
+                                        <td>0.00</td>
+                                        <td>0.10</td>
+                                        <td>Technical ceiling is <code>0.25</code>.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 id="run-parameters-reference">Parameter reference</h3>
+                        <dl class="docs-article__defs">
+                            <dt><code>n_top_coins</code> (default 100)</dt>
+                            <dd>Impact: larger universes diversify but add noise and illiquidity. Constraints: <code>total_assets &lt;= n_top_coins</code>; free plan cap 200.</dd>
+
+                            <dt><code>total_assets</code> (default 10)</dt>
+                            <dd>Impact: more assets reduce concentration; fewer increase focus. Constraints: <code>&lt;= n_top_coins</code>; free plan cap 12.</dd>
+
+                            <dt><code>start_date</code> (default empty)</dt>
+                            <dd>Impact: earlier dates stabilize estimates but reduce reactivity. Constraints: not in the future, not before <code>2016-01-01</code>, not later than <code>today - max(lookback_days, 120d)</code>.</dd>
+
+                            <dt><code>lookback_days</code> (default 180)</dt>
+                            <dd>Impact: larger windows smooth noise; smaller windows react faster. Constraints: <code>&gt;= window_size</code>.</dd>
+
+                            <dt><code>window_size</code> (default 30)</dt>
+                            <dd>Impact: smaller windows increase sensitivity; larger smooth shifts. Constraints: <code>&lt;= lookback_days</code>.</dd>
+
+                            <dt><code>forecast_horizon</code> (default 30)</dt>
+                            <dd>Impact: longer horizons update weights less often. Constraints: <code>&lt;= window_size</code> and <code>&lt;= lookback_days</code>.</dd>
+
+                            <dt><code>advanced_forecast</code> (default true)</dt>
+                            <dd>Impact: richer models can improve quality but raise model risk. Constraints: <code>gating_tolerance</code> applies only when true.</dd>
+
+                            <dt><code>gating_tolerance</code> (default 0.02)</dt>
+                            <dd>Impact: higher values favor conservative blends. Constraints: <code>&lt;= 0.10</code> (technical ceiling <code>0.25</code>), used only with <code>advanced_forecast</code>.</dd>
+
+                            <dt><code>risk_min_weight</code> (default 0.03)</dt>
+                            <dd>Impact: higher minimums spread weights more evenly. Constraints: <code>risk_min_weight * total_assets &lt;= 1</code>, <code>risk_min_weight &lt;= min(0.08, 1 / total_assets)</code>.</dd>
+
+                            <dt><code>risk_max_weight</code> (default 0.25)</dt>
+                            <dd>Impact: lower caps reduce concentration; higher allow focus. Constraints: <code>risk_max_weight &gt;= risk_min_weight</code>.</dd>
+
+                            <dt><code>weight_cap</code> (default 0.15)</dt>
+                            <dd>Impact: lower caps equalize weights; higher allow concentration. Constraints: <code>weight_cap &gt;= max(0.08, 1 / total_assets)</code>, <code>weight_cap &lt;= 0.30</code>.</dd>
+
+                            <dt><code>vol_floor_ratio</code> (default 0.4)</dt>
+                            <dd>Impact: higher values make allocations more defensive.</dd>
+
+                            <dt><code>run_id</code> (default empty)</dt>
+                            <dd>Impact: does not change results, only identifies the run. Constraints: keep within 64 chars and use a-z, 0-9, dash, underscore.</dd>
+                        </dl>
+                    </div>
+                </section>
+
+                <section class="docs-section" id="connect" data-docs-section data-docs-label="Connect">
+                    <div class="docs-section__header">
+                        <h2 class="docs-section__title">Connect and authenticate</h2>
+                        <div class="docs-hero__actions">
+                            <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="connect" aria-label="Copy link to Connect" title="Copy link">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <p class="docs-article__lead">Use HTTPS, pass your API key in request headers, and store base URL + key in server-side environment variables. Keep retries bounded and respect <code>Retry-After</code> on throttling responses.</p>
+
+                        <h3 id="connect-tldr">TL;DR</h3>
+                        <p>Call <code>GET {{ base_api_url }}/weights/latest</code> with <code>X-API-Key</code> and <code>Accept: application/json</code>. Keep one <code>run_id</code> for subsequent metrics and chart calls.</p>
+
+                        <h3 id="connect-base-url">Base URL and required headers</h3>
+                        <div class="docs-copy-field" role="group" aria-label="Base URL">
+                            <code>{{ base_api_url }}</code>
+                            <button class="docs-copy-btn" type="button" data-copy-value="{{ base_api_url }}" aria-label="Copy base URL" title="Copy base URL">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <p>Required headers: <code>X-API-Key</code> and <code>Accept: application/json</code>. Optional: <code>User-Agent</code> to identify your service in logs.</p>
+                        <div class="docs-code" data-docs-code>
+                            <div class="docs-code__header">
+                                <span>curl GET /weights/latest</span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy request" title="Copy request">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <pre><code>curl -X GET "{{ base_api_url }}/weights/latest" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -H "Accept: application/json"</code></pre>
+                        </div>
+
+                        <h3 id="connect-endpoints">Core endpoints</h3>
+                        <p>The selector below is intentionally interactive so you can quickly inspect full endpoint URLs and copy a ready <code>curl</code> template.</p>
+                        <div class="docs-endpoints" data-docs-endpoints>
+                            <button class="docs-endpoint is-active" type="button" data-method="GET" data-path="/weights/latest">
+                                <span class="docs-endpoint__method">GET</span>
+                                <span class="docs-endpoint__path">/weights/latest</span>
+                                <p class="docs-endpoint__desc">Returns the latest <code>run_id</code> and sleeve weights</p>
+                            </button>
+                            <button class="docs-endpoint" type="button" data-method="GET" data-path="/runs/{{ sample_run_id }}/perf">
+                                <span class="docs-endpoint__method">GET</span>
+                                <span class="docs-endpoint__path">/runs/{{ sample_run_id }}/perf</span>
+                                <p class="docs-endpoint__desc">CAGR, annual volatility, max drawdown, Sharpe</p>
+                            </button>
+                            <button class="docs-endpoint" type="button" data-method="GET" data-path="/runs/{{ sample_run_id }}/mini">
+                                <span class="docs-endpoint__method">GET</span>
+                                <span class="docs-endpoint__path">/runs/{{ sample_run_id }}/mini</span>
+                                <p class="docs-endpoint__desc">Equity curve summary plus chart assets</p>
+                            </button>
+                        </div>
+                        <div class="docs-endpoint-preview" data-endpoint-preview data-base-url="{{ base_api_url }}">
+                            <div class="docs-endpoint-preview__meta">
+                                <span class="docs-endpoint__method" data-endpoint-method>GET</span>
+                                <span class="docs-endpoint-preview__path" data-endpoint-path data-copy-value="" role="button" tabindex="0" aria-label="Copy full endpoint URL" title="Copy endpoint URL"></span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="connect" aria-label="Copy anchor link" title="Copy anchor">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="docs-code" data-docs-code>
+                                <div class="docs-code__header">
+                                    <span>curl endpoint</span>
+                                    <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy example" title="Copy example">
+                                        <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                                <pre><code data-endpoint-sample>curl -X GET "{{ base_api_url }}/weights/latest" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -H "Accept: application/json"</code></pre>
+                            </div>
+                        </div>
+
+                        <h3 id="connect-rate-limits">Rate limits and retries</h3>
+                        <ul>
+                            <li>Edge cache keeps <code>/weights/latest</code> fast (around 120 ms p50 in internal tests).</li>
+                            <li>Pipeline triggers charge base + parameter add-ons; status checks are free; run artifacts read is 5 tokens per request.</li>
+                            <li>Indicative caps: Free up to 1k tokens/day and 5 rps, Pro up to 10k tokens/day and 40 rps, Enterprise negotiated.</li>
+                            <li>Check <code>X-RateLimit-*</code> on every response and avoid tight retry loops.</li>
+                        </ul>
+                        <div class="docs-note" id="connect-limits" data-docs-anchor>
+                            <strong>429 / Retry-After.</strong> Pause for the <code>Retry-After</code> value before retrying. Add jittered backoff and avoid hammering <code>/weights/latest</code>; cache responses on your side for at least the 30s edge TTL.
+                        </div>
+                    </div>
+                </section>
+
+                <section class="docs-section" id="examples" data-docs-section data-docs-label="Examples">
+                    <div class="docs-section__header">
+                        <h2 class="docs-section__title">Examples and quick start</h2>
+                        <div class="docs-hero__actions">
+                            <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="examples" aria-label="Copy link to Examples" title="Copy link">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <p class="docs-article__lead">Use this section as an implementation checklist: get latest weights, read metrics for the same <code>run_id</code>, then integrate the SDK that matches your stack.</p>
+
+                        <h3 id="examples-tldr">TL;DR</h3>
+                        <p><code>GET /weights/latest</code> returns the active <code>run_id</code>. Reuse that id for <code>/runs/{run_id}/perf</code> and <code>/runs/{run_id}/mini</code> to keep outputs aligned.</p>
+
+                        <h3 id="examples-curl">curl examples</h3>
+                        <p>First request for weights:</p>
+                        <div class="docs-code" data-docs-code>
+                            <div class="docs-code__header">
+                                <span>curl - weights</span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy request" title="Copy request">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <pre><code>curl -X GET "{{ base_api_url }}/weights/latest" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -H "Accept: application/json"</code></pre>
+                        </div>
+                        <div class="docs-code" data-docs-code>
+                            <div class="docs-code__header">
+                                <span>JSON</span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy response" title="Copy response">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <pre><code class="language-json">{
+  "run_id": "{{ sample_run_id }}",
+  "items": [
+    {"asset": "BTC", "weight": 0.34},
+    {"asset": "ETH", "weight": 0.27},
+    {"asset": "SOL", "weight": 0.11},
+    {"asset": "BNB", "weight": 0.08}
+  ]
+}</code></pre>
+                        </div>
+                        <p>Then request metrics for the same run:</p>
+                        <div class="docs-code" data-docs-code>
+                            <div class="docs-code__header">
+                                <span>curl - perf</span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy request" title="Copy request">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <pre><code>curl -X GET "{{ base_api_url }}/runs/{{ sample_run_id }}/perf" \
+  -H "X-API-Key: YOUR_API_KEY"</code></pre>
+                        </div>
+                        <div class="docs-code" data-docs-code>
+                            <div class="docs-code__header">
+                                <span>JSON</span>
+                                <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-code aria-label="Copy response" title="Copy response">
+                                    <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <pre><code class="language-json">{
+  "run_id": "{{ sample_run_id }}",
+  "metrics": {
+    "cagr": 0.312,
+    "annual_volatility": 0.46,
+    "max_drawdown": -0.25,
+    "sharpe": 1.42
+  }
+}</code></pre>
+                        </div>
+
+                        <h3 id="examples-sdk">SDK quick start</h3>
+                        <p>Python SDK bundle: <a href="{{ request.url_for('download_sdk_bundle', sdk_name='python') }}">{{ request.url_for('download_sdk_bundle', sdk_name='python') }}</a>. Install with <code>pip install .</code>, then set <code>AICI_API_KEY</code> and <code>AICI_BASE_URL={{ base_api_url }}</code>.</p>
+                        <p>JavaScript SDK bundle: <a href="{{ request.url_for('download_sdk_bundle', sdk_name='js') }}">{{ request.url_for('download_sdk_bundle', sdk_name='js') }}</a>. Install with <code>npm install</code> and set <code>AICI_API_KEY</code> plus <code>AICI_BASE_URL</code> in <code>.env</code>.</p>
+                        <div class="docs-hero__actions">
+                            <a
+                                class="docs-btn docs-btn--secondary"
+                                href="{{ request.url_for('download_sdk_bundle', sdk_name='python') }}"
+                                data-cta-id="docs_download_sdk_python_examples"
+                                data-cta-format="link"
+                                data-cta-location="docs"
+                                data-cta-scenario="download_sdk"
+                                data-cta-meta='{"section":"examples_sdk","sdk":"python"}'
+                            >Python SDK zip</a>
+                            <a
+                                class="docs-btn docs-btn--secondary"
+                                href="{{ request.url_for('download_sdk_bundle', sdk_name='js') }}"
+                                data-cta-id="docs_download_sdk_js_examples"
+                                data-cta-format="link"
+                                data-cta-location="docs"
+                                data-cta-scenario="download_sdk"
+                                data-cta-meta='{"section":"examples_sdk","sdk":"js"}'
+                            >JavaScript SDK zip</a>
+                        </div>
+                        <div class="docs-note">
+                            <strong>429/5xx.</strong> SDK helpers include retry and backoff for 429/5xx responses. Keep your base URL and headers centralized so rotating keys or hosts does not require code edits.
+                        </div>
+                    </div>
+                </section>
+                <section class="docs-section" id="faq" data-docs-section data-docs-label="FAQ">
+                    <div class="docs-section__header">
+                        <h2 class="docs-section__title">FAQ: keys, limits, reliability</h2>
+                        <div class="docs-hero__actions">
+                            <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="faq" aria-label="Copy link to FAQ" title="Copy link">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <h3 id="faq-tldr">TL;DR</h3>
+                        <p>Keys are generated in the account dashboard (<code>/app</code>) under <em>Keys</em>. Keep keys server-side and pair them with <code>AICI_BASE_URL</code>. Use <code>Retry-After</code> on 429 and short delayed retries on transient 5xx responses.</p>
+
+                        <h3 id="faq-questions">Questions</h3>
+                        <dl class="docs-article__defs">
+                            <dt>How do I generate an API key?</dt>
+                            <dd>Sign in to the account dashboard (<code>/app</code>), open <em>Keys</em>, and generate a key. Store it as <code>AICI_API_KEY</code> and never expose it in client-side code.</dd>
+
+                            <dt>Which base URL should I use?</dt>
+                            <dd>Use <code>{{ base_api_url }}</code> for production unless support provides a staging host. Keep URL in environment variables for easy switching.</dd>
+
+                            <dt>What does <code>run_id</code> represent?</dt>
+                            <dd><code>run_id</code> is the UTC timestamp for one model build. Reuse it across endpoints to fetch consistent weights and metrics.</dd>
+
+                            <dt>How does data freshness work for <code>n_top_coins</code>?</dt>
+                            <dd><code>n_top_coins=100</code> uses the daily cached snapshot. Other values can trigger fresh snapshot retrieval and then reuse cache until expiration.</dd>
+
+                            <dt>What are Free plan limits?</dt>
+                            <dd>Free caps <code>n_top_coins</code> at 200 and final asset count at 12. Requests above limits fall back to defaults.</dd>
+
+                            <dt>Why did I get 401 or 403?</dt>
+                            <dd>Check that <code>X-API-Key</code> is present, active, and allowed for your source IP/domain, and ensure the request points to the correct base URL.</dd>
+
+                            <dt>How should I handle 429?</dt>
+                            <dd>Read <code>Retry-After</code>, apply exponential backoff with jitter, and avoid repeated hot-loop calls to <code>/weights/latest</code>.</dd>
+
+                            <dt>What about 5xx or maintenance windows?</dt>
+                            <dd>Retry after a short delay. If errors persist, contact support with your <code>run_id</code> and request ID.</dd>
+                        </dl>
+                    </div>
+                </section>
+                <section class="docs-section" id="glossary" data-docs-section data-docs-label="Glossary">
+                    <div class="docs-section__header">
+                        <h2 class="docs-section__title">Glossary</h2>
+                        <div class="docs-hero__actions">
+                            <button class="docs-copy-btn docs-copy-btn--inline" type="button" data-copy-anchor="glossary" aria-label="Copy link to Glossary" title="Copy link">
+                                <span class="docs-copy-btn__icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="docs-article">
+                        <h3 id="glossary-tldr">TL;DR</h3>
+                        <p><em>Index run</em> is one timestamped build with a unique <code>run_id</code>. A <em>sleeve</em> is a risk profile. A <em>benchmark</em> is a reference portfolio used for comparison.</p>
+
+                        <h3 id="glossary-terms">Terms</h3>
+                        <dl class="docs-article__defs">
+                            <dt>Index run</dt>
+                            <dd>A full model build at a point in time, identified by <code>run_id</code>.</dd>
+
+                            <dt>Sleeve</dt>
+                            <dd>A risk profile and allocation mix: Classic, Conservative, or Aggressive.</dd>
+
+                            <dt>Benchmark</dt>
+                            <dd>A reference portfolio used to compare sleeve performance.</dd>
+
+                            <dt>Weights</dt>
+                            <dd>Asset allocations represented as decimals that sum to 1.0 for each sleeve.</dd>
+
+                            <dt>Latency</dt>
+                            <dd>API round-trip time between the client and endpoint response.</dd>
+                        </dl>
+                    </div>
+                </section>
+            <div class="docs-pagination" aria-label="Section pagination">
+                <a class="docs-pagination__link docs-pagination__link--prev is-disabled" href="#" data-docs-prev aria-label="Previous section"></a>
+                <a class="docs-pagination__link docs-pagination__link--next" href="#" data-docs-next aria-label="Next section"></a>
+            </div>
+        </div>
+        </div>
+    </main>
+    <footer class="docs-footer pricing-footer" aria-label="Footer">
+        <div class="docs-footer__inner">
+            <div>
+                <p class="docs-footer__text">&copy; {{ current_year }} AI Crypto Index</p>
+                <p class="docs-footer__note">Documentation for anyone exploring AI Crypto Index. Data is provided for research; contact the team for production guidance.</p>
+            </div>
+            <div class="docs-footer__actions">
+                <a
+                    class="docs-btn docs-btn--secondary"
+                    href="mailto:contact@aici.pro"
+                    aria-label="Contact the AI Crypto Index team"
+                    data-cta-id="docs_contact_sales_footer"
+                    data-cta-format="button"
+                    data-cta-location="docs"
+                    data-cta-scenario="contact_sales"
+                    data-cta-meta='{"section":"footer"}'
+                >Contact</a>
+                <a
+                    class="docs-btn docs-btn--ghost"
+                    href="{{ request.url_for('render_landing_page') }}"
+                    data-cta-id="docs_back_to_site_footer"
+                    data-cta-format="link"
+                    data-cta-location="docs"
+                    data-cta-scenario="navigate_landing"
+                    data-cta-meta='{"section":"footer"}'
+                >Back to site</a>
+                {% if docs_has_account %}
+                <a
+                    class="docs-btn docs-btn--primary"
+                    href="{{ docs_profile_url }}"
+                    data-cta-id="docs_open_dashboard_footer"
+                    data-cta-format="button"
+                    data-cta-location="docs"
+                    data-cta-scenario="open_dashboard"
+                    data-cta-meta='{"section":"footer"}'
+                    data-cta-skip-toast="true"
+                >Go to profile</a>
+                {% else %}
+                <a
+                    class="docs-btn docs-btn--ghost"
+                    href="{{ request.url_for('render_auth_login') }}"
+                    data-cta-id="docs_sign_in_footer"
+                    data-cta-format="link"
+                    data-cta-location="docs"
+                    data-cta-scenario="open_login"
+                    data-cta-meta='{"section":"footer"}'
+                >Sign in</a>
+                <a
+                    class="docs-btn docs-btn--primary"
+                    href="#registration-modal"
+                    data-cta-id="docs_start_free_plan_footer"
+                    data-cta-format="button"
+                    data-cta-location="docs"
+                    data-cta-scenario="start_free_plan"
+                    data-cta-meta='{"section":"footer"}'
+                    data-modal-trigger="registration"
+                >Start free plan</a>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+    {% if not docs_has_account %}
+    <div
+        class="landing-modal registration-modal"
+        id="registration-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+        aria-labelledby="registration-modal-title"
+        aria-describedby="registration-modal-description"
+        data-modal="registration"
+        data-registration-modal
+        data-signup-endpoint="{{ api_url('api_auth_signup') }}"
+        data-resend-endpoint="{{ api_url('api_auth_resend_confirmation') }}"
+        data-terms-version="2024-10"
+    >
+        <div class="landing-modal__overlay" data-modal-close aria-hidden="true"></div>
+        <div class="landing-modal__content registration-modal__content" role="document">
+            <button class="landing-modal__close" type="button" data-modal-close aria-label="Close dialog">
+                <span class="landing-modal__close-icon" aria-hidden="true">&times;</span>
+            </button>
+            <header class="registration-modal__header">
+                <p class="registration-modal__eyebrow">Self-serve onboarding</p>
+                <h2 class="registration-modal__title" id="registration-modal-title">Create your AICI account</h2>
+                <p class="registration-modal__subtitle" id="registration-modal-description">Confirm email - get API access in under a minute.</p>
+            </header>
+            <div class="registration-modal__progress" role="list" aria-label="Registration steps">
+                <span class="registration-modal__progress-step is-active" data-registration-progress-step="signup">1. Account</span>
+                <span class="registration-modal__progress-step" data-registration-progress-step="verify">2. Confirm email</span>
+            </div>
+            <section class="registration-step" data-registration-step="signup" aria-live="polite">
+                <form class="registration-form" data-registration-form novalidate>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Work email</span>
+                        <input class="registration-input" type="email" name="email" autocomplete="email" required maxlength="160" placeholder="dev@yourcompany.com" data-modal-initial-focus data-registration-email-input>
+                    </label>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Password</span>
+                        <div class="registration-password">
+                            <input class="registration-input" type="password" name="password" autocomplete="new-password" required minlength="10" maxlength="160" placeholder="Minimum 10 characters" data-registration-password-input>
+                            <button
+                                class="registration-password__toggle"
+                                type="button"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                                data-password-toggle
+                                data-show-icon="{{ url_for('static', path='icons/show.svg') }}"
+                                data-hide-icon="{{ url_for('static', path='icons/hide.svg') }}"
+                            >
+                                <img
+                                    class="registration-password__toggle-icon"
+                                    src="{{ url_for('static', path='icons/show.svg') }}"
+                                    alt=""
+                                    aria-hidden="true"
+                                    width="20"
+                                    height="20"
+                                    decoding="async"
+                                >
+                            </button>
+                        </div>
+                        <div class="registration-password__meter" data-password-meter>
+                            <span class="registration-password__strength" data-password-strength-label data-score="0">Weak</span>
+                            <span class="registration-password__hint">Use letters, numbers, and special characters.</span>
+                        </div>
+                    </label>
+                    <div class="registration-options">
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="newsletter_opt_in" value="true">
+                            <span class="registration-checkbox__text">Send me roadmap and product updates</span>
+                        </label>
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="terms" required>
+                            <span class="registration-checkbox__text">I agree to the <a class="registration-link" href="{{ url_for('render_terms_of_service') }}" target="_blank" rel="noopener">Terms</a> and <a class="registration-link" href="{{ url_for('render_privacy_policy') }}" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+                        </label>
+                    </div>
+                    <button class="landing-cta landing-cta--primary registration-form__submit" type="submit" data-registration-submit>
+                        <span class="landing-cta__text">Create account</span>
+                    </button>
+                    <p class="registration-form__legal">By continuing you confirm the accuracy of the data provided.</p>
+                    <p class="registration-form__switch">Already onboarded? <a class="registration-link" href="{{ request.url_for('render_auth_login') }}">Sign in</a>.</p>
+                </form>
+            </section>
+            <section class="registration-step registration-step--verify" data-registration-step="verify" aria-live="polite" hidden>
+                <div class="registration-verify">
+                    <p class="registration-verify__title">Check your inbox</p>
+                    <p class="registration-verify__description">We sent a confirmation link to <strong data-registration-email></strong>. Confirming unlocks the dashboard with your API key and usage limits.</p>
+                    <div class="registration-verify__actions">
+                        <button class="landing-cta landing-cta--ghost registration-verify__cta" type="button" data-registration-open-mail>
+                            <span class="landing-cta__text">Open mail app</span>
+                        </button>
+                        <button class="landing-cta landing-cta--primary registration-verify__cta" type="button" data-registration-resend disabled>
+                            <span class="landing-cta__text">Resend email</span>
+                        </button>
+                    </div>
+                    <p class="registration-verify__note">Resend available in <span data-registration-countdown>60s</span>. Limit 5 per hour.</p>
+                    <div class="registration-verify__footer">
+                        <button class="registration-verify__link" type="button" data-registration-edit-email>Change email</button>
+                        <span class="registration-verify__hint">Need help? <a class="registration-link" href="mailto:support@aici.pro">support@aici.pro</a></span>
+                    </div>
+                </div>
+            </section>
+            <p class="registration-status" role="status" aria-live="polite" data-registration-status></p>
+        </div>
+    </div>
+    {% endif %}
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

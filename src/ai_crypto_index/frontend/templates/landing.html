@@ -1,0 +1,1469 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index,follow">
+    <title>AI Crypto Index - Analytics Platform and API</title>
+    <meta
+        name="description"
+        content="AI Crypto Index combines machine learning models to assemble a managed crypto index, surface risk analytics, and launch a verified data API within minutes."
+    >
+    <link rel="canonical" href="{{ request.url_for('render_landing_page') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icons/favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', path='site.webmanifest') }}">
+    <meta name="theme-color" content="#020617">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLN230EE6R"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-LLN230EE6R');
+    </script>
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url_for('render_landing_page') }}">
+    <meta property="og:title" content="AI Crypto Index - transparent AI analytics with a developer-first API.">
+    <meta
+        property="og:description"
+        content="Assemble a managed crypto asset index in minutes, track performance, and ship the data into your product through the API."
+    >
+    <meta property="og:image" content="{{ url_for('static', path='media/og-cover.png') }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="AI Crypto Index">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Crypto Index - transparent AI analytics with a developer-first API.">
+    <meta
+        name="twitter:description"
+        content="Regular data refreshes, transparent methodology, and a ready-to-use API for developers and finance teams."
+    >
+    <meta name="twitter:image" content="{{ url_for('static', path='media/og-cover.png') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "AI Crypto Index",
+            "url": "{{ request.url_for('render_landing_page') }}",
+            "logo": "{{ url_for('static', path='icons/favicon.svg') }}",
+            "description": "Analytics platform and API for managed cryptocurrency indices powered by AI.",
+            "sameAs": [
+                "https://www.linkedin.com/company/aicryptoindex",
+                "https://github.com/aicryptoindex"
+            ],
+            "contactPoint": [
+                {
+                    "@type": "ContactPoint",
+                    "contactType": "sales",
+                    "email": "contact@aici.pro"
+                }
+            ]
+        }
+    </script>
+</head>
+<body
+    class="landing-page"
+    data-has-account="{{ 'true' if landing_has_account else 'false' }}"
+    data-is-authenticated="{{ 'true' if landing_has_account else 'false' }}"
+    data-cta-endpoint="{{ api_url('api_track_cta_event') }}"
+    data-billing-status-url="{{ api_url('api_billing_status') }}"
+    data-billing-checkout-url="{{ api_url('api_billing_checkout') }}"
+    data-billing-portal-url="{{ api_url('api_billing_portal') }}"
+    data-auth-refresh-url="{{ api_url('api_auth_refresh') }}"
+>
+    {% set landing_profile_url = account_portal_url or None %}
+    {% set landing_has_account = landing_profile_url is not none %}
+    {% set free_plan_copy = "Free is a starter tier with API access, basic rate limits, and up to 500 tokens per month." %}
+    {% set token_model_copy = "Status checks are free; data reads (weights/perf/export) cost 5 tokens per call; pipeline triggers charge base + parameter add-ons." %}
+    {% set hhi_tooltip_copy = "HHI shows concentration of index weights. 1.000 means one asset dominates; lower values mean the index is more evenly spread." %}
+    {% set effective_assets_tooltip_copy = "Effective assets = 1 / HHI. It converts concentration into an equal-weight equivalent; e.g., 5.0 means diversification similar to about five equal assets." %}
+    <div id="page-start" aria-hidden="true"></div>
+    <a class="visually-hidden" href="#main-content" aria-label="Skip to main content">Skip to main content</a>
+    <div class="landing-cta-toast" data-cta-toast role="status" aria-live="polite"></div>
+    <header class="landing-header" id="top" data-mobile-header="true">
+        <div class="landing-header__inner">
+            <a class="landing-header__logo" href="#page-start" aria-label="AI Crypto Index home" tabindex="0">
+                <img class="landing-header__logo-mark" src="{{ url_for('static', path='icons/Logo_AICI_blue-gradient.svg') }}" alt="" aria-hidden="true" width="36" height="36" decoding="async">
+                <span class="landing-header__logo-text" translate="no" data-translate="no" lang="en">AI Crypto Index</span>
+            </a>
+            <button
+                class="landing-header__burger"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="landing-header-drawer"
+                data-menu-trigger="true"
+            >
+                <span class="landing-header__burger-icon" aria-hidden="true">
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                </span>
+            </button>
+            <div class="landing-header__drawer" id="landing-header-drawer" data-menu-drawer="true">
+                <nav class="landing-header__nav" aria-label="Primary navigation">
+                    <ul class="landing-header__nav-list">
+                        <li><a class="landing-header__nav-link" href="#metrics" aria-label="Go to Metrics section" tabindex="0">Metrics</a></li>
+                        <li><a class="landing-header__nav-link" href="#platform" aria-label="Go to Platform section" tabindex="0">Platform</a></li>
+                        <li><a class="landing-header__nav-link" href="#api" aria-label="Go to API section" tabindex="0">API</a></li>
+                        <li><a class="landing-header__nav-link" href="#contacts" aria-label="Go to Contact section" tabindex="0">Contact</a></li>
+                        <li><a class="landing-header__nav-link" href="/pricing" aria-label="Open pricing page" tabindex="0">Pricing</a></li>
+                        <li><a class="landing-header__nav-link" href="{{ request.url_for('render_docs') }}" aria-label="Open AI Crypto Index documentation" tabindex="0">Docs</a></li>
+                    </ul>
+                </nav>
+                <div class="landing-header__actions">
+                    {% if landing_has_account %}
+                    <a
+                        class="landing-cta landing-cta--primary landing-header__cta"
+                        href="{{ landing_profile_url }}"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Go to your profile"
+                        data-cta-id="header_profile"
+                        data-cta-format="link"
+                        data-cta-location="header"
+                        data-cta-scenario="open_profile"
+                        data-cta-confirm="Profile shortcut opened."
+                        data-cta-skip-toast="true"
+                        data-cta-error="Unable to log CTA event right now."
+                    >
+                        <span class="landing-cta__text">Go to profile</span>
+                    </a>
+                    {% else %}
+                    <a
+                        class="landing-cta landing-cta--ghost landing-header__cta"
+                        href="{{ request.url_for('render_auth_login') }}"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Sign in to your AICI account"
+                        data-cta-id="header_login"
+                        data-cta-format="link"
+                        data-cta-location="header"
+                        data-cta-scenario="open_login"
+                        data-cta-confirm="Login intent logged."
+                        data-cta-error="Unable to log CTA event right now."
+                    >
+                        <span class="landing-cta__text">Sign in</span>
+                    </a>
+                    <a
+                        class="landing-cta landing-cta--primary landing-cta--with-tooltip landing-header__cta"
+                        href="#hero"
+                        role="button"
+                        tabindex="0"
+                        aria-describedby="landing-start-free-tooltip-header"
+                        aria-label="Create your AICI account"
+                        data-modal-trigger="registration"
+                        data-cta-id="landing_start_free_plan_header"
+                        data-cta-format="button"
+                        data-cta-location="header"
+                        data-cta-scenario="open_signup_modal"
+                        data-cta-confirm="Registration intent logged."
+                        data-cta-error="Unable to log CTA event right now."
+                    >
+                        <span class="landing-cta__text">Start free plan</span>
+                        <span class="landing-cta__tooltip" id="landing-start-free-tooltip-header" role="tooltip">{{ free_plan_copy }}</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="landing-header__overlay" data-menu-overlay-for="landing-header-drawer" data-menu-overlay="true" aria-hidden="true"></div>
+    </header>
+    <main class="landing-main" id="main-content">
+        <section class="landing-section landing-hero" id="hero">
+            <div class="landing-hero__inner">
+                <p class="landing-hero__eyebrow">CUSTOMIZABLE CRYPTO INDEX YOU CAN USE AS A PORTFOLIO</p>
+                <h1 class="landing-hero__title">Build a <span class="landing-hero__highlight">portfolio-ready crypto index</span> in minutes</h1>
+                <p class="landing-hero__subtitle">
+                Monthly rebalances with built-in risk controls. Get weights, performance, and risk metrics in the dashboard or via the API.
+                </p>
+                <div class="landing-hero__actions" role="group" aria-label="Primary calls to action">
+                    {% if landing_has_account %}
+                    <a
+                        class="landing-cta landing-cta--primary landing-hero__cta"
+                        href="{{ landing_profile_url }}"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Go to your AI Crypto Index profile"
+                        data-cta-id="hero_profile"
+                        data-cta-format="banner"
+                        data-cta-location="hero"
+                        data-cta-scenario="open_profile"
+                        data-cta-confirm="Profile shortcut opened."
+                        data-cta-skip-toast="true"
+                        data-cta-error="Unable to open the profile. Try again shortly."
+                    >
+                        <span class="landing-cta__text">Go to profile</span>
+                        <span class="visually-hidden">Open your dashboard and API keys</span>
+                    </a>
+                    {% else %}
+                    <a
+                        class="landing-cta landing-cta--primary landing-cta--with-tooltip landing-hero__cta"
+                        href="#hero"
+                        role="button"
+                        tabindex="0"
+                        aria-describedby="landing-start-free-tooltip-hero"
+                        aria-label="Create your AICI account"
+                        data-modal-trigger="registration"
+                        data-cta-id="landing_start_free_plan_hero"
+                        data-cta-format="banner"
+                        data-cta-location="hero"
+                        data-cta-scenario="open_signup_modal"
+                        data-cta-confirm="Signup flow opened."
+                        data-cta-error="Unable to open the signup flow. Try again shortly."
+                    >
+                        <span class="landing-cta__text">Start free plan</span>
+                        <span class="landing-cta__tooltip" id="landing-start-free-tooltip-hero" role="tooltip">{{ free_plan_copy }}</span>
+                        <span class="visually-hidden">Confirm email and get API access</span>
+                    </a>
+                    {% endif %}
+                    <a
+                        class="landing-cta landing-cta--ghost landing-hero__cta"
+                        href="/pricing"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Compare plans on the pricing page"
+                        data-cta-id="landing_compare_plans_hero"
+                        data-cta-format="link"
+                        data-cta-location="hero"
+                        data-cta-scenario="open_pricing_page"
+                        data-cta-confirm="Pricing page opened."
+                        data-cta-error="Could not record the action."
+                    >
+                        <span class="landing-cta__text">Compare plans</span>
+                        <span class="visually-hidden">Compare Free, Pro, Ultra, and Enterprise plans</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="landing-section landing-performance" id="metrics" aria-labelledby="performance-title">
+            <div class="landing-performance__inner">
+                <div class="landing-performance__layout-wrapper">
+                    <div class="landing-performance__intro">
+                        <p class="landing-performance__eyebrow">Live vs Backtest performance</p>
+                        <h2 class="landing-performance__title" id="performance-title">AI Index vs BTC+ETH 50/50</h2>
+                    </div>
+
+                    {% if performance_bundle %}
+                        {% set default_key = performance_bundle.default_key %}
+                        {% set snapshot = performance_bundle.snapshots[default_key] %}
+                        {% set live_backtest = (live_backtest_by_strategy_payload.get(snapshot.strategy_key) if live_backtest_by_strategy_payload and live_backtest_by_strategy_payload.get(snapshot.strategy_key) else (live_backtest_payload if live_backtest_payload else none)) %}
+                        {% set live_start_month = (live_backtest.live_start_date[:7] if live_backtest and live_backtest.live_start_date else none) %}
+                        {% set monthly_snapshots = composition.monthly_snapshots if composition and composition.monthly_snapshots else [] %}
+                        {% set initial_composition_strategy_raw = (composition.monthly_snapshots_default_strategy if composition and composition.monthly_snapshots_default_strategy else snapshot.strategy_key) %}
+                        {% set initial_composition_strategy = ('aggressive' if initial_composition_strategy_raw == 'risky' else initial_composition_strategy_raw) %}
+                        {% set monthly_snapshots_by_strategy = composition.monthly_snapshots_by_strategy if composition and composition.monthly_snapshots_by_strategy else {} %}
+                        {% set initial_monthly_snapshots = monthly_snapshots_by_strategy.get(initial_composition_strategy, monthly_snapshots) %}
+                        {% set initial_monthly_months = initial_monthly_snapshots | map(attribute='month') | unique | list %}
+                        {% set initial_monthly_selected_month = initial_monthly_months[-1] if initial_monthly_months else none %}
+                        {% set initial_monthly_rows = (initial_monthly_snapshots | selectattr('month', 'equalto', initial_monthly_selected_month) | list) if initial_monthly_selected_month else [] %}
+                        {% set initial_live_backtest = (
+                            live_backtest_by_strategy_payload.get(initial_composition_strategy)
+                            if live_backtest_by_strategy_payload and live_backtest_by_strategy_payload.get(initial_composition_strategy)
+                            else (
+                                live_backtest_by_strategy_payload.get('risky')
+                                if live_backtest_by_strategy_payload and initial_composition_strategy == 'aggressive' and live_backtest_by_strategy_payload.get('risky')
+                                else live_backtest
+                            )
+                        ) %}
+                        {% set initial_live_start_month = (initial_live_backtest.live_start_date[:7] if initial_live_backtest and initial_live_backtest.live_start_date else none) %}
+                        {% set initial_month_is_live = (initial_live_start_month and initial_monthly_selected_month and initial_monthly_selected_month >= initial_live_start_month) %}
+
+                        <div class="landing-performance__copy">
+                            <p class="landing-performance__meta">
+                                <span data-performance-summary-mode>Backtest + Live continuity</span> •
+                                <span data-performance-period>{{ snapshot.chart_period_label }}</span> •
+                                Monthly composition snapshots
+                            </p>
+                            <p class="landing-performance__description">
+                                Compare three strategy presets (Classic / Conservative / Aggressive) versus a BTC+ETH 50/50 benchmark. The curve is continuous: backtest data runs up to the first monthly auto-run, then real monthly run results continue from that point.
+                            </p>
+                        </div>
+
+                </div>
+                <div
+                    class="landing-performance__layout"
+                    data-performance-root
+                    data-active-strategy="{{ snapshot.strategy_key }}"
+                    aria-live="polite"
+                >
+                    <aside class="landing-performance__transparency" aria-label="Live and backtest transparency block">
+                        <div class="landing-performance__transparency-header">
+                            <h3 class="landing-performance__transparency-title">Live/Backtest transparency</h3>
+                        </div>
+                        <dl class="landing-performance__transparency-list">
+                            <div class="landing-performance__transparency-item">
+                                <dt>Live since</dt>
+                                <dd data-performance-live-since>{{ live_backtest.live_start_date if live_backtest and live_backtest.live_start_date else "Not available yet" }}</dd>
+                            </div>
+                            <div class="landing-performance__transparency-item">
+                                <dt>Backtest window</dt>
+                                <dd data-performance-backtest-window>{{ (live_backtest.backtest_window_start ~ " to " ~ live_backtest.backtest_window_end) if live_backtest else "Unavailable" }}</dd>
+                            </div>
+                            <div class="landing-performance__transparency-item">
+                                <dt>Fees &amp; slippage assumptions</dt>
+                                <dd data-performance-cost-assumptions>
+                                    {% set fees_included = (live_backtest.fees_included if live_backtest else false) %}
+                                    {% set slippage_included = (live_backtest.slippage_included if live_backtest else false) %}
+                                    {% if fees_included == slippage_included %}
+                                        {{ "Included" if fees_included else "Excluded" }}
+                                    {% else %}
+                                        Fees: {{ "Included" if fees_included else "Excluded" }} |
+                                        Slippage: {{ "Included" if slippage_included else "Excluded" }}
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div class="landing-performance__transparency-item">
+                                <dt>Calculation basis</dt>
+                                <dd data-performance-calculation-basis>{{ (live_backtest.calculation_basis.frequency ~ " | " ~ live_backtest.calculation_basis.currency ~ " | " ~ live_backtest.calculation_basis.timestamp_policy) if live_backtest and live_backtest.calculation_basis else "Unavailable" }}</dd>
+                            </div>
+                        </dl>
+                        <div class="landing-performance__transparency-note">
+                            <p>Live = real monthly auto-run history after launch.</p>
+                            <p>Backtest = simulated historical period before live starts.</p>
+                        </div>
+                    </aside>
+                    <figure class="landing-performance__chart" role="group" aria-labelledby="equity-curve-heading">
+                        <div class="landing-performance__chart-header">
+                            <span class="landing-performance__chart-title" id="equity-curve-heading">Equity curve</span>
+                            <div class="landing-performance__chart-controls">
+                                <div class="landing-performance__mode-switch" role="group" aria-label="Select time period">
+                                    <button class="landing-performance__mode-button is-active" type="button" data-performance-period-btn="5" aria-pressed="true">5Y</button>
+                                    <button class="landing-performance__mode-button" type="button" data-performance-period-btn="3" aria-pressed="false">3Y</button>
+                                    <button class="landing-performance__mode-button" type="button" data-performance-period-btn="1" aria-pressed="false">1Y</button>
+                                </div>
+                                <div class="landing-performance__mode-switch" role="group" aria-label="Select index strategy">
+                                    {% for key, variant in performance_bundle.snapshots.items() %}
+                                    <button
+                                        class="landing-performance__mode-button{% if key == snapshot.strategy_key %} is-active{% endif %}"
+                                        type="button"
+                                        data-performance-strategy="{{ key }}"
+                                        aria-pressed="{{ 'true' if key == snapshot.strategy_key else 'false' }}"
+                                    >
+                                        {{ variant.strategy_label }}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="landing-performance__chart-body">
+                            <div class="landing-performance__chart-canvas" data-performance-chart-canvas>
+                                <svg
+                                    class="landing-performance__chart-svg"
+                                    viewBox="0 0 640 360"
+                                    role="img"
+                                    aria-label="Performance comparison: AI Crypto Index versus BTC+ETH 50/50 portfolio"
+                                    focusable="false"
+                                    data-performance-chart
+                                >
+                                    <defs>
+                                        <linearGradient id="performance-fill" x1="0" y1="1" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.05" />
+                                            <stop offset="100%" stop-color="#00E5FF" stop-opacity="0.45" />
+                                        </linearGradient>
+                                        <linearGradient id="performance-grid" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#F5F7FA" stop-opacity="0.18" />
+                                            <stop offset="100%" stop-color="#F5F7FA" stop-opacity="0.04" />
+                                        </linearGradient>
+                                    </defs>
+                                    <g class="landing-performance__chart-grid" aria-hidden="true">
+                                        <path d="M20 40H620" />
+                                        <path d="M20 120H620" />
+                                        <path d="M20 200H620" />
+                                        <path d="M20 280H620" />
+                                        <path d="M20 320H620" />
+                                        <path d="M120 20V340" />
+                                        <path d="M240 20V340" />
+                                        <path d="M360 20V340" />
+                                        <path d="M480 20V340" />
+                                        <path d="M600 20V340" />
+                                    </g>
+                                    {% set index_paths = snapshot.chart_paths['index'] %}
+                                    {% set benchmark_paths = snapshot.chart_paths['benchmark'] %}
+                                    <g class="landing-performance__axis landing-performance__axis--y" aria-hidden="true">
+                                        {% for tick in snapshot.chart_axes.y_ticks %}
+                                        <text
+                                            class="landing-performance__axis-label landing-performance__axis-label--y"
+                                            x="12"
+                                            y="{{ tick.coordinate }}"
+                                            data-performance-axis-y="{{ loop.index0 }}"
+                                            data-axis-value="{{ tick.value }}"
+                                        >
+                                            {{ tick.label }}
+                                        </text>
+                                        {% endfor %}
+                                    </g>
+                                    <g class="landing-performance__axis landing-performance__axis--x" aria-hidden="true">
+                                        {% for tick in snapshot.chart_axes.x_ticks %}
+                                        <text
+                                            class="landing-performance__axis-label landing-performance__axis-label--x"
+                                            x="{{ tick.coordinate }}"
+                                            y="348"
+                                            data-performance-axis-x="{{ loop.index0 }}"
+                                            data-axis-value="{{ tick.value }}"
+                                        >
+                                            {{ tick.label }}
+                                        </text>
+                                        {% endfor %}
+                                    </g>
+                                    <g class="landing-performance__series landing-performance__series--index">
+                                        {% if index_paths.fill_path %}
+                                        <path class="landing-performance__series-fill" d="{{ index_paths.fill_path }}" data-series-fill="index" />
+                                        {% endif %}
+                                        <path class="landing-performance__series-line" d="{{ index_paths.line_path }}" data-series-line="index" />
+                                    </g>
+                                    <path class="landing-performance__series-line landing-performance__series-line--benchmark" d="{{ benchmark_paths.line_path }}" data-series-line="benchmark" />
+                                    <g class="landing-performance__peak" aria-hidden="true" data-peak-layer>
+                                        <line
+                                            class="landing-performance__peak-line"
+                                            x1="20"
+                                            y1="20"
+                                            x2="20"
+                                            y2="20"
+                                            data-peak-line
+                                        />
+                                        <circle
+                                            class="landing-performance__peak-marker"
+                                            cx="20"
+                                            cy="20"
+                                            r="5"
+                                            data-peak-marker
+                                        ></circle>
+                                        <text
+                                            class="landing-performance__peak-label"
+                                            x="20"
+                                            y="20"
+                                            text-anchor="middle"
+                                            dominant-baseline="baseline"
+                                            data-peak-label
+                                        >
+                                            <tspan data-peak-label-title x="20" dy="0"></tspan>
+                                            <tspan data-peak-label-value x="20" dy="12"></tspan>
+                                            <tspan data-peak-label-delta x="20" dy="12"></tspan>
+                                        </text>
+                                    </g>
+                                    <g class="landing-performance__markers" aria-hidden="true">
+                                        <circle cx="{{ index_paths.marker_x }}" cy="{{ index_paths.marker_y }}" r="5" data-series-marker="index"></circle>
+                                        <circle cx="{{ benchmark_paths.marker_x }}" cy="{{ benchmark_paths.marker_y }}" r="4" data-series-marker="benchmark"></circle>
+                                    </g>
+                                </svg>
+                                <div class="landing-performance__chart-overlay" data-performance-overlay aria-hidden="true">
+                                    <div class="landing-performance__hover-line" data-performance-hover-line></div>
+                                    <div class="landing-performance__tooltip" data-performance-tooltip>
+                                        <p class="landing-performance__tooltip-date" data-performance-tooltip-date></p>
+                                        <div class="landing-performance__tooltip-row" data-performance-tooltip-row="index">
+                                            <span class="landing-performance__tooltip-label">
+                                                <span class="landing-performance__tooltip-swatch" data-series="index" aria-hidden="true"></span>
+                                                <span class="landing-performance__tooltip-name" data-performance-tooltip-name="index"></span>
+                                            </span>
+                                            <span class="landing-performance__tooltip-value" data-performance-tooltip-value="index"></span>
+                                        </div>
+                                        <div class="landing-performance__tooltip-row" data-performance-tooltip-row="benchmark">
+                                            <span class="landing-performance__tooltip-label">
+                                                <span class="landing-performance__tooltip-swatch" data-series="benchmark" aria-hidden="true"></span>
+                                                <span class="landing-performance__tooltip-name" data-performance-tooltip-name="benchmark"></span>
+                                            </span>
+                                            <span class="landing-performance__tooltip-value" data-performance-tooltip-value="benchmark"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="landing-performance__chart-aside">
+                            <ul class="landing-performance__legend" role="list">
+                                {% for item in snapshot.legend %}
+                                <li class="landing-performance__legend-item">
+                                    <span class="landing-performance__legend-swatch" data-series="{{ item.css_modifier }}" aria-hidden="true"></span>
+                                    <span data-performance-legend="{{ loop.index0 }}">{{ item.label }} - {{ item.delta_text }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </figure>
+                    <div class="landing-performance__kpi-grid" role="list">
+                        {% for card in snapshot.metric_cards %}
+                        <article class="landing-kpi" role="listitem" data-performance-metric="{{ loop.index0 }}">
+                            <header class="landing-kpi__header">
+                                <span class="landing-kpi__label">{{ card.label }}</span>
+                            </header>
+                            <p class="landing-kpi__value">{{ card.value_text }}</p>
+                            <p class="landing-kpi__delta" data-trend="{{ card.delta_modifier }}">{{ card.delta_text }}</p>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    <section
+                        class="landing-performance__composition is-collapsed"
+                        aria-label="Monthly index composition snapshots"
+                        data-performance-composition-root
+                        data-active-strategy="{{ initial_composition_strategy }}"
+                    >
+                        <header class="landing-performance__composition-header">
+                            <h3 class="landing-performance__composition-title">Index composition by snapshot month</h3>
+                            <p class="landing-performance__composition-meta">
+                                <span data-performance-composition-mode-label>{{ "Live (real run)" if initial_month_is_live else "Backtest (simulation)" }}</span>
+                            </p>
+                            <button
+                                type="button"
+                                class="landing-performance__composition-toggle"
+                                data-performance-composition-toggle
+                                aria-expanded="false"
+                                aria-controls="performance-composition-panel"
+                            >
+                                <span class="landing-performance__composition-toggle-text">Expand</span>
+                                <img
+                                    class="landing-performance__composition-toggle-icon landing-performance__composition-toggle-icon--collapse"
+                                    src="{{ url_for('static', path='icons/arrow-up.svg') }}"
+                                    alt=""
+                                    width="16"
+                                    height="16"
+                                    aria-hidden="true"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                                <img
+                                    class="landing-performance__composition-toggle-icon landing-performance__composition-toggle-icon--expand"
+                                    src="{{ url_for('static', path='icons/arrow-down.svg') }}"
+                                    alt=""
+                                    width="16"
+                                    height="16"
+                                    aria-hidden="true"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </button>
+                        </header>
+                        <div
+                            class="landing-performance__composition-panel"
+                            id="performance-composition-panel"
+                            data-performance-composition-panel
+                            hidden
+                        >
+                        <div class="landing-performance__composition-controls">
+                            <div class="landing-performance__composition-filters">
+                                <div class="landing-performance__composition-filter">
+                                    <label class="landing-performance__composition-select-label" for="performance-composition-month">Snapshot month (YYYY-MM)</label>
+                                    <select
+                                        id="performance-composition-month"
+                                        class="landing-performance__composition-select"
+                                        data-performance-composition-month
+                                        {% if not initial_monthly_months %}disabled aria-disabled="true"{% endif %}
+                                    >
+                                        {% if initial_monthly_months %}
+                                            {% for month in initial_monthly_months | reverse %}
+                                            <option value="{{ month }}" {% if month == initial_monthly_selected_month %}selected{% endif %}>{{ month }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="">No snapshots</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="landing-performance__composition-filter">
+                                    <label class="landing-performance__composition-select-label" for="performance-composition-strategy">Strategy preset</label>
+                                    <select
+                                        id="performance-composition-strategy"
+                                        class="landing-performance__composition-select"
+                                        data-performance-composition-strategy
+                                    >
+                                        <option value="classic" {% if initial_composition_strategy == 'classic' %}selected{% endif %}>Classic</option>
+                                        <option value="conservative" {% if initial_composition_strategy == 'conservative' %}selected{% endif %}>Conservative</option>
+                                        <option value="aggressive" {% if initial_composition_strategy == 'aggressive' %}selected{% endif %}>Aggressive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="landing-performance__composition-source" data-performance-composition-source>
+                                {% if initial_monthly_rows %}
+                                Source: {{ initial_monthly_rows[0].source }} &bull; Run: {{ initial_monthly_rows[0].run_id }}
+                                {% else %}
+                                No monthly snapshots are available.
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="landing-performance__composition-table-wrap landing-composition__table-wrap">
+                            <div
+                                class="composition-table__scroll"
+                                role="region"
+                                aria-label="Monthly index composition table"
+                                tabindex="0"
+                                data-scroll-hint="true"
+                            >
+                                <table class="landing-composition__table composition-table">
+                                    <thead class="composition-table__head">
+                                        <tr>
+                                            <th scope="col" class="composition-table__heading composition-table__heading--rank" translate="no" data-translate="no">#</th>
+                                            <th scope="col" class="composition-table__heading composition-table__heading--asset" translate="no" data-translate="no">Asset</th>
+                                            <th scope="col" class="composition-table__heading composition-table__heading--numeric" translate="no" data-translate="no">Weight %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="composition-table__body" data-performance-composition-body>
+                                        {% if initial_monthly_rows %}
+                                            {% for item in initial_monthly_rows %}
+                                            <tr class="composition-table__row">
+                                                <td class="composition-table__cell composition-table__cell--rank" data-label="#" translate="no" data-translate="no">
+                                                    <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ loop.index }}</span>
+                                                </td>
+                                                <td class="composition-table__cell composition-table__cell--asset" data-label="Asset" translate="no" data-translate="no">
+                                                    <span class="composition-table__text" title="{{ item.asset }}" translate="no" data-translate="no" lang="en">{{ item.asset }}</span>
+                                                </td>
+                                                <td class="composition-table__cell composition-table__cell--numeric" data-label="Weight %" translate="no" data-translate="no">
+                                                    <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ '%.2f' % (item.weight * 100) }}%</span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr class="composition-table__row composition-table__row--empty">
+                                                <td class="composition-table__cell composition-table__cell--empty" colspan="3">
+                                                    No monthly snapshots are available.
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        </div>
+                    </section>
+                </div>
+                {% if performance_payload %}
+                <script id="performance-data" type="application/json">{{ performance_payload | tojson }}</script>
+                {% endif %}
+                {% if composition %}
+                    {% set composition_payload = {
+                        "monthlySnapshots": composition.monthly_snapshots,
+                        "monthlyLiveSnapshots": composition.monthly_live_snapshots,
+                        "monthlyBacktestSnapshots": composition.monthly_backtest_snapshots,
+                        "monthlySnapshotsUpdatedAt": composition.monthly_snapshots_updated_at,
+                        "monthlySnapshotsCurrentMonth": composition.monthly_snapshots_current_month,
+                        "monthlySnapshotsDefaultStrategy": composition.monthly_snapshots_default_strategy,
+                        "monthlySnapshotsByStrategy": composition.monthly_snapshots_by_strategy,
+                        "monthlyLiveSnapshotsByStrategy": composition.monthly_live_snapshots_by_strategy,
+                        "monthlyBacktestSnapshotsByStrategy": composition.monthly_backtest_snapshots_by_strategy,
+                        "monthlySnapshotsUpdatedAtByStrategy": composition.monthly_snapshots_updated_at_by_strategy,
+                        "monthlySnapshotsCurrentMonthByStrategy": composition.monthly_snapshots_current_month_by_strategy,
+                        "defaultStrategyKey": (
+                            composition.monthly_snapshots_default_strategy
+                            if composition and composition.monthly_snapshots_default_strategy
+                            else (
+                                performance_bundle.default_key
+                                if performance_bundle
+                                else none
+                            )
+                        ),
+                        "liveBacktest": composition.live_backtest if composition.live_backtest else live_backtest,
+                        "liveBacktestByStrategy": (composition.live_backtest_by_strategy if composition and composition.live_backtest_by_strategy else live_backtest_by_strategy_payload),
+                    } %}
+                <script id="composition-data" type="application/json">{{ composition_payload | tojson }}</script>
+                {% endif %}
+                {% else %}
+                <div class="landing-performance__fallback">
+                    <p class="landing-performance__fallback-text">We couldn't load the performance snapshot right now. Please refresh or check back shortly.</p>
+                    {% if performance_error %}
+                    <p class="landing-performance__fallback-note">{{ performance_error }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        <section class="landing-section landing-composition" id="composition">
+            <div class="landing-composition__inner">
+                <header class="landing-composition__header">
+                    <div class="landing-composition__headline">
+                        <p class="landing-eyebrow">Current index composition</p>
+                        <h2 class="landing-composition__title">Current index composition</h2>
+                        <p class="landing-composition__subtitle">Holdings rebalance monthly based on predictive signals, liquidity filters, and risk limits. Download the latest weights or full run artifacts in one click.</p>
+                    </div>
+                    <div class="landing-composition__meta" role="group" aria-label="Index composition downloads">
+                        <p class="landing-composition__timestamp">
+                            <span class="landing-composition__status-dot" aria-hidden="true"></span>
+                            <span>Updated {{ composition.updated_display if composition else '-' }}</span>
+                            {% if composition %}
+                            <time datetime="{{ composition.updated_iso }}" class="landing-composition__time">Run ID {{ composition.run_id }}</time>
+                            {% endif %}
+                        </p>
+                        <div class="landing-composition__actions">
+                            <a class="landing-cta landing-cta--ghost" href="{{ composition.downloads.csv if composition else '#' }}" role="button" tabindex="0" aria-label="Download latest weights as CSV" {% if not composition %}aria-disabled="true"{% endif %}>
+                                <span class="landing-cta__label">
+                                    <span class="landing-cta__icon" aria-hidden="true">
+                                        <img src="{{ url_for('static', path='icons/Download_CSV_icon.svg') }}" alt="" width="20" height="20">
+                                    </span>
+                                    <span class="landing-cta__text">Download CSV</span>
+                                </span>
+                            </a>
+                            <a class="landing-cta landing-cta--ghost" href="{{ composition.downloads.zip if composition else '#' }}" role="button" tabindex="0" aria-label="Download full export with analytics" {% if not composition %}aria-disabled="true"{% endif %}>
+                                <span class="landing-cta__label">
+                                    <span class="landing-cta__icon" aria-hidden="true">
+                                        <img src="{{ url_for('static', path='icons/Download_archive_icon.svg') }}" alt="" width="20" height="20">
+                                    </span>
+                                    <span class="landing-cta__text">Full archive</span>
+                                </span>
+                            </a>
+                            <a class="landing-cta landing-cta--primary" href="{{ request.url_for('render_run_mini', run_id=composition.run_id) if composition else '#' }}" role="button" tabindex="0" aria-label="Open mini index report for the latest run" target="_blank" rel="noopener" {% if not composition %}aria-disabled="true"{% endif %}>
+                                <span class="landing-cta__label">
+                                    <span class="landing-cta__icon" aria-hidden="true">
+                                        <img src="{{ url_for('static', path='icons/link_icon.svg') }}" alt="" width="20" height="20">
+                                    </span>
+                                    <span class="landing-cta__text">View mini report</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </header>
+                {% if composition %}
+                <div class="landing-composition__layout">
+                    <div class="landing-composition__table-wrap">
+                        <div
+                            class="composition-table__scroll"
+                            role="region"
+                            aria-label="Scroll horizontally to view index weights table"
+                            tabindex="0"
+                            data-scroll-hint="true"
+                        >
+                            <table class="landing-composition__table composition-table">
+                                <thead class="composition-table__head">
+                                    <tr>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--rank" translate="no" data-translate="no">#</th>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--asset" translate="no" data-translate="no">Asset</th>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--numeric" translate="no" data-translate="no">Weight %</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="composition-table__body">
+                                    {% for item in composition.assets %}
+                                    <tr class="composition-table__row">
+                                        <td class="composition-table__cell composition-table__cell--rank" data-label="#" translate="no" data-translate="no">
+                                            <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ item.rank }}</span>
+                                        </td>
+                                        <td class="composition-table__cell composition-table__cell--asset" data-label="Asset" translate="no" data-translate="no">
+                                            <span class="composition-table__text" title="{{ item.asset }}" translate="no" data-translate="no" lang="en">{{ item.asset }}</span>
+                                        </td>
+                                        <td class="composition-table__cell composition-table__cell--numeric" data-label="Weight %" translate="no" data-translate="no">
+                                            <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ '%.2f' % item.weight_pct }}%</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <aside class="landing-composition__summary" role="list">
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>Total assets</h3>
+                            <p class="landing-composition__summary-value">{{ composition.summary.count }}</p>
+                            <p class="landing-composition__summary-note">Monthly rebalance keeps weights within risk-parity bounds and a fixed per-asset cap.</p>
+                        </article>
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>Top 3 weight</h3>
+                            <p class="landing-composition__summary-value">{{ '%.1f' % composition.summary.top3_pct }}%</p>
+                            <p class="landing-composition__summary-note">Concentration guardrails prevent outsized single-asset exposure.</p>
+                        </article>
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>
+                                HHI
+                                <span
+                                    class="landing-composition__summary-hint landing-cta--with-tooltip"
+                                    tabindex="0"
+                                    role="note"
+                                    aria-describedby="landing-composition-tooltip-hhi"
+                                    aria-label="HHI explanation"
+                                >
+                                    <span aria-hidden="true">?</span>
+                                    <span class="landing-cta__tooltip landing-composition__summary-tooltip" id="landing-composition-tooltip-hhi" role="tooltip">{{ hhi_tooltip_copy }}</span>
+                                </span>
+                            </h3>
+                            <p class="landing-composition__summary-value">{{ '%.3f' % composition.summary.herfindahl }}</p>
+                            <p class="landing-composition__summary-note">Herfindahl-Hirschman index over normalized allocations.</p>
+                        </article>
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>
+                                Effective assets
+                                <span
+                                    class="landing-composition__summary-hint landing-cta--with-tooltip"
+                                    tabindex="0"
+                                    role="note"
+                                    aria-describedby="landing-composition-tooltip-effective-assets"
+                                    aria-label="Effective assets explanation"
+                                >
+                                    <span aria-hidden="true">?</span>
+                                    <span class="landing-cta__tooltip landing-composition__summary-tooltip" id="landing-composition-tooltip-effective-assets" role="tooltip">{{ effective_assets_tooltip_copy }}</span>
+                                </span>
+                            </h3>
+                            <p class="landing-composition__summary-value">{{ composition.summary.effective_assets and ('%.1f' % composition.summary.effective_assets) or '-' }}</p>
+                            <p class="landing-composition__summary-note">Reciprocal of HHI - proxy for diversification factor.</p>
+                        </article>
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>Max weight</h3>
+                            <p class="landing-composition__summary-value">{{ '%.2f' % composition.summary.max_weight_pct }}%</p>
+                            <p class="landing-composition__summary-note">Highest single-asset share in the current snapshot.</p>
+                        </article>
+                        <article class="landing-composition__summary-card" role="listitem">
+                            <h3>Min weight</h3>
+                            <p class="landing-composition__summary-value">{{ '%.2f' % composition.summary.min_weight_pct }}%</p>
+                            <p class="landing-composition__summary-note">Tail assets stay in index while they pass historical data quality checks.</p>
+                        </article>
+                    </aside>
+                </div>
+                {% else %}
+                <div class="landing-composition__fallback">
+                    <p class="landing-composition__fallback-text">Index composition will appear once a run with weights completes.</p>
+                    {% if composition_error %}
+                    <p class="landing-composition__fallback-note">{{ composition_error }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        <section class="landing-section landing-key-value" id="platform" aria-labelledby="key-value-title">
+            <div class="landing-key-value__intro">
+                <p class="landing-key-value__eyebrow">Key value</p>
+                <h2 class="landing-key-value__title" id="key-value-title">Build a resilient index with transparent AI oversight</h2>
+                <p class="landing-key-value__description">The stack unifies high-frequency data intake, explainable forecasting, and governed deployment so your index reacts to the market without losing control.</p>
+            </div>
+            <div class="landing-key-value__grid" role="list" aria-label="Core product advantages">
+                <article class="landing-key-value__card" role="listitem">
+                    <span class="landing-key-value__icon" aria-hidden="true">
+                        <span class="landing-key-value__icon-glow"></span>
+                        <span class="landing-key-value__icon-glyph">01</span>
+                    </span>
+                    <h3 class="landing-key-value__card-title">Signal clarity</h3>
+                    <p class="landing-key-value__card-text">Multi-model forecasts reconcile momentum, liquidity, and macro signals to surface actionable weights on every rebalance.</p>
+                </article>
+                <article class="landing-key-value__card" role="listitem">
+                    <span class="landing-key-value__icon" aria-hidden="true">
+                        <span class="landing-key-value__icon-glow"></span>
+                        <span class="landing-key-value__icon-glyph">02</span>
+                    </span>
+                    <h3 class="landing-key-value__card-title">Risk-parity guardrails</h3>
+                    <p class="landing-key-value__card-text">Risk-parity rebalances keep exposures inside configurable 3-25% bands, and Quant Ops signs off on every run before it reaches production.</p>
+                </article>
+                <article class="landing-key-value__card" role="listitem">
+                    <span class="landing-key-value__icon" aria-hidden="true">
+                        <span class="landing-key-value__icon-glow"></span>
+                        <span class="landing-key-value__icon-glyph">03</span>
+                    </span>
+                    <h3 class="landing-key-value__card-title">Audit-ready transparency</h3>
+                    <p class="landing-key-value__card-text">Every dataset, feature, and model version ships with a changelog so risk and compliance teams can trace decisions instantly.</p>
+                </article>
+            </div>
+        </section>
+        <section class="landing-section landing-how-it-works" id="how-it-works" aria-labelledby="how-it-works-title">
+            <div class="landing-how-it-works__intro">
+                <p class="landing-how-it-works__eyebrow">How it works</p>
+                <h2 class="landing-how-it-works__title" id="how-it-works-title">How each monthly run becomes portfolio-ready</h2>
+                <p class="landing-how-it-works__description">From market data to published weights, every step is designed to deliver stable diversification, measurable risk control, and immediate API-ready outputs.</p>
+            </div>
+            <ol class="landing-how-it-works__timeline" role="list">
+                <li class="landing-how-it-works__step" aria-label="Step 1, capture market state">
+                    <span class="landing-how-it-works__icon" aria-hidden="true">
+                        <span class="landing-how-it-works__icon-glow"></span>
+                        <img src="{{ url_for('static', path='icons/how-it-works_01.svg') }}" class="landing-how-it-works__icon-glyph" width="32" height="32" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                        <span class="landing-how-it-works__step-index">01</span>
+                    </span>
+                    <div class="landing-how-it-works__content">
+                        <h3 class="landing-how-it-works__step-title">Capture market state</h3>
+                        <p class="landing-how-it-works__step-text">Liquid-market quotes are consolidated into a clean baseline so every rebalance starts from consistent data.</p>
+                    </div>
+                    <span class="landing-how-it-works__connector" aria-hidden="true"></span>
+                </li>
+                <li class="landing-how-it-works__step" aria-label="Step 2, turn data into signals">
+                    <span class="landing-how-it-works__icon" aria-hidden="true">
+                        <span class="landing-how-it-works__icon-glow"></span>
+                        <img src="{{ url_for('static', path='icons/how-it-works_02.svg') }}" class="landing-how-it-works__icon-glyph" width="32" height="32" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                        <span class="landing-how-it-works__step-index">02</span>
+                    </span>
+                    <div class="landing-how-it-works__content">
+                        <h3 class="landing-how-it-works__step-title">Turn data into signals</h3>
+                        <p class="landing-how-it-works__step-text">Feature engineering translates price behavior into momentum and volatility signals that drive allocation decisions.</p>
+                    </div>
+                    <span class="landing-how-it-works__connector" aria-hidden="true"></span>
+                </li>
+                <li class="landing-how-it-works__step" aria-label="Step 3, estimate forward risk">
+                    <span class="landing-how-it-works__icon" aria-hidden="true">
+                        <span class="landing-how-it-works__icon-glow"></span>
+                        <img src="{{ url_for('static', path='icons/how-it-works_03.svg') }}" class="landing-how-it-works__icon-glyph" width="32" height="32" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                        <span class="landing-how-it-works__step-index">03</span>
+                    </span>
+                    <div class="landing-how-it-works__content">
+                        <h3 class="landing-how-it-works__step-title">Estimate forward risk</h3>
+                        <p class="landing-how-it-works__step-text">LSTM volatility forecasts and covariance estimates model near-term risk before weights are finalized.</p>
+                    </div>
+                    <span class="landing-how-it-works__connector" aria-hidden="true"></span>
+                </li>
+                <li class="landing-how-it-works__step" aria-label="Step 4, build diversified weights">
+                    <span class="landing-how-it-works__icon" aria-hidden="true">
+                        <span class="landing-how-it-works__icon-glow"></span>
+                        <img src="{{ url_for('static', path='icons/how-it-works_04.svg') }}" class="landing-how-it-works__icon-glyph" width="32" height="32" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                        <span class="landing-how-it-works__step-index">04</span>
+                    </span>
+                    <div class="landing-how-it-works__content">
+                        <h3 class="landing-how-it-works__step-title">Build diversified weights</h3>
+                        <p class="landing-how-it-works__step-text">A risk-parity optimizer applies allocation caps and liquidity constraints to keep concentration under control.</p>
+                    </div>
+                    <span class="landing-how-it-works__connector" aria-hidden="true"></span>
+                </li>
+                <li class="landing-how-it-works__step" aria-label="Step 5, publish and monitor outcomes">
+                    <span class="landing-how-it-works__icon" aria-hidden="true">
+                        <span class="landing-how-it-works__icon-glow"></span>
+                        <img src="{{ url_for('static', path='icons/how-it-works_05.svg') }}" class="landing-how-it-works__icon-glyph" width="32" height="32" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                        <span class="landing-how-it-works__step-index">05</span>
+                    </span>
+                    <div class="landing-how-it-works__content">
+                        <h3 class="landing-how-it-works__step-title">Publish and monitor outcomes</h3>
+                        <p class="landing-how-it-works__step-text">Each monthly run ships with run IDs, performance history, and downloadable artifacts in dashboard and API.</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+        <section class="landing-section landing-api" id="api" aria-labelledby="api-title">
+            <div class="landing-api__inner">
+                <div class="landing-api__header">
+                    <p class="landing-api__eyebrow">Developer-first tooling</p>
+                    <h2 class="landing-api__title" id="api-title">API for developers and quant teams</h2>
+                    <p class="landing-api__description">Sign in to the account dashboard (<code>/app</code>) to issue API keys, allowlist IPs, and run core endpoints in the dashboard UI. {{ free_plan_copy }}</p>
+                </div>
+                <div class="landing-api__grid">
+                    <div class="landing-api__snippets" role="group" aria-label="API usage examples">
+                        <figure class="landing-api__snippet-card">
+                            <figcaption class="landing-api__snippet-label">
+                                <span class="landing-api__snippet-pill" aria-hidden="true">REST</span>
+                                <span class="landing-api__snippet-title">Latest weights</span>
+                            </figcaption>
+                            <pre class="landing-api__code" tabindex="0"><code>curl --request GET \
+  --url {{ api_url('api_get_latest_weights') }} \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'Accept: application/json'
+
+{
+  "run_id": "2024-07-15T00-00-00Z",
+  "items": [
+    {"asset": "BTC", "weight": 0.32},
+    {"asset": "ETH", "weight": 0.21}
+  ]
+}</code></pre>
+                        </figure>
+                        <p class="landing-api__note">{{ token_model_copy }}</p>
+                    </div>
+                    <div class="landing-api__features" role="list" aria-label="API feature highlights">
+                        <article class="landing-api__feature" role="listitem">
+                            <h3 class="landing-api__feature-title">Latest allocation</h3>
+                            <p class="landing-api__feature-text">Call <code>/weights/latest</code> to fetch the latest run_id for your account and its asset weights.</p>
+                        </article>
+                        <article class="landing-api__feature" role="listitem">
+                            <h3 class="landing-api__feature-title">Historical runs</h3>
+                            <p class="landing-api__feature-text">Use <code>/runs/{id}/weights</code> and <code>/runs/{id}/perf</code> to inspect any stored run.</p>
+                        </article>
+                        <article class="landing-api__feature" role="listitem">
+                            <h3 class="landing-api__feature-title">Access control</h3>
+                            <p class="landing-api__feature-text">Keys are tied to IP allow lists and return quota headers for alerting.</p>
+                        </article>
+                    </div>
+                </div>
+                <div class="landing-api__cta">
+                    <a
+                        class="landing-cta landing-cta--primary landing-api__cta-button{% if not landing_has_account %} landing-cta--with-tooltip{% endif %}"
+                        {% if landing_has_account %}
+                        href="{{ request.url_for('render_account_tab', tab='overview') }}"
+                        aria-label="Open the dashboard to issue an API key"
+                        data-cta-id="landing_open_dashboard_api"
+                        data-cta-format="button"
+                        data-cta-location="api_section"
+                        data-cta-scenario="open_dashboard"
+                        data-cta-confirm="Opening dashboard."
+                        data-cta-error="Could not open the dashboard. Please try again later."
+                        {% else %}
+                        href="#api"
+                        aria-label="Open the dashboard (registration required)"
+                        aria-describedby="landing-start-free-tooltip-api"
+                        data-modal-trigger="registration"
+                        data-cta-id="landing_start_free_plan_api"
+                        data-cta-format="button"
+                        data-cta-location="api_section"
+                        data-cta-scenario="open_signup_modal"
+                        data-cta-confirm="Signup flow opened."
+                        data-cta-error="Unable to open the signup flow. Try again shortly."
+                        {% endif %}
+                        role="button"
+                        tabindex="0"
+                    >
+                        <span class="landing-cta__text">{% if landing_has_account %}Go to profile{% else %}Start free plan{% endif %}</span>
+                        {% if not landing_has_account %}
+                        <span class="landing-cta__tooltip" id="landing-start-free-tooltip-api" role="tooltip">{{ free_plan_copy }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="landing-section landing-trust" aria-labelledby="trust-elements-title">
+            <div class="landing-trust__header">
+                <h2 class="landing-trust__title" id="trust-elements-title">Why teams trust the index</h2>
+            </div>
+            <div class="landing-trust__grid" role="list" aria-label="Trust elements">
+                <article class="landing-trust__card" role="listitem">
+                    <h3 class="landing-trust__card-title">Operational reliability</h3>
+                    <p class="landing-trust__card-text">Use strategy presets as a working portfolio, export monthly weights, and configure usage alerts without extra tooling.</p>
+                </article>
+                <article class="landing-trust__card" role="listitem">
+                    <h3 class="landing-trust__card-title">Transparent decision trail</h3>
+                    <p class="landing-trust__card-text">Methodology, run IDs, and historical snapshots keep allocations reproducible for research, reporting, and review.</p>
+                </article>
+                <article class="landing-trust__card" role="listitem">
+                    <h3 class="landing-trust__card-title">Integration-ready controls</h3>
+                    <p class="landing-trust__card-text">API endpoints support IP allowlists, quota-aware responses, and webhook-based notifications for production workflows.</p>
+                </article>
+            </div>
+        </section>
+        <section class="landing-section landing-faq" id="faq">
+            <div class="landing-faq__inner">
+                <div class="landing-faq__header">
+                    <h2>Frequently asked questions</h2>
+                    <p>Clear answers on access, refresh cadence, runs, and usage limits. Live/Backtest assumptions are shown in the transparency block near the chart.</p>
+                </div>
+                <div class="landing-faq__list" role="list">
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-1" id="faq-trigger-1">
+                                <span class="landing-faq__question-text">How do I get an API key?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-1" role="region" aria-labelledby="faq-trigger-1" data-faq-panel hidden>
+                            <p>Create an account, open the account dashboard (<code>/app</code>), confirm your email, then open <code>/app/keys</code>. {{ free_plan_copy }}</p>
+                            <p>You can restrict keys with an IP allowlist; requests from other addresses are rejected.</p>
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-2" id="faq-trigger-2">
+                                <span class="landing-faq__question-text">Is there a free tier?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-2" role="region" aria-labelledby="faq-trigger-2" data-faq-panel hidden>
+                            <p>Yes. {{ free_plan_copy }}</p>
+                            <p>{{ token_model_copy }}</p>
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-3" id="faq-trigger-3">
+                                <span class="landing-faq__question-text">What is a “token” in your pricing?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-3" role="region" aria-labelledby="faq-trigger-3" data-faq-panel hidden>
+                            <p>A token is a unit of usage for running pipeline jobs and reading artifacts (weights, metrics, reports).</p>
+                            <p>{{ token_model_copy }}</p>
+                            <p>Free includes up to 500 tokens/month, usually enough for a few heavy runs depending on parameters.</p>
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-4" id="faq-trigger-4">
+                                <span class="landing-faq__question-text">How often are market data and index weights updated?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-4" role="region" aria-labelledby="faq-trigger-4" data-faq-panel hidden>
+                            <p><strong>Market data &amp; analytics:</strong> refreshed on the latest daily closes (T+1 cadence).</p>
+                            <p><strong>Index weights (Current index composition):</strong> the published index rebalances <strong>monthly</strong>. Each monthly publication produces a new run with downloadable artifacts.</p>
+                            <p>If you run the pipeline on-demand via the API/dashboard, you get a fresh run for that moment — separate from the scheduled monthly publication.</p>
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-5" id="faq-trigger-5">
+                                <span class="landing-faq__question-text">What is a Run ID and why does it matter?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-5" role="region" aria-labelledby="faq-trigger-5" data-faq-panel hidden>
+                            <p>A <strong>Run ID</strong> identifies one specific pipeline execution (scheduled rebalance or on-demand run). It’s the “receipt” that ties together weights, performance metrics, and exported files for that exact run.</p>
+                            <p>Use it to fetch historical artifacts (e.g., weights/performance for that run) and to share results with others. Example: <code>auto-classic-2026-01-04T16-48-45Z</code>.</p>
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                            <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-3" id="faq-trigger-3">
+                                <span class="landing-faq__question-text">Which endpoints should I start with?</span>
+                                <span class="landing-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-3" role="region" aria-labelledby="faq-trigger-3" data-faq-panel hidden>
+                            <p>Start with <code>/weights/latest</code> to get the current published allocation and its <code>run_id</code>. Then use <code>/runs/{id}/weights</code> and <code>/runs/{id}/perf</code> to inspect any stored run.</p>                        
+                        </div>
+                    </article>
+                    <article class="landing-faq__item" data-faq-item role="listitem">
+                        <h3 class="landing-faq__heading">
+                        <button class="landing-faq__question" type="button" aria-expanded="false" aria-controls="faq-panel-7" id="faq-trigger-7">
+                            <span class="landing-faq__question-text">What are the rate limits and how do I handle 401/403/429?</span>
+                            <span class="landing-faq__icon" aria-hidden="true"></span>
+                        </button>
+                        </h3>
+                        <div class="landing-faq__answer" id="faq-panel-7" role="region" aria-labelledby="faq-trigger-7" data-faq-panel hidden>
+                        <p>Rate limits depend on your plan and key settings. Each response returns quota headers (limit/remaining) and <code>Retry-After</code> when throttled.</p>
+                        <p><strong>401/403:</strong> check the <code>X-API-Key</code> value and (if enabled) your IP allowlist. <strong>429:</strong> respect <code>Retry-After</code> and back off (avoid parallel retries).</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="landing-footer" id="contacts" aria-labelledby="contacts-title" aria-describedby="footer-disclaimer">
+        <div class="landing-footer__inner">
+            <div class="landing-footer__layout">
+                <div class="landing-footer__brand">
+                    <img class="landing-footer__brand-mark" src="{{ url_for('static', path='icons/Logo_AICI_blue-footer.svg') }}" alt="AI Crypto Index logo" width="56" height="56" loading="lazy" decoding="async">
+                    <div class="landing-footer__brand-copy">
+                        <p class="landing-footer__eyebrow">Stay connected</p>
+                        <h2 class="landing-footer__title" id="contacts-title">Partner with the AI Crypto Index team</h2>
+                        <p class="landing-footer__subtitle">Schedule a strategy walkthrough, access bespoke datasets, or integrate the index feed into your analytics stack.</p>
+                    </div>
+                </div>
+                <section class="landing-footer__spotlight" aria-label="Contact the AI Crypto Index team">
+                    <ul class="landing-footer__contact-list">
+                        <li>
+                            <a class="landing-footer__contact-link" href="mailto:contact@aici.pro" aria-label="Email AI Crypto Index sales and partnerships">
+                                <span class="landing-footer__contact-indicator" aria-hidden="true"></span>
+                                contact@aici.pro
+                            </a>
+                        </li>
+                        <li>
+                            <a class="landing-footer__contact-link" href="https://x.com/AICIindex" target="_blank" rel="noopener" aria-label="Follow AI Crypto Index on X">
+                                <span class="landing-footer__contact-indicator" aria-hidden="true"></span>
+                                x.com/AICIindex
+                            </a>
+                        </li>
+                        <li>
+                            <a class="landing-footer__contact-link" href="https://cal.com/ilya-romanenko-xg2q9e/aici-meet" target="_blank" rel="noopener" aria-label="Book a consultation with AI Crypto Index">
+                                <span class="landing-footer__contact-indicator" aria-hidden="true"></span>
+                                Book a consultation
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="landing-footer__status" aria-label="Service safeguards">
+                        <li class="landing-footer__status-item">
+                            <span class="landing-footer__status-dot" aria-hidden="true"></span>
+                            <span>Regular data updates</span>
+                        </li>
+                        <li class="landing-footer__status-item">
+                            <span class="landing-footer__status-dot" aria-hidden="true"></span>
+                            <span>Verified sources</span>
+                        </li>
+                        <li class="landing-footer__status-item">
+                            <span class="landing-footer__status-dot" aria-hidden="true"></span>
+                            <span>Automated risk controls</span>
+                        </li>
+                    </ul>
+                </section>
+                <nav class="landing-footer__column" aria-label="Site navigation">
+                    <h3 class="landing-footer__column-title">Navigation</h3>
+                    <ul class="landing-footer__link-list">
+                        <li><a href="#platform">Platform overview</a></li>
+                        <li><a href="#metrics">Performance metrics</a></li>
+                        <li><a href="#api">API &amp; integrations</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="landing-footer__divider" aria-hidden="true"></div>
+        <div class="landing-footer__bottom">
+            <p class="landing-footer__disclaimer" id="footer-disclaimer">The AI Crypto Index is provided for research and informational purposes only and does not constitute investment advice. Live is real history after launch; Backtest is historical simulation before live start.</p>
+            <div class="landing-footer__meta">
+                <a class="landing-footer__policy-link" href="{{ url_for('render_privacy_policy') }}">Privacy policy</a>
+                <a class="landing-footer__policy-link" href="{{ url_for('render_cookie_policy') }}">Cookie policy</a>
+                <a class="landing-footer__policy-link" href="{{ url_for('render_terms_of_service') }}">Terms of service</a>
+                <span class="landing-footer__copyright">&copy; {{ current_year }} AI Crypto Index. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+    <div
+        class="landing-modal registration-modal"
+        id="registration-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+        aria-labelledby="registration-modal-title"
+        aria-describedby="registration-modal-description"
+        data-modal="registration"
+        data-registration-modal
+        data-signup-endpoint="{{ api_url('api_auth_signup') }}"
+        data-resend-endpoint="{{ api_url('api_auth_resend_confirmation') }}"
+        data-google-login-url="{{ api_url('api_auth_google_login') }}"
+        data-terms-version="2024-10"
+    >
+        <div class="landing-modal__overlay" data-modal-close aria-hidden="true"></div>
+        <div class="landing-modal__content registration-modal__content" role="document">
+            <button class="landing-modal__close" type="button" data-modal-close aria-label="Close dialog">
+                <span class="landing-modal__close-icon" aria-hidden="true">&times;</span>
+            </button>
+            <header class="registration-modal__header">
+                <p class="registration-modal__eyebrow">Self-serve onboarding</p>
+                <h2 class="registration-modal__title" id="registration-modal-title">Create your AICI account</h2>
+                <p class="registration-modal__subtitle" id="registration-modal-description">Confirm email — get API access in under a minute.</p>
+            </header>
+            <div class="registration-modal__progress" role="list" aria-label="Registration steps">
+                <span class="registration-modal__progress-step is-active" data-registration-progress-step="signup">1. Account</span>
+                <span class="registration-modal__progress-step" data-registration-progress-step="verify">2. Confirm email</span>
+            </div>
+            <section class="registration-step" data-registration-step="signup" aria-live="polite">
+                <a
+                    class="oauth-btn oauth-btn--google"
+                    href="{{ api_url('api_auth_google_login') }}?next=/app/overview"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Continue with Google"
+                    data-registration-google-btn
+                >
+                    <img
+                        class="oauth-btn__icon"
+                        src="{{ url_for('static', path='icons/google.svg') }}"
+                        alt=""
+                        aria-hidden="true"
+                        width="18"
+                        height="18"
+                        decoding="async"
+                    >
+                    <span class="oauth-btn__text">Continue with Google</span>
+                </a>
+                <div class="auth-divider" role="separator" aria-hidden="true">
+                    <span class="auth-divider__text">or</span>
+                </div>
+                <form class="registration-form" data-registration-form novalidate>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Work email</span>
+                        <input class="registration-input" type="email" name="email" autocomplete="email" required maxlength="160" placeholder="dev@yourcompany.com" data-modal-initial-focus data-registration-email-input>
+                    </label>
+                    <label class="registration-field">
+                        <span class="registration-field__label">Password</span>
+                        <div class="registration-password">
+                            <input class="registration-input" type="password" name="password" autocomplete="new-password" required minlength="10" maxlength="160" placeholder="Minimum 10 characters" data-registration-password-input>
+                            <button
+                                class="registration-password__toggle"
+                                type="button"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                                data-password-toggle
+                                data-show-icon="{{ url_for('static', path='icons/show.svg') }}"
+                                data-hide-icon="{{ url_for('static', path='icons/hide.svg') }}"
+                            >
+                                <img
+                                    class="registration-password__toggle-icon"
+                                    src="{{ url_for('static', path='icons/show.svg') }}"
+                                    alt=""
+                                    aria-hidden="true"
+                                    width="20"
+                                    height="20"
+                                    decoding="async"
+                                >
+                            </button>
+                        </div>
+                        <div class="registration-password__meter" data-password-meter>
+                            <span class="registration-password__strength" data-password-strength-label data-score="0">Weak</span>
+                            <span class="registration-password__hint">Use letters, numbers, and special characters.</span>
+                        </div>
+                    </label>
+                    <div class="registration-options">
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="newsletter_opt_in" value="true">
+                            <span class="registration-checkbox__text">Send me roadmap and product updates</span>
+                        </label>
+                        <label class="registration-checkbox">
+                            <input class="registration-checkbox__input" type="checkbox" name="terms" required>
+                            <span class="registration-checkbox__text">I agree to the <a class="registration-link" href="{{ url_for('render_terms_of_service') }}" target="_blank" rel="noopener">Terms</a> and <a class="registration-link" href="{{ url_for('render_privacy_policy') }}" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+                        </label>
+                    </div>
+                    <button class="landing-cta landing-cta--primary registration-form__submit" type="submit" data-registration-submit>
+                        <span class="landing-cta__text">Create account</span>
+                    </button>
+                    <p class="registration-form__legal">By continuing you confirm the accuracy of the data provided.</p>
+                    <p class="registration-form__switch">Already onboarded? <a class="registration-link" href="{{ request.url_for('render_auth_login') }}">Sign in</a>.</p>
+                </form>
+            </section>
+            <section class="registration-step registration-step--verify" data-registration-step="verify" aria-live="polite" hidden>
+                <div class="registration-verify">
+                    <p class="registration-verify__title">Check your inbox</p>
+                    <p class="registration-verify__description">We sent a confirmation link to <strong data-registration-email></strong>. Confirming unlocks the dashboard with your API key and usage limits.</p>
+                    <div class="registration-verify__actions">
+                        <button class="landing-cta landing-cta--ghost registration-verify__cta" type="button" data-registration-open-mail>
+                            <span class="landing-cta__text">Open mail app</span>
+                        </button>
+                        <button class="landing-cta landing-cta--primary registration-verify__cta" type="button" data-registration-resend disabled>
+                            <span class="landing-cta__text">Resend email</span>
+                        </button>
+                    </div>
+                    <p class="registration-verify__note">Resend available in <span data-registration-countdown>60s</span>. Limit 5 per hour.</p>
+                    <div class="registration-verify__footer">
+                        <button class="registration-verify__link" type="button" data-registration-edit-email>Change email</button>
+                        <span class="registration-verify__hint">Need help? <a class="registration-link" href="mailto:support@aici.pro">support@aici.pro</a></span>
+                    </div>
+                </div>
+            </section>
+            <p class="registration-status" role="status" aria-live="polite" data-registration-status></p>
+        </div>
+    </div>
+    <div
+        class="landing-modal landing-intake"
+        id="api-key-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+        aria-labelledby="api-key-modal-title"
+        aria-describedby="api-key-modal-description"
+        data-modal="api-key"
+    >
+        <div class="landing-modal__overlay" data-modal-close aria-hidden="true"></div>
+        <div class="landing-modal__content landing-intake__content" role="document">
+            <button class="landing-modal__close" type="button" data-modal-close aria-label="Close dialog">
+                <span class="landing-modal__close-icon" aria-hidden="true">&times;</span>
+            </button>
+            <header class="landing-modal__header landing-intake__header">
+                <p class="landing-modal__eyebrow">Production access</p>
+                <h2 class="landing-modal__title" id="api-key-modal-title">Request an API key</h2>
+                <p class="landing-modal__subtitle" id="api-key-modal-description">Share your expected usage so we can issue the right limits and onboarding steps.</p>
+            </header>
+            <form
+                class="landing-intake__form"
+                method="post"
+                action="{{ api_url('api_submit_api_key_request') }}"
+                data-intake-form="api-key"
+                data-success-message="Request received. We will share activation steps shortly."
+                data-submitting-message="Submitting request..."
+                data-bool-fields="subscribe_updates,terms_accepted"
+                novalidate
+            >
+                <div class="landing-intake__grid">
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">Full name</span>
+                        <input
+                            class="landing-intake__input"
+                            type="text"
+                            name="contact_name"
+                            autocomplete="name"
+                            required
+                            minlength="2"
+                            maxlength="120"
+                            placeholder="Ada Lovelace"
+                            data-modal-initial-focus
+                        >
+                    </label>
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">Work email</span>
+                        <input
+                            class="landing-intake__input"
+                            type="email"
+                            name="email"
+                            autocomplete="email"
+                            required
+                            maxlength="160"
+                            placeholder="ada@yourcompany.com"
+                        >
+                    </label>
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">Company or fund</span>
+                        <input
+                            class="landing-intake__input"
+                            type="text"
+                            name="company"
+                            autocomplete="organization"
+                            required
+                            minlength="2"
+                            maxlength="160"
+                            placeholder="AICI Labs"
+                        >
+                    </label>
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">
+                            <span class="landing-intake__label-text">Exp. monthly requests</span>
+                            <span class="landing-intake__label-optional">Optional</span>
+                        </span>
+                        <select class="landing-intake__input landing-intake__select" name="expected_monthly_requests">
+                            <option value="">Select a range</option>
+                            <option value="Under 5,000">Under 5,000</option>
+                            <option value="5,000 - 25,000">5,000 - 25,000</option>
+                            <option value="25,000 - 100,000">25,000 - 100,000</option>
+                            <option value="100,000+">100,000+</option>
+                        </select>
+                    </label>
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">
+                            <span class="landing-intake__label-text">Integration stage</span>
+                            <span class="landing-intake__label-optional">Optional</span>
+                        </span>
+                        <select class="landing-intake__input landing-intake__select" name="integration_stage">
+                            <option value="">Select a stage</option>
+                            <option value="Evaluation">Evaluation</option>
+                            <option value="Proof of concept">Proof of concept</option>
+                            <option value="Pre-production testing">Pre-production testing</option>
+                            <option value="Production rollout">Production rollout</option>
+                        </select>
+                    </label>
+                    <label class="landing-intake__field">
+                        <span class="landing-intake__label">
+                            <span class="landing-intake__label-text">Timeline</span>
+                            <span class="landing-intake__label-optional">Optional</span>
+                        </span>
+                        <input
+                            class="landing-intake__input"
+                            type="text"
+                            name="timeline"
+                            maxlength="120"
+                            placeholder="e.g., Launching pilot in Q1"
+                        >
+                    </label>
+                    <label class="landing-intake__field landing-intake__field--full">
+                        <span class="landing-intake__label">Primary use case</span>
+                        <textarea
+                            class="landing-intake__input landing-intake__textarea"
+                            name="use_case"
+                            rows="4"
+                            required
+                            minlength="10"
+                            maxlength="600"
+                            placeholder="Outline how the API data will integrate with your workflows or product."
+                        ></textarea>
+                    </label>
+                </div>
+                <div class="landing-intake__options">
+                    <label class="landing-intake__checkbox">
+                        <input
+                            class="landing-intake__checkbox-input"
+                            type="checkbox"
+                            name="subscribe_updates"
+                            value="true"
+                        >
+                        <span class="landing-intake__checkbox-text">Send me product updates and roadmap releases</span>
+                    </label>
+                    <label class="landing-intake__checkbox">
+                        <input
+                            class="landing-intake__checkbox-input"
+                            type="checkbox"
+                            name="terms_accepted"
+                            value="true"
+                            required
+                        >
+                        <span class="landing-intake__checkbox-text">I agree to the <a href="{{ url_for('render_terms_of_service') }}" class="landing-intake__link" target="_blank" rel="noopener">terms of service</a> and <a href="{{ url_for('render_privacy_policy') }}" class="landing-intake__link" target="_blank" rel="noopener">privacy policy</a>.</span>
+                    </label>
+                </div>
+                <div class="landing-intake__actions">
+                    <button class="landing-cta landing-cta--primary landing-intake__submit" type="submit">
+                        <span class="landing-cta__text">Request an API key</span>
+                    </button>
+                    <p class="landing-intake__status" role="status" aria-live="polite"></p>
+                </div>
+                <p class="landing-intake__footnote">We respond within one business day. Requests go directly to the product team.</p>
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+
+</body>
+</html>

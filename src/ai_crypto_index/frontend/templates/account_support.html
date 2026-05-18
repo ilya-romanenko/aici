@@ -1,0 +1,126 @@
+{% extends "account_base.html" %}
+{% block page_title %}Support - AI Crypto Index{% endblock %}
+{% block content %}
+<div class="account-container">
+<section class="support-hero">
+    <div>
+        <p class="support-hero__eyebrow">Support</p>
+        <h1>Report a bug or delivery issue</h1>
+        <p>Describe the problem and leave a contact email. You can also email us directly at <a href="mailto:support@aici.pro">support@aici.pro</a>.</p>
+    </div>
+</section>
+
+<section class="support-card support-card--form">
+    <form
+        class="support-form"
+        method="post"
+        action="{{ support_form_action }}"
+        data-intake-form="support-ticket"
+        data-attachment-max-count="3"
+        data-attachment-max-size="5242880"
+        data-success-message="Thank you! We'll reply to {{ support_contact_email or support_email }}."
+        novalidate
+    >
+        <div class="support-form__grid">
+            <label class="support-form__field landing-intake__field">
+                <span class="support-form__label landing-intake__label">Subject</span>
+                <input
+                    class="support-form__input landing-intake__input"
+                    type="text"
+                    name="subject"
+                    required
+                    minlength="4"
+                    maxlength="160"
+                    placeholder="Short summary of the bug"
+                >
+            </label>
+            <label class="support-form__field landing-intake__field">
+                <span class="support-form__label landing-intake__label">Contact email</span>
+                <input
+                    class="support-form__input landing-intake__input"
+                    type="email"
+                    name="contact_email"
+                    required
+                    maxlength="160"
+                    autocomplete="email"
+                    value="{{ support_contact_email }}"
+                    placeholder="you@company.com"
+                >
+            </label>
+            <label class="support-form__field landing-intake__field">
+                <span class="support-form__label landing-intake__label">
+                    <span class="support-form__label-text landing-intake__label-text">Name</span>
+                    <span class="support-form__label-optional landing-intake__label-optional">Optional</span>
+                </span>
+                <input
+                    class="support-form__input landing-intake__input"
+                    type="text"
+                    name="contact_name"
+                    maxlength="120"
+                    value="{{ support_contact_name }}"
+                    placeholder="Your name"
+                >
+            </label>
+        </div>
+        <label class="support-form__field support-form__field--full landing-intake__field">
+            <span class="support-form__label landing-intake__label">Description</span>
+            <textarea
+                class="support-form__textarea landing-intake__input"
+                name="description"
+                rows="4"
+                required
+                minlength="10"
+                maxlength="2000"
+                placeholder="Steps to reproduce, what you expected, any error shown, links, or screenshots."
+            ></textarea>
+        </label>
+        <label class="support-form__field support-form__field--full landing-intake__field">
+            <span class="support-form__label landing-intake__label">
+                <span class="support-form__label-text landing-intake__label-text">Screenshots</span>
+                <span class="support-form__label-optional landing-intake__label-optional">Optional</span>
+            </span>
+            <div
+                class="support-form__upload"
+                data-attachments
+                role="button"
+                tabindex="0"
+                aria-label="Attach screenshots"
+                aria-describedby="support-attachments-hint support-attachments-summary"
+            >
+                <input
+                    class="support-form__file-input"
+                    type="file"
+                    name="attachments"
+                    id="support-attachments"
+                    accept="image/*"
+                    multiple
+                    data-attachments-input
+                    aria-describedby="support-attachments-hint"
+                >
+                <label class="support-form__upload-label" for="support-attachments">
+                    <span class="support-form__upload-content">
+                        <span class="support-form__upload-title">Drop files here or click to browse</span>
+                    </span>
+                </label>
+                <div class="support-form__upload-list" data-attachments-list></div>
+                <p class="support-form__upload-summary" id="support-attachments-summary" data-attachments-summary role="status" aria-live="polite">
+                    No files selected yet (0/3).
+                </p>
+            </div>
+            <p class="support-form__hint" id="support-attachments-hint">Attach up to 3 images, 5 MB each.</p>
+        </label>
+        <div class="support-form__actions">
+            <button class="account-cta account-cta--primary" type="submit">
+                Send to support
+            </button>
+            <p class="support-form__status" data-intake-status role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+        <p class="support-form__hint">
+            Or email us at <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+        </p>
+    </form>
+</section>
+</div>
+{% endblock %}
+
+

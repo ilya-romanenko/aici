@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AICI Admin - CTA Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        :root {
+            color-scheme: light;
+        }
+        body {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at 10% 10%, #3d67b5 0%, #1d3870 35%, #10264c 68%, #0a1832 100%);
+            color: #0f1d40;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .admin-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .admin-header h1,
+        .admin-header p {
+            margin: 0;
+            color: #f7f9ff;
+            text-shadow: 0 1px 10px rgba(9, 20, 46, 0.4);
+        }
+        .admin-header p {
+            margin-top: 8px;
+            color: #dae5ff;
+        }
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .admin-nav__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #d8e5ff;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 229, 255, 0.4);
+            background: rgba(15, 31, 68, 0.32);
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+        .admin-nav__link:hover,
+        .admin-nav__link:focus-visible {
+            color: #f8fbff;
+            border-color: rgba(216, 229, 255, 0.8);
+            background: rgba(15, 31, 68, 0.54);
+        }
+        .admin-nav__link.is-active {
+            color: #0f2550;
+            border-color: #ecf3ff;
+            background: #ecf3ff;
+        }
+        .admin-card {
+            background: #fff;
+            border: 1px solid #dfe7ff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 32px rgba(12, 22, 58, 0.08);
+        }
+        .admin-card h2 {
+            margin: 0;
+            color: #0f2550;
+        }
+        .admin-card p {
+            margin: 8px 0 0;
+            color: #5a6e9f;
+        }
+        .admin-controls {
+            display: grid;
+            gap: 14px;
+        }
+        .admin-controls__row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .admin-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .admin-pill-button {
+            border: 1px solid #bfd0fb;
+            background: #f7faff;
+            color: #1f3b72;
+            border-radius: 999px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .admin-pill-button:hover,
+        .admin-pill-button:focus-visible {
+            border-color: #88a5ef;
+            background: #ebf2ff;
+        }
+        .admin-pill-button.is-active {
+            border-color: #0f62fe;
+            background: #0f62fe;
+            color: #fff;
+        }
+        .admin-input,
+        .admin-select,
+        .admin-button {
+            font: inherit;
+            border-radius: 10px;
+            border: 1px solid #bfd0fb;
+            padding: 7px 10px;
+        }
+        .admin-button {
+            background: #0f62fe;
+            border-color: #0f62fe;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .admin-button:hover,
+        .admin-button:focus-visible {
+            opacity: 0.9;
+        }
+        .admin-button.is-light {
+            background: #f7faff;
+            color: #1f3b72;
+            border-color: #bfd0fb;
+        }
+        .admin-button[disabled] {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+        .admin-muted {
+            color: #5c6f9d;
+            font-size: 13px;
+        }
+        .admin-kpi-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .admin-kpi-grid--quality {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 14px;
+        }
+        .admin-kpi {
+            border: 1px solid #dde7ff;
+            border-radius: 12px;
+            padding: 14px;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+        }
+        .admin-kpi__label {
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #5c6f9d;
+            margin-bottom: 8px;
+        }
+        .admin-kpi__value {
+            font-size: 30px;
+            line-height: 1.1;
+            color: #0f2550;
+            font-weight: 700;
+        }
+        .admin-kpi__hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #5b6f9f;
+        }
+        .admin-service-grid {
+            margin-top: 14px;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .admin-service-item {
+            border: 1px dashed #c4d6ff;
+            border-radius: 12px;
+            padding: 12px;
+            background: #f8fbff;
+        }
+        .admin-service-item__label {
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #5b6f9f;
+            margin-bottom: 6px;
+        }
+        .admin-service-item__value {
+            color: #0f2550;
+            font-weight: 600;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .admin-layout {
+            display: grid;
+            gap: 18px;
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .admin-layout--two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .admin-layout--three {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .admin-chart {
+            border: 1px solid #e2eaff;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #f8fbff 0%, #f2f6ff 100%);
+            padding: 12px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+        .admin-chart svg {
+            width: 100%;
+            height: 260px;
+            display: block;
+            overflow: visible;
+        }
+        .chart-tooltip {
+            position: absolute;
+            background: #fff;
+            border: 1px solid #d0deff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(12, 22, 58, 0.14);
+            z-index: 10;
+            min-width: 170px;
+            font-size: 13px;
+            color: #0f2550;
+            transform: translate(-50%, calc(-100% - 14px));
+            transition: opacity 0.1s ease;
+        }
+        .chart-tooltip__date {
+            font-weight: 700;
+            font-size: 12px;
+            color: #5c6f9d;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid #eef3ff;
+            padding-bottom: 5px;
+        }
+        .chart-tooltip__row {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            line-height: 1.7;
+        }
+        .chart-tooltip__row span { color: #5c6f9d; }
+        .chart-tooltip__row strong { color: #0f2550; }
+        .chart-filters {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .chart-filter-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4a5f90;
+            user-select: none;
+        }
+        .chart-filter-label input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid #9db0d8;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.15s, border-color 0.15s;
+            position: relative;
+        }
+        .chart-filter-label input[type="checkbox"]:checked {
+            background: #0f62fe;
+            border-color: #0f62fe;
+        }
+        .chart-filter-label input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            left: 3px;
+            top: 1px;
+            width: 8px;
+            height: 5px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(-45deg);
+        }
+        .chart-filter-label:hover input[type="checkbox"]:not(:checked) {
+            border-color: #5a7cc8;
+        }
+        .admin-empty {
+            color: #6d7fae;
+            font-size: 14px;
+            text-align: center;
+            padding: 24px 8px;
+        }
+        .admin-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e2eaff;
+            border-radius: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid #eef3ff;
+            white-space: nowrap;
+        }
+        th {
+            color: #5b6f9f;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: #f7faff;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .admin-funnel {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .admin-funnel--compact {
+            margin-top: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .admin-funnel--compact .admin-funnel-step__value {
+            font-size: 20px;
+        }
+        .admin-funnel-step {
+            border: 1px solid #dce7ff;
+            border-radius: 12px;
+            padding: 12px;
+            background: #f9fbff;
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-funnel-step::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--funnel-fill, 0%);
+            background: linear-gradient(90deg, rgba(15, 98, 254, 0.24), rgba(15, 98, 254, 0.08));
+            pointer-events: none;
+        }
+        .admin-funnel-step > * {
+            position: relative;
+            z-index: 1;
+        }
+        .admin-funnel-step__label {
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #5b6f9f;
+        }
+        .admin-funnel-step__value {
+            margin-top: 8px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f2550;
+            line-height: 1;
+        }
+        .admin-funnel-step__rate {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #385489;
+        }
+        .admin-page-slice {
+            border: 1px solid #e2eaff;
+            border-radius: 14px;
+            padding: 14px;
+            background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+        }
+        .admin-page-slice h3 {
+            margin: 0;
+            color: #0f2550;
+            font-size: 18px;
+        }
+        .admin-page-slice__source {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #566b9c;
+        }
+        .admin-export-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .admin-export-actions .admin-button {
+            min-width: 120px;
+        }
+        .admin-error {
+            border: 1px solid #ffd6de;
+            border-radius: 12px;
+            background: #fff2f5;
+            color: #9c2746;
+            padding: 10px 12px;
+            margin-top: 12px;
+        }
+        .admin-status-chip {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid #d3e0ff;
+            color: #1f3b72;
+            background: #f4f8ff;
+        }
+        .admin-status-chip[data-status="active"] {
+            border-color: #a8e8c8;
+            color: #0f5e3a;
+            background: #ecfff3;
+        }
+        .admin-status-chip[data-status="paused"] {
+            border-color: #ffd8d8;
+            color: #8e2a2a;
+            background: #fff2f2;
+        }
+        .admin-decision-note {
+            margin-top: 8px;
+            color: #51679a;
+            font-size: 13px;
+        }
+        .admin-decision-changes {
+            margin-top: 6px;
+            color: #51679a;
+            font-size: 13px;
+        }
+        @media (max-width: 1024px) {
+            .admin-kpi-grid,
+            .admin-funnel {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .admin-kpi-grid--quality {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .admin-layout--two {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .admin-layout--three {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .admin-service-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .admin-shell {
+                padding: 20px 14px 42px;
+            }
+            .admin-kpi-grid,
+            .admin-funnel {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .admin-kpi-grid--quality {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .admin-kpi__value {
+                font-size: 26px;
+            }
+            th, td {
+                padding: 9px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <header class="admin-header">
+            <div>
+                <h1>CTA Analytics</h1>
+                <p>Monitor CTA performance, conversion quality, and location-level behavior in one view.</p>
+            </div>
+        </header>
+        <nav class="admin-nav" aria-label="Admin sections">
+            <a class="admin-nav__link {% if admin_section == 'moderation' %}is-active{% endif %}" href="/admin/moderation">
+                Moderation
+            </a>
+            <a class="admin-nav__link {% if admin_section == 'cta_analytics' %}is-active{% endif %}" href="/admin/cta-analytics">
+                CTA Analytics
+            </a>
+        </nav>
+
+        <section class="admin-card">
+            <h2>Period And Dataset Controls</h2>
+            <p>Choose a period and refresh metrics. Conversion lookback stays aligned to selected lookback days.</p>
+            <div class="admin-controls">
+                <div class="admin-controls__row">
+                    <div class="admin-presets" role="group" aria-label="Quick range presets">
+                        <button class="admin-pill-button" type="button" data-lookback="1">24h</button>
+                        <button class="admin-pill-button is-active" type="button" data-lookback="7">7d</button>
+                        <button class="admin-pill-button" type="button" data-lookback="30">30d</button>
+                        <button class="admin-pill-button" type="button" data-lookback="90">90d</button>
+                    </div>
+                </div>
+                <div class="admin-controls__row">
+                    <label>
+                        Start
+                        <input class="admin-input" type="datetime-local" data-filter-start>
+                    </label>
+                    <label>
+                        End
+                        <input class="admin-input" type="datetime-local" data-filter-end>
+                    </label>
+                    <label>
+                        Interval
+                        <select class="admin-select" data-filter-interval>
+                            <option value="day" selected>Day</option>
+                            <option value="hour">Hour</option>
+                        </select>
+                    </label>
+                    <button class="admin-button" type="button" data-refresh-button>Refresh</button>
+                    <button class="admin-button is-light" type="button" data-clear-range>Use Preset Range</button>
+                </div>
+                <div class="admin-controls__row">
+                    <label>
+                        Placement
+                        <input class="admin-input" type="text" data-filter-placement placeholder="hero, header, pricing">
+                    </label>
+                    <label>
+                        Page
+                        <input class="admin-input" type="text" data-filter-page placeholder="/, /pricing, /docs">
+                    </label>
+                    <label>
+                        UTM Source
+                        <input class="admin-input" type="text" data-filter-utm-source placeholder="ads, organic, partner">
+                    </label>
+                </div>
+                <div class="admin-controls__row">
+                    <label>
+                        CTA Format
+                        <input class="admin-input" type="text" data-filter-cta-format placeholder="button, link, banner">
+                    </label>
+                    <label>
+                        CTA ID
+                        <input class="admin-input" type="text" data-filter-cta-id placeholder="landing_start_free_plan_hero">
+                    </label>
+                </div>
+                <div class="admin-controls__row admin-muted">
+                    Filters accept comma-separated values. Example: <code>/, /pricing, /docs</code>.
+                </div>
+                <div class="admin-controls__row">
+                    <div class="admin-export-actions">
+                        <button class="admin-button is-light" type="button" data-export-dataset="summary">Export Summary CSV</button>
+                        <button class="admin-button is-light" type="button" data-export-dataset="funnel">Export Funnel CSV</button>
+                        <button class="admin-button is-light" type="button" data-export-dataset="timeseries">Export Timeseries CSV</button>
+                        <button class="admin-button is-light" type="button" data-export-dataset="breakdown">Export Breakdown CSV</button>
+                        <span class="admin-muted" data-export-status></span>
+                    </div>
+                </div>
+                <div class="admin-controls__row admin-muted" data-generated-at>
+                    Last update: -
+                </div>
+                <div class="admin-error" data-error-block hidden></div>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <h2>KPI Overview</h2>
+            <div class="admin-kpi-grid">
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Total Clicks</div>
+                    <div class="admin-kpi__value" data-kpi-total-clicks>0</div>
+                </article>
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Unique Clicks</div>
+                    <div class="admin-kpi__value" data-kpi-unique-clicks>0</div>
+                </article>
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Unique Users</div>
+                    <div class="admin-kpi__value" data-kpi-unique-users>0</div>
+                </article>
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Attribution Coverage</div>
+                    <div class="admin-kpi__value" data-kpi-coverage>0%</div>
+                </article>
+            </div>
+            <div class="admin-kpi-grid admin-kpi-grid--quality">
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Active Hours</div>
+                    <div class="admin-kpi__value" data-observability-missing>0</div>
+                    <div class="admin-kpi__hint" data-observability-missing-hint>0 / 0 hourly slots</div>
+                </article>
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Invalid Events</div>
+                    <div class="admin-kpi__value" data-observability-invalid>0%</div>
+                    <div class="admin-kpi__hint" data-observability-invalid-hint>0 / 0 events</div>
+                </article>
+                <article class="admin-kpi">
+                    <div class="admin-kpi__label">Aggregation Lag</div>
+                    <div class="admin-kpi__value" data-observability-lag>-</div>
+                    <div class="admin-kpi__hint">Target: near real-time</div>
+                </article>
+            </div>
+            <div class="admin-service-grid">
+                <article class="admin-service-item">
+                    <div class="admin-service-item__label">Last Accepted Event</div>
+                    <div class="admin-service-item__value" data-service-last-accepted>No events yet.</div>
+                </article>
+                <article class="admin-service-item">
+                    <div class="admin-service-item__label">Last Aggregated Slot</div>
+                    <div class="admin-service-item__value" data-service-last-aggregated>No slots yet.</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>Решения за 7 дней</h2>
+                    <p>Weekly optimization picks top-3 CTA formats and applies active/paused statuses.</p>
+                </div>
+            </div>
+            <div class="admin-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Decision Time</th>
+                            <th>Window</th>
+                            <th>Top Formats</th>
+                            <th>Changed</th>
+                        </tr>
+                    </thead>
+                    <tbody data-format-decisions-body>
+                        <tr><td colspan="4" class="admin-muted">No decisions yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="admin-decision-note admin-muted" data-format-statuses-note>
+                Current statuses: -
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>Clicks Dynamics</h2>
+                    <p>Total CTA clicks by selected interval.</p>
+                </div>
+                <div class="chart-filters">
+                    <label class="chart-filter-label">
+                        <input type="checkbox" data-chart-filter="show-empty-days">
+                        Показывать пустые дни
+                    </label>
+                    <label class="chart-filter-label">
+                        <input type="checkbox" data-chart-filter="show-all-dates">
+                        Все даты на оси X
+                    </label>
+                    <label class="chart-filter-label">
+                        <input type="checkbox" data-chart-filter="only-unique-users">
+                        Только уникальные клики
+                    </label>
+                </div>
+            </div>
+            <div class="admin-chart" data-timeseries-chart></div>
+        </section>
+
+        <section class="admin-layout admin-layout--two">
+            <section class="admin-card">
+                <div class="admin-header">
+                    <div>
+                        <h2>Top CTA</h2>
+                        <p>Highest-performing CTA identifiers.</p>
+                    </div>
+                </div>
+                <div class="admin-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>CTA ID</th>
+                                <th>Clicks</th>
+                                <th>Unique</th>
+                                <th>Signup</th>
+                                <th>Confirmed</th>
+                                <th>Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody data-top-cta-body>
+                            <tr><td colspan="6" class="admin-muted">No data yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-header">
+                    <div>
+                        <h2>Location Breakdown</h2>
+                        <p>Aggregated performance by CTA location.</p>
+                    </div>
+                </div>
+                <div class="admin-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Clicks</th>
+                                <th>Unique</th>
+                                <th>Signup</th>
+                                <th>Confirmed</th>
+                                <th>Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody data-location-body>
+                            <tr><td colspan="6" class="admin-muted">No data yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="admin-card">
+            <h2>Page Funnels By UTM Source</h2>
+            <p>Breakdown for <code>Landing/Home</code>, <code>/pricing</code>, and <code>/docs</code> in utm_source slices.</p>
+            <div class="admin-layout admin-layout--three">
+                <article class="admin-page-slice" data-page-slice="/pricing">
+                    <h3>/pricing</h3>
+                    <div class="admin-page-slice__source" data-slice-source>Top utm_source: -</div>
+                    <div class="admin-table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>UTM Source</th>
+                                    <th>Clicks</th>
+                                    <th>Signup</th>
+                                    <th>Confirmed</th>
+                                    <th>Paid</th>
+                                    <th>Paid CR</th>
+                                </tr>
+                            </thead>
+                            <tbody data-slice-body>
+                                <tr><td colspan="6" class="admin-muted">No data yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-funnel admin-funnel--compact" data-slice-funnel>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Click</div>
+                            <div class="admin-funnel-step__value" data-slice-clicks>0</div>
+                            <div class="admin-funnel-step__rate">Baseline</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Signup</div>
+                            <div class="admin-funnel-step__value" data-slice-signups>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-signup-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Confirmed</div>
+                            <div class="admin-funnel-step__value" data-slice-confirmed>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-confirmed-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Paid</div>
+                            <div class="admin-funnel-step__value" data-slice-paid>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-paid-rate>0%</div>
+                        </article>
+                    </div>
+                </article>
+                <article class="admin-page-slice" data-page-slice="/docs">
+                    <h3>/docs</h3>
+                    <div class="admin-page-slice__source" data-slice-source>Top utm_source: -</div>
+                    <div class="admin-table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>UTM Source</th>
+                                    <th>Clicks</th>
+                                    <th>Signup</th>
+                                    <th>Confirmed</th>
+                                    <th>Paid</th>
+                                    <th>Paid CR</th>
+                                </tr>
+                            </thead>
+                            <tbody data-slice-body>
+                                <tr><td colspan="6" class="admin-muted">No data yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-funnel admin-funnel--compact" data-slice-funnel>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Click</div>
+                            <div class="admin-funnel-step__value" data-slice-clicks>0</div>
+                            <div class="admin-funnel-step__rate">Baseline</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Signup</div>
+                            <div class="admin-funnel-step__value" data-slice-signups>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-signup-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Confirmed</div>
+                            <div class="admin-funnel-step__value" data-slice-confirmed>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-confirmed-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Paid</div>
+                            <div class="admin-funnel-step__value" data-slice-paid>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-paid-rate>0%</div>
+                        </article>
+                    </div>
+                </article>
+                <article class="admin-page-slice" data-page-slice="/">
+                    <h3>Landing/Home</h3>
+                    <div class="admin-page-slice__source" data-slice-source>Top utm_source: -</div>
+                    <div class="admin-table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>UTM Source</th>
+                                    <th>Clicks</th>
+                                    <th>Signup</th>
+                                    <th>Confirmed</th>
+                                    <th>Paid</th>
+                                    <th>Paid CR</th>
+                                </tr>
+                            </thead>
+                            <tbody data-slice-body>
+                                <tr><td colspan="6" class="admin-muted">No data yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-funnel admin-funnel--compact" data-slice-funnel>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Click</div>
+                            <div class="admin-funnel-step__value" data-slice-clicks>0</div>
+                            <div class="admin-funnel-step__rate">Baseline</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Signup</div>
+                            <div class="admin-funnel-step__value" data-slice-signups>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-signup-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Confirmed</div>
+                            <div class="admin-funnel-step__value" data-slice-confirmed>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-confirmed-rate>0%</div>
+                        </article>
+                        <article class="admin-funnel-step">
+                            <div class="admin-funnel-step__label">Paid</div>
+                            <div class="admin-funnel-step__value" data-slice-paid>0</div>
+                            <div class="admin-funnel-step__rate" data-slice-paid-rate>0%</div>
+                        </article>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <h2>Funnel</h2>
+            <p>CTA click -> signup -> confirmed -> paid for the selected period.</p>
+            <div class="admin-funnel" data-funnel>
+                <article class="admin-funnel-step">
+                    <div class="admin-funnel-step__label">CTA Click</div>
+                    <div class="admin-funnel-step__value" data-funnel-clicks>0</div>
+                    <div class="admin-funnel-step__rate">Baseline</div>
+                </article>
+                <article class="admin-funnel-step">
+                    <div class="admin-funnel-step__label">Signup</div>
+                    <div class="admin-funnel-step__value" data-funnel-signups>0</div>
+                    <div class="admin-funnel-step__rate" data-funnel-signup-rate>Click -> Signup: 0%</div>
+                </article>
+                <article class="admin-funnel-step">
+                    <div class="admin-funnel-step__label">Confirmed</div>
+                    <div class="admin-funnel-step__value" data-funnel-confirmed>0</div>
+                    <div class="admin-funnel-step__rate" data-funnel-confirmed-rate>Click -> Confirmed: 0%<br>Signup -> Confirmed: 0%</div>
+                </article>
+                <article class="admin-funnel-step">
+                    <div class="admin-funnel-step__label">Paid</div>
+                    <div class="admin-funnel-step__value" data-funnel-paid>0</div>
+                    <div class="admin-funnel-step__rate" data-funnel-paid-rate>Click -> Paid: 0%<br>Confirmed -> Paid: 0%</div>
+                </article>
+            </div>
+        </section>
+    </div>
+    <script>
+        (function () {
+            const apiBase = "{{ api_base }}";
+            const refreshButton = document.querySelector("[data-refresh-button]");
+            const clearRangeButton = document.querySelector("[data-clear-range]");
+            const intervalSelect = document.querySelector("[data-filter-interval]");
+            const startInput = document.querySelector("[data-filter-start]");
+            const endInput = document.querySelector("[data-filter-end]");
+            const placementInput = document.querySelector("[data-filter-placement]");
+            const pageInput = document.querySelector("[data-filter-page]");
+            const utmSourceInput = document.querySelector("[data-filter-utm-source]");
+            const ctaFormatInput = document.querySelector("[data-filter-cta-format]");
+            const ctaIdInput = document.querySelector("[data-filter-cta-id]");
+            const generatedAtNode = document.querySelector("[data-generated-at]");
+            const exportStatusNode = document.querySelector("[data-export-status]");
+            const exportButtons = Array.from(document.querySelectorAll("[data-export-dataset]"));
+            const errorBlock = document.querySelector("[data-error-block]");
+            const formatDecisionsBody = document.querySelector("[data-format-decisions-body]");
+            const formatStatusesNoteNode = document.querySelector("[data-format-statuses-note]");
+            const chartNode = document.querySelector("[data-timeseries-chart]");
+            const chartFilterShowEmptyDays = document.querySelector("[data-chart-filter='show-empty-days']");
+            const chartFilterShowAllDates = document.querySelector("[data-chart-filter='show-all-dates']");
+            const chartFilterOnlyUniqueUsers = document.querySelector("[data-chart-filter='only-unique-users']");
+            const topBody = document.querySelector("[data-top-cta-body]");
+            const locationBody = document.querySelector("[data-location-body]");
+            const presetButtons = Array.from(document.querySelectorAll("[data-lookback]"));
+            const funnelRoot = document.querySelector("[data-funnel]");
+            const pageSliceCards = Array.from(document.querySelectorAll("[data-page-slice]"));
+            const missingNode = document.querySelector("[data-observability-missing]");
+            const missingHintNode = document.querySelector("[data-observability-missing-hint]");
+            const invalidNode = document.querySelector("[data-observability-invalid]");
+            const invalidHintNode = document.querySelector("[data-observability-invalid-hint]");
+            const lagNode = document.querySelector("[data-observability-lag]");
+            const lastAcceptedNode = document.querySelector("[data-service-last-accepted]");
+            const lastAggregatedNode = document.querySelector("[data-service-last-aggregated]");
+            const pageSliceViews = new Map();
+            const trackedPages = ["/pricing", "/docs", "/"];
+
+            pageSliceCards.forEach((card) => {
+                const page = String(card.dataset.pageSlice || "").toLowerCase();
+                if (!page) {
+                    return;
+                }
+                pageSliceViews.set(page, {
+                    sourceNode: card.querySelector("[data-slice-source]"),
+                    body: card.querySelector("[data-slice-body]"),
+                    clicksNode: card.querySelector("[data-slice-clicks]"),
+                    signupsNode: card.querySelector("[data-slice-signups]"),
+                    confirmedNode: card.querySelector("[data-slice-confirmed]"),
+                    paidNode: card.querySelector("[data-slice-paid]"),
+                    signupRateNode: card.querySelector("[data-slice-signup-rate]"),
+                    confirmedRateNode: card.querySelector("[data-slice-confirmed-rate]"),
+                    paidRateNode: card.querySelector("[data-slice-paid-rate]"),
+                    funnelSteps: Array.from(card.querySelectorAll(".admin-funnel-step")),
+                });
+            });
+
+            const state = {
+                lookbackDays: 7,
+                interval: "day",
+                startAt: null,
+                endAt: null,
+                placements: [],
+                pages: [],
+                utmSources: [],
+                ctaFormats: [],
+                ctaIds: [],
+                chartShowEmptyDays: false,
+                chartShowAllDates: false,
+                chartOnlyUniqueUsers: false,
+                lastTimeseries: null,
+            };
+
+            const numberFormatter = new Intl.NumberFormat("en-US");
+            const percentFormatter = new Intl.NumberFormat("en-US", {
+                style: "percent",
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+            });
+
+            const formatCount = (value) => numberFormatter.format(Number.isFinite(value) ? value : 0);
+            const formatRate = (value) => percentFormatter.format(Number.isFinite(value) ? value : 0);
+            const formatDateTime = (value) => {
+                if (!value) {
+                    return "-";
+                }
+                const parsed = new Date(value);
+                if (Number.isNaN(parsed.getTime())) {
+                    return String(value);
+                }
+                return parsed.toLocaleString();
+            };
+            const formatLag = (value) => {
+                if (!Number.isFinite(value) || value < 0) {
+                    return "-";
+                }
+                if (value < 60) {
+                    return `${Math.trunc(value)}s`;
+                }
+                const minutes = Math.trunc(value / 60);
+                const seconds = Math.trunc(value % 60);
+                if (minutes < 60) {
+                    return `${minutes}m ${seconds}s`;
+                }
+                const hours = Math.trunc(minutes / 60);
+                const restMinutes = minutes % 60;
+                return `${hours}h ${restMinutes}m`;
+            };
+
+            const safeDateToIso = (value) => {
+                if (!value) {
+                    return null;
+                }
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) {
+                    return null;
+                }
+                return date.toISOString();
+            };
+
+            const toDateTimeLocalValue = (value) => {
+                if (!value) {
+                    return "";
+                }
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) {
+                    return "";
+                }
+                const pad = (chunk) => String(chunk).padStart(2, "0");
+                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            };
+
+            const parseFilterValues = (rawValue) => {
+                if (!rawValue) {
+                    return [];
+                }
+                const normalized = [];
+                const seen = new Set();
+                String(rawValue)
+                    .split(",")
+                    .forEach((chunk) => {
+                        const candidate = chunk.trim().toLowerCase();
+                        if (!candidate || seen.has(candidate)) {
+                            return;
+                        }
+                        seen.add(candidate);
+                        normalized.push(candidate);
+                    });
+                return normalized;
+            };
+
+            const serializeFilterValues = (values) => {
+                if (!Array.isArray(values) || values.length === 0) {
+                    return "";
+                }
+                return values.join(", ");
+            };
+
+            const parseQueryList = (query, key) => {
+                const values = [];
+                const seen = new Set();
+                query.getAll(key).forEach((rawValue) => {
+                    String(rawValue)
+                        .split(",")
+                        .forEach((chunk) => {
+                            const candidate = chunk.trim().toLowerCase();
+                            if (!candidate || seen.has(candidate)) {
+                                return;
+                            }
+                            seen.add(candidate);
+                            values.push(candidate);
+                        });
+                });
+                return values;
+            };
+
+            const clampLookbackDays = (value) => {
+                if (!Number.isFinite(value)) {
+                    return 7;
+                }
+                return Math.max(1, Math.min(90, Math.trunc(value)));
+            };
+
+            const buildParams = () => {
+                const params = new URLSearchParams();
+                params.set("lookback_days", String(state.lookbackDays));
+                if (state.startAt && state.endAt) {
+                    params.set("start_at", state.startAt);
+                    params.set("end_at", state.endAt);
+                }
+                state.placements.forEach((value) => params.append("placement", value));
+                state.pages.forEach((value) => params.append("page", value));
+                state.utmSources.forEach((value) => params.append("utm_source", value));
+                state.ctaFormats.forEach((value) => params.append("cta_format", value));
+                state.ctaIds.forEach((value) => params.append("cta_id", value));
+                return params;
+            };
+
+            const syncUrlQuery = () => {
+                const params = buildParams();
+                params.set("interval", state.interval);
+                const nextQuery = params.toString();
+                const nextUrl = nextQuery ? `${window.location.pathname}?${nextQuery}` : window.location.pathname;
+                window.history.replaceState({}, "", nextUrl);
+            };
+
+            const syncControlsFromState = () => {
+                if (intervalSelect) {
+                    intervalSelect.value = state.interval;
+                }
+                if (startInput) {
+                    startInput.value = toDateTimeLocalValue(state.startAt);
+                }
+                if (endInput) {
+                    endInput.value = toDateTimeLocalValue(state.endAt);
+                }
+                if (placementInput) {
+                    placementInput.value = serializeFilterValues(state.placements);
+                }
+                if (pageInput) {
+                    pageInput.value = serializeFilterValues(state.pages);
+                }
+                if (utmSourceInput) {
+                    utmSourceInput.value = serializeFilterValues(state.utmSources);
+                }
+                if (ctaFormatInput) {
+                    ctaFormatInput.value = serializeFilterValues(state.ctaFormats);
+                }
+                if (ctaIdInput) {
+                    ctaIdInput.value = serializeFilterValues(state.ctaIds);
+                }
+            };
+
+            const hydrateStateFromUrl = () => {
+                const query = new URLSearchParams(window.location.search);
+                const lookbackCandidate = Number.parseInt(query.get("lookback_days") || "", 10);
+                state.lookbackDays = clampLookbackDays(lookbackCandidate);
+                const intervalCandidate = (query.get("interval") || "").trim().toLowerCase();
+                state.interval = intervalCandidate === "hour" ? "hour" : "day";
+                const startAt = safeDateToIso(query.get("start_at"));
+                const endAt = safeDateToIso(query.get("end_at"));
+                if (startAt && endAt && startAt < endAt) {
+                    state.startAt = startAt;
+                    state.endAt = endAt;
+                } else {
+                    state.startAt = null;
+                    state.endAt = null;
+                }
+                state.placements = parseQueryList(query, "placement");
+                state.pages = parseQueryList(query, "page");
+                state.utmSources = parseQueryList(query, "utm_source");
+                state.ctaFormats = parseQueryList(query, "cta_format");
+                state.ctaIds = parseQueryList(query, "cta_id");
+            };
+
+            const withPaging = (params, pageSize) => {
+                const next = new URLSearchParams(params);
+                next.set("page_number", "1");
+                next.set("page_size", String(pageSize));
+                return next;
+            };
+
+            const setExportStatus = (message) => {
+                if (!exportStatusNode) {
+                    return;
+                }
+                exportStatusNode.textContent = message || "";
+            };
+
+            const setExportBusy = (isBusy) => {
+                exportButtons.forEach((button) => {
+                    button.disabled = isBusy;
+                });
+            };
+
+            const resolveFilename = (dataset, headers) => {
+                const disposition = headers.get("content-disposition") || "";
+                const match = disposition.match(/filename=\"?([^\";]+)\"?/i);
+                if (match && match[1]) {
+                    return match[1];
+                }
+                return `cta_${dataset}.csv`;
+            };
+
+            const downloadCsvExport = async (dataset) => {
+                const params = buildParams();
+                params.set("dataset", dataset);
+                params.set("interval", state.interval);
+                const suffix = params.toString();
+                const response = await fetch(`${apiBase}/admin/cta-analytics/export?${suffix}`, {
+                    headers: { Accept: "text/csv" },
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || `Request failed: ${response.status}`);
+                }
+                const blob = await response.blob();
+                const filename = resolveFilename(dataset, response.headers);
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            };
+
+            const fetchJson = async (path, params) => {
+                const suffix = params ? `?${params.toString()}` : "";
+                const response = await fetch(`${path}${suffix}`, {
+                    headers: { Accept: "application/json" },
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || `Request failed: ${response.status}`);
+                }
+                return response.json();
+            };
+
+            const getConversion = (item) => item && typeof item === "object" ? (item.conversion || {}) : {};
+
+            const coerceNumber = (value) => {
+                const numeric = Number(value);
+                return Number.isFinite(numeric) ? numeric : 0;
+            };
+
+            const renderKpi = (summary) => {
+                document.querySelector("[data-kpi-total-clicks]").textContent = formatCount(coerceNumber(summary.total_clicks));
+                document.querySelector("[data-kpi-unique-clicks]").textContent = formatCount(coerceNumber(summary.unique_clicks));
+                document.querySelector("[data-kpi-unique-users]").textContent = formatCount(coerceNumber(summary.unique_users));
+                document.querySelector("[data-kpi-coverage]").textContent = formatRate(coerceNumber(summary.attribution_coverage));
+            };
+
+            const renderObservability = (summary) => {
+                const observability = summary && typeof summary === "object" ? (summary.observability || {}) : {};
+                const serviceState = summary && typeof summary === "object" ? (summary.service_state || {}) : {};
+
+                const activeSlots = coerceNumber(observability.active_slots);
+                const expectedSlots = coerceNumber(observability.expected_slots);
+                const invalidEvents = coerceNumber(observability.invalid_events);
+                const totalEvents = coerceNumber(observability.total_events);
+
+                if (missingNode) {
+                    missingNode.textContent = formatCount(activeSlots);
+                }
+                if (missingHintNode) {
+                    missingHintNode.textContent = expectedSlots > 0
+                        ? `${formatCount(activeSlots)} / ${formatCount(expectedSlots)} hourly slots`
+                        : "no data in range";
+                }
+                if (invalidNode) {
+                    invalidNode.textContent = formatRate(coerceNumber(observability.invalid_ratio));
+                }
+                if (invalidHintNode) {
+                    invalidHintNode.textContent = `${formatCount(invalidEvents)} / ${formatCount(totalEvents)} events`;
+                }
+                if (lagNode) {
+                    const lagRaw = observability.aggregation_lag_seconds;
+                    lagNode.textContent = lagRaw === null || lagRaw === undefined
+                        ? "-"
+                        : formatLag(coerceNumber(lagRaw));
+                }
+
+                const lastAccepted = serviceState.last_accepted_event || null;
+                const lastAggregated = serviceState.last_aggregated_slot || null;
+
+                if (lastAcceptedNode) {
+                    if (!lastAccepted || !lastAccepted.received_at) {
+                        lastAcceptedNode.textContent = "No accepted events yet.";
+                    } else {
+                        const ctaId = String(lastAccepted.cta_id || "unknown");
+                        const location = String(lastAccepted.location || "unknown");
+                        const eventId = String(lastAccepted.event_id || "n/a");
+                        lastAcceptedNode.textContent = `${formatDateTime(lastAccepted.received_at)} | ${ctaId} @ ${location} | ${eventId}`;
+                    }
+                }
+
+                if (lastAggregatedNode) {
+                    if (!lastAggregated || !lastAggregated.event_hour) {
+                        lastAggregatedNode.textContent = "No slots yet.";
+                    } else {
+                        const hourLabel = formatDateTime(lastAggregated.event_hour);
+                        const dateLabel = lastAggregated.event_date ? String(lastAggregated.event_date) : "-";
+                        lastAggregatedNode.textContent = `${hourLabel} (day ${dateLabel})`;
+                    }
+                }
+            };
+
+            const renderTimeseriesChart = (timeseries) => {
+                state.lastTimeseries = timeseries;
+                let items = Array.isArray(timeseries.items) ? timeseries.items : [];
+                if (!chartNode) {
+                    return;
+                }
+
+                // Fill in missing days/hours when "show empty days" is enabled
+                if (state.chartShowEmptyDays && items.length >= 2 && state.interval === "day") {
+                    const bucketMap = new Map(items.map((item) => [item.bucket.slice(0, 10), item]));
+                    const startDate = new Date(items[0].bucket);
+                    const endDate = new Date(items[items.length - 1].bucket);
+                    const filled = [];
+                    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                        const key = d.toISOString().slice(0, 10);
+                        if (bucketMap.has(key)) {
+                            filled.push(bucketMap.get(key));
+                        } else {
+                            filled.push({
+                                bucket: key + "T00:00:00",
+                                total_clicks: 0,
+                                unique_clicks: 0,
+                                unique_users: 0,
+                                unique_sessions: 0,
+                                conversion: { click_to_signup: 0, click_to_paid: 0, click_to_confirmed: 0 },
+                                rates: {},
+                            });
+                        }
+                    }
+                    items = filled;
+                } else if (state.chartShowEmptyDays && items.length >= 2 && state.interval === "hour") {
+                    const bucketMap = new Map(items.map((item) => [item.bucket.slice(0, 13), item]));
+                    const startDate = new Date(items[0].bucket);
+                    const endDate = new Date(items[items.length - 1].bucket);
+                    const filled = [];
+                    for (let d = new Date(startDate); d <= endDate; d.setHours(d.getHours() + 1)) {
+                        const key = d.toISOString().slice(0, 13);
+                        if (bucketMap.has(key)) {
+                            filled.push(bucketMap.get(key));
+                        } else {
+                            filled.push({
+                                bucket: d.toISOString(),
+                                total_clicks: 0,
+                                unique_clicks: 0,
+                                unique_users: 0,
+                                unique_sessions: 0,
+                                conversion: { click_to_signup: 0, click_to_paid: 0, click_to_confirmed: 0 },
+                                rates: {},
+                            });
+                        }
+                    }
+                    items = filled;
+                }
+
+                if (items.length === 0) {
+                    chartNode.innerHTML = '<div class="admin-empty">No timeseries data in selected period.</div>';
+                    return;
+                }
+
+                const width = 1000;
+                const needsRotatedLabels = state.chartShowAllDates && items.length > 12;
+                const height = needsRotatedLabels ? 330 : 270;
+                const margin = { top: 20, right: 20, bottom: needsRotatedLabels ? 100 : 50, left: 48 };
+                const innerWidth = width - margin.left - margin.right;
+                const innerHeight = height - margin.top - margin.bottom;
+
+                // Use unique_clicks or total_clicks based on filter
+                const getItemValue = (item) => coerceNumber(state.chartOnlyUniqueUsers ? item.unique_clicks : item.total_clicks);
+                const maxValue = Math.max(...items.map(getItemValue), 1);
+
+                const points = items.map((item, index) => {
+                    const x = margin.left + (innerWidth * index) / Math.max(items.length - 1, 1);
+                    const value = getItemValue(item);
+                    const y = margin.top + innerHeight - (value / maxValue) * innerHeight;
+                    return { x, y, value, bucket: String(item.bucket || "-"), item };
+                });
+
+                // X label distribution — all labels or smart (up to 10)
+                let labelIndexes;
+                if (state.chartShowAllDates) {
+                    labelIndexes = items.map((_, i) => i);
+                } else {
+                    const maxLabels = Math.min(items.length, state.interval === "hour" ? 8 : 10);
+                    const labelStep = (items.length - 1) / Math.max(maxLabels - 1, 1);
+                    labelIndexes = Array.from({ length: maxLabels }, (_, i) => Math.round(i * labelStep))
+                        .filter((v, i, arr) => arr.indexOf(v) === i);
+                }
+
+                const formatBucketShort = (bucket) => {
+                    const parsed = new Date(bucket);
+                    if (isNaN(parsed.getTime())) {
+                        return bucket.length > 12 ? bucket.slice(0, 12) + "\u2026" : bucket;
+                    }
+                    if (state.interval === "hour") {
+                        return parsed.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+                    }
+                    return parsed.toLocaleString("en-US", { month: "short", day: "numeric" });
+                };
+
+                const formatBucketFull = (bucket) => {
+                    const parsed = new Date(bucket);
+                    if (isNaN(parsed.getTime())) return bucket;
+                    if (state.interval === "hour") {
+                        return parsed.toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+                    }
+                    return parsed.toLocaleString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" });
+                };
+
+                const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+                const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${(margin.top + innerHeight).toFixed(1)} L ${points[0].x.toFixed(1)} ${(margin.top + innerHeight).toFixed(1)} Z`;
+                const yTicks = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round(maxValue * ratio));
+
+                const yGrid = yTicks.map((value) => {
+                    const y = margin.top + innerHeight - (value / maxValue) * innerHeight;
+                    return `<g>
+                        <line x1="${margin.left}" y1="${y.toFixed(1)}" x2="${(margin.left + innerWidth).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#dce6ff" stroke-width="1"/>
+                        <text x="${(margin.left - 8).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="#6074a5" font-size="11">${formatCount(value)}</text>
+                    </g>`;
+                }).join("");
+
+                const rotateLabels = state.chartShowAllDates && labelIndexes.length > 12;
+                const xLabels = labelIndexes.map((index) => {
+                    const point = points[index];
+                    const label = formatBucketShort(point.bucket);
+                    if (rotateLabels) {
+                        return `<g>
+                            <line x1="${point.x.toFixed(1)}" y1="${(margin.top + innerHeight).toFixed(1)}" x2="${point.x.toFixed(1)}" y2="${(margin.top + innerHeight + 5).toFixed(1)}" stroke="#8097c8" stroke-width="1.5"/>
+                            <text x="${point.x.toFixed(1)}" y="${(margin.top + innerHeight + 10).toFixed(1)}" text-anchor="end" fill="#6074a5" font-size="10" transform="rotate(-45 ${point.x.toFixed(1)} ${(margin.top + innerHeight + 10).toFixed(1)})">${label}</text>
+                        </g>`;
+                    }
+                    return `<g>
+                        <line x1="${point.x.toFixed(1)}" y1="${(margin.top + innerHeight).toFixed(1)}" x2="${point.x.toFixed(1)}" y2="${(margin.top + innerHeight + 5).toFixed(1)}" stroke="#8097c8" stroke-width="1.5"/>
+                        <text x="${point.x.toFixed(1)}" y="${(margin.top + innerHeight + 18).toFixed(1)}" text-anchor="middle" fill="#6074a5" font-size="11">${label}</text>
+                    </g>`;
+                }).join("");
+
+                const markers = points.map((point, index) => {
+                    return `<circle class="chart-dot" data-index="${index}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4" fill="#0f62fe" stroke="#fff" stroke-width="2" style="transition:r 0.1s ease"/>`;
+                }).join("");
+
+                // Wide invisible hover bands for easier mouse targeting
+                const bandWidth = items.length > 1 ? innerWidth / (items.length - 1) : innerWidth;
+                const hoverBands = points.map((point, index) => {
+                    const bx = Math.max(margin.left, point.x - bandWidth / 2);
+                    return `<rect class="chart-hover-band" data-index="${index}" x="${bx.toFixed(1)}" y="${margin.top}" width="${Math.min(bandWidth, innerWidth).toFixed(1)}" height="${innerHeight}" fill="transparent" cursor="crosshair"/>`;
+                }).join("");
+
+                // Vertical crosshair line
+                const crosshair = `<line id="chart-crosshair" x1="0" y1="${margin.top}" x2="0" y2="${(margin.top + innerHeight).toFixed(1)}" stroke="#0f62fe" stroke-width="1" stroke-dasharray="4 3" opacity="0" pointer-events="none"/>`;
+
+                chartNode.innerHTML = `
+                    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="CTA clicks dynamics chart">
+                        <defs>
+                            <linearGradient id="cta-chart-fill" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stop-color="#2f7cff" stop-opacity="0.35"></stop>
+                                <stop offset="100%" stop-color="#2f7cff" stop-opacity="0.02"></stop>
+                            </linearGradient>
+                        </defs>
+                        ${yGrid}
+                        <path d="${areaPath}" fill="url(#cta-chart-fill)"></path>
+                        <path d="${linePath}" fill="none" stroke="#0f62fe" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        ${crosshair}
+                        ${markers}
+                        ${xLabels}
+                        ${hoverBands}
+                    </svg>
+                    <div class="admin-muted" style="margin-top:2px">Points: ${items.length} &nbsp;·&nbsp; Peak: ${formatCount(maxValue)} ${state.chartOnlyUniqueUsers ? "unique clicks" : "clicks"}</div>
+                `;
+
+                // --- Tooltip setup ---
+                let tooltipEl = chartNode.querySelector(".chart-tooltip");
+                if (!tooltipEl) {
+                    tooltipEl = document.createElement("div");
+                    tooltipEl.className = "chart-tooltip";
+                    chartNode.appendChild(tooltipEl);
+                }
+                tooltipEl.hidden = true;
+
+                const svgEl = chartNode.querySelector("svg");
+                const crosshairEl = svgEl.querySelector("#chart-crosshair");
+                const dotEls = Array.from(svgEl.querySelectorAll(".chart-dot"));
+                let activeIndex = -1;
+
+                const showTooltip = (index) => {
+                    if (index === activeIndex) return;
+                    activeIndex = index;
+                    const point = points[index];
+                    const item = point.item;
+                    const conversion = getConversion(item);
+
+                    const primaryLabel = state.chartOnlyUniqueUsers ? "Unique Clicks" : "Total Clicks";
+                    const rows = [`<div class="chart-tooltip__row"><span>${primaryLabel}</span><strong>${formatCount(point.value)}</strong></div>`];
+                    if (!state.chartOnlyUniqueUsers && item.unique_clicks !== undefined) {
+                        rows.push(`<div class="chart-tooltip__row"><span>Unique Clicks</span><strong>${formatCount(coerceNumber(item.unique_clicks))}</strong></div>`);
+                    }
+                    if (conversion.click_to_signup !== undefined) {
+                        rows.push(`<div class="chart-tooltip__row"><span>Signup CR</span><strong>${formatRate(coerceNumber(conversion.click_to_signup))}</strong></div>`);
+                    }
+                    if (conversion.click_to_paid !== undefined) {
+                        rows.push(`<div class="chart-tooltip__row"><span>Paid CR</span><strong>${formatRate(coerceNumber(conversion.click_to_paid))}</strong></div>`);
+                    }
+
+                    tooltipEl.innerHTML = `<div class="chart-tooltip__date">${formatBucketFull(point.bucket)}</div>${rows.join("")}`;
+
+                    const svgRect = svgEl.getBoundingClientRect();
+                    const chartRect = chartNode.getBoundingClientRect();
+                    const scaleX = svgRect.width / width;
+                    const scaleY = svgRect.height / height;
+                    const tipX = (svgRect.left - chartRect.left) + point.x * scaleX;
+                    const tipY = (svgRect.top - chartRect.top) + point.y * scaleY;
+
+                    tooltipEl.style.left = `${tipX}px`;
+                    tooltipEl.style.top = `${tipY}px`;
+                    tooltipEl.hidden = false;
+
+                    if (crosshairEl) {
+                        crosshairEl.setAttribute("x1", point.x.toFixed(1));
+                        crosshairEl.setAttribute("x2", point.x.toFixed(1));
+                        crosshairEl.setAttribute("opacity", "0.6");
+                    }
+
+                    dotEls.forEach((dot, i) => {
+                        dot.setAttribute("r", i === index ? "6" : "4");
+                        dot.setAttribute("stroke-width", i === index ? "2.5" : "2");
+                    });
+                };
+
+                const hideTooltip = () => {
+                    activeIndex = -1;
+                    tooltipEl.hidden = true;
+                    if (crosshairEl) crosshairEl.setAttribute("opacity", "0");
+                    dotEls.forEach((dot) => {
+                        dot.setAttribute("r", "4");
+                        dot.setAttribute("stroke-width", "2");
+                    });
+                };
+
+                svgEl.querySelectorAll(".chart-hover-band").forEach((band) => {
+                    band.addEventListener("mouseenter", () => showTooltip(Number(band.dataset.index)));
+                });
+                svgEl.addEventListener("mouseleave", hideTooltip);
+            };
+
+            const renderTopCtaTable = (payload) => {
+                const items = Array.isArray(payload.items) ? payload.items : [];
+                if (!topBody) {
+                    return;
+                }
+                if (items.length === 0) {
+                    topBody.innerHTML = '<tr><td colspan="6" class="admin-muted">No data yet.</td></tr>';
+                    return;
+                }
+                topBody.innerHTML = items.map((item) => {
+                    const conversion = getConversion(item);
+                    const signupRate = coerceNumber(conversion.click_to_signup);
+                    const confirmedRate = coerceNumber(conversion.click_to_confirmed);
+                    const paidRate = coerceNumber(conversion.click_to_paid);
+                    return `
+                        <tr>
+                            <td>${String(item.cta_id || "-")}</td>
+                            <td>${formatCount(coerceNumber(item.total_clicks))}</td>
+                            <td>${formatCount(coerceNumber(item.unique_clicks))}</td>
+                            <td>${formatRate(signupRate)}</td>
+                            <td>${formatRate(confirmedRate)}</td>
+                            <td>${formatRate(paidRate)}</td>
+                        </tr>
+                    `;
+                }).join("");
+            };
+
+            const aggregateByLocation = (items) => {
+                const map = new Map();
+                items.forEach((item) => {
+                    const key = String(item.location || "unknown");
+                    const conversion = getConversion(item);
+                    const current = map.get(key) || {
+                        location: key,
+                        total_clicks: 0,
+                        unique_clicks: 0,
+                        click_users: 0,
+                        signup_users: 0,
+                        confirmed_users: 0,
+                        paid_users: 0,
+                    };
+                    current.total_clicks += coerceNumber(item.total_clicks);
+                    current.unique_clicks += coerceNumber(item.unique_clicks);
+                    current.click_users += coerceNumber(conversion.click_users);
+                    current.signup_users += coerceNumber(conversion.signup_users);
+                    current.confirmed_users += coerceNumber(conversion.confirmed_users ?? conversion.signup_users);
+                    current.paid_users += coerceNumber(conversion.paid_users);
+                    map.set(key, current);
+                });
+                return Array.from(map.values())
+                    .map((entry) => ({
+                        ...entry,
+                        click_to_signup: entry.click_users > 0 ? entry.signup_users / entry.click_users : 0,
+                        click_to_confirmed: entry.click_users > 0 ? entry.confirmed_users / entry.click_users : 0,
+                        click_to_paid: entry.click_users > 0 ? entry.paid_users / entry.click_users : 0,
+                    }))
+                    .sort((left, right) => right.total_clicks - left.total_clicks);
+            };
+
+            const renderLocationTable = (payload) => {
+                const items = Array.isArray(payload.items) ? payload.items : [];
+                const grouped = aggregateByLocation(items).slice(0, 10);
+                if (!locationBody) {
+                    return;
+                }
+                if (grouped.length === 0) {
+                    locationBody.innerHTML = '<tr><td colspan="6" class="admin-muted">No data yet.</td></tr>';
+                    return;
+                }
+                locationBody.innerHTML = grouped.map((item) => {
+                    return `
+                        <tr>
+                            <td>${item.location}</td>
+                            <td>${formatCount(item.total_clicks)}</td>
+                            <td>${formatCount(item.unique_clicks)}</td>
+                            <td>${formatRate(item.click_to_signup)}</td>
+                            <td>${formatRate(item.click_to_confirmed)}</td>
+                            <td>${formatRate(item.click_to_paid)}</td>
+                        </tr>
+                    `;
+                }).join("");
+            };
+
+            const aggregateByPageAndUtm = (items) => {
+                const normalizePageSlicePath = (value) => {
+                    const raw = String(value || "").trim().toLowerCase();
+                    if (!raw) {
+                        return "";
+                    }
+                    const hashIndex = raw.indexOf("#");
+                    const withoutHash = hashIndex >= 0 ? raw.slice(0, hashIndex) : raw;
+                    const queryIndex = withoutHash.indexOf("?");
+                    const withoutQuery = queryIndex >= 0 ? withoutHash.slice(0, queryIndex) : withoutHash;
+                    let normalized = withoutQuery.startsWith("/") ? withoutQuery : `/${withoutQuery}`;
+                    if (normalized.length > 1) {
+                        normalized = normalized.replace(/\/+$/, "");
+                    }
+                    if (normalized === "/docs" || normalized.startsWith("/docs/")) {
+                        return "/docs";
+                    }
+                    if (normalized === "/pricing" || normalized.startsWith("/pricing/")) {
+                        return "/pricing";
+                    }
+                    if (normalized === "/" || normalized === "/landing" || normalized.startsWith("/landing/")) {
+                        return "/";
+                    }
+                    return normalized;
+                };
+
+                const pageBuckets = new Map();
+                trackedPages.forEach((page) => {
+                    pageBuckets.set(page, new Map());
+                });
+
+                items.forEach((item) => {
+                    const pagePath = normalizePageSlicePath(item.page_path);
+                    if (!pageBuckets.has(pagePath)) {
+                        return;
+                    }
+                    const sourceKey = String(item.utm_source || "").trim().toLowerCase() || "(direct)";
+                    const conversion = getConversion(item);
+                    const bucket = pageBuckets.get(pagePath);
+                    if (!bucket) {
+                        return;
+                    }
+                    const current = bucket.get(sourceKey) || {
+                        source: sourceKey,
+                        total_clicks: 0,
+                        click_users: 0,
+                        signup_users: 0,
+                        confirmed_users: 0,
+                        paid_users: 0,
+                    };
+                    current.total_clicks += coerceNumber(item.total_clicks);
+                    current.click_users += coerceNumber(conversion.click_users);
+                    current.signup_users += coerceNumber(conversion.signup_users);
+                    current.confirmed_users += coerceNumber(conversion.confirmed_users ?? conversion.signup_users);
+                    current.paid_users += coerceNumber(conversion.paid_users);
+                    bucket.set(sourceKey, current);
+                });
+
+                const payload = new Map();
+                trackedPages.forEach((page) => {
+                    const sourceMap = pageBuckets.get(page);
+                    const rows = sourceMap
+                        ? Array.from(sourceMap.values()).map((entry) => ({
+                            ...entry,
+                            click_to_signup: entry.click_users > 0 ? entry.signup_users / entry.click_users : 0,
+                            click_to_confirmed: entry.click_users > 0 ? entry.confirmed_users / entry.click_users : 0,
+                            click_to_paid: entry.click_users > 0 ? entry.paid_users / entry.click_users : 0,
+                        }))
+                        : [];
+                    rows.sort((left, right) => {
+                        if (right.click_users !== left.click_users) {
+                            return right.click_users - left.click_users;
+                        }
+                        if (right.total_clicks !== left.total_clicks) {
+                            return right.total_clicks - left.total_clicks;
+                        }
+                        return left.source.localeCompare(right.source);
+                    });
+                    payload.set(page, rows);
+                });
+                return payload;
+            };
+
+            const renderPageSliceFunnel = (view, row) => {
+                if (!view) {
+                    return;
+                }
+                const clickUsers = row ? coerceNumber(row.click_users) : 0;
+                const signupUsers = row ? coerceNumber(row.signup_users) : 0;
+                const confirmedUsers = row ? coerceNumber(row.confirmed_users) : 0;
+                const paidUsers = row ? coerceNumber(row.paid_users) : 0;
+                const clickToSignup = row ? coerceNumber(row.click_to_signup) : 0;
+                const clickToConfirmed = row ? coerceNumber(row.click_to_confirmed) : 0;
+                const clickToPaid = row ? coerceNumber(row.click_to_paid) : 0;
+
+                if (view.clicksNode) {
+                    view.clicksNode.textContent = formatCount(clickUsers);
+                }
+                if (view.signupsNode) {
+                    view.signupsNode.textContent = formatCount(signupUsers);
+                }
+                if (view.confirmedNode) {
+                    view.confirmedNode.textContent = formatCount(confirmedUsers);
+                }
+                if (view.paidNode) {
+                    view.paidNode.textContent = formatCount(paidUsers);
+                }
+                if (view.signupRateNode) {
+                    view.signupRateNode.textContent = formatRate(clickToSignup);
+                }
+                if (view.confirmedRateNode) {
+                    view.confirmedRateNode.textContent = formatRate(clickToConfirmed);
+                }
+                if (view.paidRateNode) {
+                    view.paidRateNode.textContent = formatRate(clickToPaid);
+                }
+
+                const baseline = Math.max(clickUsers, 1);
+                const ratios = [1, signupUsers / baseline, confirmedUsers / baseline, paidUsers / baseline];
+                view.funnelSteps.forEach((step, index) => {
+                    const width = Math.max(0, Math.min(1, ratios[index] || 0)) * 100;
+                    step.style.setProperty("--funnel-fill", `${width.toFixed(2)}%`);
+                });
+            };
+
+            const renderPageSlices = (payload) => {
+                const items = Array.isArray(payload.items) ? payload.items : [];
+                const groupedByPage = aggregateByPageAndUtm(items);
+                trackedPages.forEach((page) => {
+                    const view = pageSliceViews.get(page);
+                    if (!view) {
+                        return;
+                    }
+                    const rows = groupedByPage.get(page) || [];
+                    if (!view.body) {
+                        return;
+                    }
+                    if (!rows.length) {
+                        view.body.innerHTML = '<tr><td colspan="6" class="admin-muted">No data yet.</td></tr>';
+                        if (view.sourceNode) {
+                            view.sourceNode.textContent = "Top utm_source: -";
+                        }
+                        renderPageSliceFunnel(view, null);
+                        return;
+                    }
+                    view.body.innerHTML = rows.slice(0, 8).map((row) => {
+                        return `
+                            <tr>
+                                <td>${row.source}</td>
+                                <td>${formatCount(row.click_users)}</td>
+                                <td>${formatCount(row.signup_users)}</td>
+                                <td>${formatCount(row.confirmed_users)}</td>
+                                <td>${formatCount(row.paid_users)}</td>
+                                <td>${formatRate(row.click_to_paid)}</td>
+                            </tr>
+                        `;
+                    }).join("");
+                    if (view.sourceNode) {
+                        view.sourceNode.textContent = `Top utm_source: ${rows[0].source}`;
+                    }
+                    renderPageSliceFunnel(view, rows[0]);
+                });
+            };
+
+            const renderFunnel = (payload) => {
+                const conversion = getConversion(payload);
+                const clickUsers = coerceNumber(conversion.click_users);
+                const signupUsers = coerceNumber(conversion.signup_users);
+                const confirmedUsers = coerceNumber(conversion.confirmed_users ?? conversion.signup_users);
+                const paidUsers = coerceNumber(conversion.paid_users);
+
+                document.querySelector("[data-funnel-clicks]").textContent = formatCount(clickUsers);
+                document.querySelector("[data-funnel-signups]").textContent = formatCount(signupUsers);
+                document.querySelector("[data-funnel-confirmed]").textContent = formatCount(confirmedUsers);
+                document.querySelector("[data-funnel-paid]").textContent = formatCount(paidUsers);
+
+                const clickToSignup = coerceNumber(conversion.click_to_signup);
+                const clickToConfirmed = coerceNumber(conversion.click_to_confirmed ?? (clickUsers > 0 ? confirmedUsers / clickUsers : 0));
+                const clickToPaid = coerceNumber(conversion.click_to_paid ?? (clickUsers > 0 ? paidUsers / clickUsers : 0));
+                const signupToConfirmed = coerceNumber(conversion.signup_to_confirmed ?? (signupUsers > 0 ? confirmedUsers / signupUsers : 0));
+                const confirmedToPaid = coerceNumber(conversion.confirmed_to_paid ?? (confirmedUsers > 0 ? paidUsers / confirmedUsers : 0));
+
+                document.querySelector("[data-funnel-signup-rate]").textContent = `Click -> Signup: ${formatRate(clickToSignup)}`;
+                document.querySelector("[data-funnel-confirmed-rate]").innerHTML = `Click -> Confirmed: ${formatRate(clickToConfirmed)}<br>Signup -> Confirmed: ${formatRate(signupToConfirmed)}`;
+                document.querySelector("[data-funnel-paid-rate]").innerHTML = `Click -> Paid: ${formatRate(clickToPaid)}<br>Confirmed -> Paid: ${formatRate(confirmedToPaid)}`;
+
+                if (!funnelRoot) {
+                    return;
+                }
+                const steps = Array.from(funnelRoot.querySelectorAll(".admin-funnel-step"));
+                const baseline = Math.max(clickUsers, 1);
+                const ratios = [
+                    1,
+                    signupUsers / baseline,
+                    confirmedUsers / baseline,
+                    paidUsers / baseline,
+                ];
+                steps.forEach((step, index) => {
+                    const width = Math.max(0, Math.min(1, ratios[index] || 0)) * 100;
+                    step.style.setProperty("--funnel-fill", `${width.toFixed(2)}%`);
+                });
+            };
+
+            const renderFormatDecisions = (payload) => {
+                const items = Array.isArray(payload.items) ? payload.items : [];
+                if (formatDecisionsBody) {
+                    if (!items.length) {
+                        formatDecisionsBody.innerHTML = '<tr><td colspan="4" class="admin-muted">No decisions yet.</td></tr>';
+                    } else {
+                        formatDecisionsBody.innerHTML = items.map((item) => {
+                            const topFormats = Array.isArray(item.top_formats) ? item.top_formats : [];
+                            const topFormatsHtml = topFormats.length
+                                ? topFormats.map((format) => `<code>${String(format)}</code>`).join(", ")
+                                : "-";
+                            const changes = Array.isArray(item.status_changes) ? item.status_changes : [];
+                            const changesHtml = changes.length
+                                ? changes.map((change) => {
+                                    const previousStatus = String(change.previous_status || "paused");
+                                    const nextStatus = String(change.new_status || "paused");
+                                    const format = String(change.cta_format || "unknown");
+                                    return `${format}: ${previousStatus} -> ${nextStatus}`;
+                                }).join("; ")
+                                : "No status changes";
+                            return `
+                                <tr>
+                                    <td>${formatDateTime(item.decided_at)}</td>
+                                    <td>${formatDateTime(item.window_start_at)} - ${formatDateTime(item.window_end_at)}</td>
+                                    <td>
+                                        ${topFormatsHtml}
+                                        <div class="admin-decision-note">${String(item.reason || "")}</div>
+                                    </td>
+                                    <td>
+                                        ${formatCount(coerceNumber(item.changed_formats))}
+                                        <div class="admin-decision-changes">${changesHtml}</div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join("");
+                    }
+                }
+
+                if (!formatStatusesNoteNode) {
+                    return;
+                }
+                const statuses = Array.isArray(payload.current_statuses) ? payload.current_statuses : [];
+                if (!statuses.length) {
+                    formatStatusesNoteNode.textContent = "Current statuses: -";
+                    return;
+                }
+                const preview = statuses.slice(0, 8).map((item) => {
+                    const ctaFormat = String(item.cta_format || "unknown");
+                    const status = String(item.status || "paused");
+                    return `${ctaFormat} ${status}`;
+                });
+                const suffix = statuses.length > preview.length ? ` (+${statuses.length - preview.length})` : "";
+                formatStatusesNoteNode.textContent = `Current statuses: ${preview.join(", ")}${suffix}`;
+            };
+
+            const setGeneratedAt = (generatedAt) => {
+                if (!generatedAtNode) {
+                    return;
+                }
+                if (!generatedAt) {
+                    generatedAtNode.textContent = "Last update: -";
+                    return;
+                }
+                const parsed = new Date(generatedAt);
+                if (Number.isNaN(parsed.getTime())) {
+                    generatedAtNode.textContent = `Last update: ${generatedAt}`;
+                    return;
+                }
+                generatedAtNode.textContent = `Last update: ${parsed.toLocaleString()}`;
+            };
+
+            const showError = (message) => {
+                if (!errorBlock) {
+                    return;
+                }
+                if (!message) {
+                    errorBlock.hidden = true;
+                    errorBlock.textContent = "";
+                    return;
+                }
+                errorBlock.hidden = false;
+                errorBlock.textContent = message;
+            };
+
+            const syncPresetButtons = () => {
+                presetButtons.forEach((button) => {
+                    const value = Number.parseInt(button.dataset.lookback || "", 10);
+                    button.classList.toggle("is-active", Number.isFinite(value) && value === state.lookbackDays && !state.startAt && !state.endAt);
+                });
+            };
+
+            const loadDashboard = async () => {
+                showError(null);
+                syncUrlQuery();
+                if (refreshButton) {
+                    refreshButton.disabled = true;
+                }
+                try {
+                    const params = buildParams();
+                    const summaryPromise = fetchJson(`${apiBase}/admin/cta-analytics/dashboard/summary`, params);
+                    const timeseriesPromise = fetchJson(
+                        `${apiBase}/admin/cta-analytics/timeseries`,
+                        (() => {
+                            const next = withPaging(params, 300);
+                            next.set("interval", state.interval);
+                            return next;
+                        })()
+                    );
+                    const topPromise = fetchJson(`${apiBase}/admin/cta-analytics/top-cta`, withPaging(params, 8));
+                    const breakdownPromise = fetchJson(`${apiBase}/admin/cta-analytics/breakdown`, withPaging(params, 100));
+                    const funnelPromise = fetchJson(`${apiBase}/admin/cta-analytics/funnel`, params);
+                    const decisionsPromise = fetchJson(
+                        `${apiBase}/admin/cta-analytics/format-decisions`,
+                        (() => {
+                            const next = new URLSearchParams();
+                            next.set("days", "7");
+                            next.set("limit", "20");
+                            return next;
+                        })()
+                    );
+
+                    const [summary, timeseries, top, breakdown, funnel, decisions] = await Promise.all([
+                        summaryPromise,
+                        timeseriesPromise,
+                        topPromise,
+                        breakdownPromise,
+                        funnelPromise,
+                        decisionsPromise,
+                    ]);
+
+                    renderKpi(summary);
+                    renderObservability(summary);
+                    renderTimeseriesChart(timeseries);
+                    renderTopCtaTable(top);
+                    renderLocationTable(breakdown);
+                    renderPageSlices(breakdown);
+                    renderFunnel(funnel);
+                    renderFormatDecisions(decisions);
+                    setGeneratedAt(summary.generated_at || timeseries.generated_at || funnel.generated_at || null);
+                } catch (error) {
+                    console.error(error);
+                    showError("Failed to load CTA analytics. Please check filters or try again.");
+                } finally {
+                    if (refreshButton) {
+                        refreshButton.disabled = false;
+                    }
+                }
+            };
+
+            presetButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const next = Number.parseInt(button.dataset.lookback || "", 10);
+                    if (!Number.isFinite(next)) {
+                        return;
+                    }
+                    state.lookbackDays = next;
+                    state.startAt = null;
+                    state.endAt = null;
+                    if (startInput) {
+                        startInput.value = "";
+                    }
+                    if (endInput) {
+                        endInput.value = "";
+                    }
+                    syncPresetButtons();
+                    loadDashboard();
+                });
+            });
+
+            if (intervalSelect) {
+                intervalSelect.addEventListener("change", () => {
+                    state.interval = intervalSelect.value === "hour" ? "hour" : "day";
+                    loadDashboard();
+                });
+            }
+
+            if (clearRangeButton) {
+                clearRangeButton.addEventListener("click", () => {
+                    state.startAt = null;
+                    state.endAt = null;
+                    if (startInput) {
+                        startInput.value = "";
+                    }
+                    if (endInput) {
+                        endInput.value = "";
+                    }
+                    syncPresetButtons();
+                    loadDashboard();
+                });
+            }
+
+            if (refreshButton) {
+                refreshButton.addEventListener("click", () => {
+                    const startAt = safeDateToIso(startInput ? startInput.value : null);
+                    const endAt = safeDateToIso(endInput ? endInput.value : null);
+
+                    if ((startAt && !endAt) || (!startAt && endAt)) {
+                        showError("Fill both Start and End or keep both empty.");
+                        return;
+                    }
+                    if (startAt && endAt && startAt >= endAt) {
+                        showError("End must be later than Start.");
+                        return;
+                    }
+
+                    showError(null);
+                    state.startAt = startAt;
+                    state.endAt = endAt;
+                    state.placements = parseFilterValues(placementInput ? placementInput.value : "");
+                    state.pages = parseFilterValues(pageInput ? pageInput.value : "");
+                    state.utmSources = parseFilterValues(utmSourceInput ? utmSourceInput.value : "");
+                    state.ctaFormats = parseFilterValues(ctaFormatInput ? ctaFormatInput.value : "");
+                    state.ctaIds = parseFilterValues(ctaIdInput ? ctaIdInput.value : "");
+                    syncPresetButtons();
+                    loadDashboard();
+                });
+            }
+
+            exportButtons.forEach((button) => {
+                button.addEventListener("click", async () => {
+                    const dataset = String(button.dataset.exportDataset || "").trim().toLowerCase();
+                    if (!dataset) {
+                        return;
+                    }
+                    try {
+                        setExportStatus("Preparing CSV...");
+                        setExportBusy(true);
+                        await downloadCsvExport(dataset);
+                        setExportStatus(`Downloaded: ${dataset}.csv`);
+                    } catch (error) {
+                        console.error(error);
+                        setExportStatus("CSV export failed.");
+                    } finally {
+                        setExportBusy(false);
+                    }
+                });
+            });
+
+            // Chart filter checkboxes — re-render from cached data without new network request
+            if (chartFilterShowEmptyDays) {
+                chartFilterShowEmptyDays.addEventListener("change", () => {
+                    state.chartShowEmptyDays = chartFilterShowEmptyDays.checked;
+                    if (state.lastTimeseries) renderTimeseriesChart(state.lastTimeseries);
+                });
+            }
+            if (chartFilterShowAllDates) {
+                chartFilterShowAllDates.addEventListener("change", () => {
+                    state.chartShowAllDates = chartFilterShowAllDates.checked;
+                    if (state.lastTimeseries) renderTimeseriesChart(state.lastTimeseries);
+                });
+            }
+            if (chartFilterOnlyUniqueUsers) {
+                chartFilterOnlyUniqueUsers.addEventListener("change", () => {
+                    state.chartOnlyUniqueUsers = chartFilterOnlyUniqueUsers.checked;
+                    if (state.lastTimeseries) renderTimeseriesChart(state.lastTimeseries);
+                });
+            }
+
+            hydrateStateFromUrl();
+            syncControlsFromState();
+            syncPresetButtons();
+            loadDashboard();
+        })();
+    </script>
+</body>
+</html>

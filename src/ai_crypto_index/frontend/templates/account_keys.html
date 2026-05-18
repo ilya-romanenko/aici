@@ -1,0 +1,216 @@
+{% extends "account_base.html" %}
+{% block page_title %}Keys & Security - AI Crypto Index{% endblock %}
+{% block body_attrs %}
+    data-api-keys-url="{{ api_url('api_list_api_keys') }}"
+    data-api-keys-create-url="{{ api_url('api_create_api_key') }}"
+    data-api-keys-update-url="{{ api_url('api_update_api_key', key_id='__KEY__') }}"
+    data-api-keys-rotate-url="{{ api_url('api_rotate_api_key', key_id='__KEY__') }}"
+    data-api-keys-revoke-url="{{ api_url('api_revoke_api_key', key_id='__KEY__') }}"
+    data-api-keys-activity-url="{{ api_url('api_list_api_key_activity', key_id='__KEY__') }}"
+{% endblock %}
+{% block content %}
+<div class="keys-container">
+    <section class="keys-hero">
+        <div>
+            <p class="keys-hero__eyebrow">Keys &amp; Security</p>
+            <h1>Manage API keys and security controls</h1>
+            <p>Rotate credentials, enforce IP allowlists, and limit access with role-based permissions and usage caps.</p>
+        </div>
+        <div class="keys-hero__cta">
+            <button class="account-cta account-cta--primary" type="button" data-keys-create-open>
+                Create key
+            </button>
+            <a class="account-cta account-cta--secondary" href="{{ request.url_for('render_account_tab', tab='overview') }}">Back to Overview</a>
+        </div>
+    </section>
+
+    <section class="keys-grid" data-keys-root>
+        <article class="keys-card keys-card--summary" data-keys-summary>
+            <div class="keys-card__header keys-card__header--summary">
+                <div class="keys-summary__heading">
+                    <p class="keys-eyebrow">Plan overview</p>
+                    <div class="keys-summary__plan-row">
+                        <h2 data-keys-summary-plan>Loading plan</h2>
+                        <span class="keys-badge" data-keys-summary-slots>0 of 0 slots used</span>
+                    </div>
+                    <p class="keys-summary__subtext">Compact view of your plan and quotas</p>
+                </div>
+            </div>
+            <div class="keys-summary keys-summary--elevated">
+                <div class="keys-summary__item">
+                    <p class="keys-summary__label">Monthly usage</p>
+                    <strong class="keys-summary__value" data-keys-summary-usage>...</strong>
+                </div>
+                <div class="keys-summary__item">
+                    <p class="keys-summary__label">Daily cap</p>
+                    <strong class="keys-summary__value" data-keys-summary-daily>...</strong>
+                </div>
+                <div class="keys-summary__item">
+                    <p class="keys-summary__label">Burst / latency</p>
+                    <strong class="keys-summary__value" data-keys-summary-burst>...</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="keys-card keys-card--list">
+            <div class="keys-card__header">
+                <div>
+                    <p class="keys-eyebrow">Active keys</p>
+                    <h3>List and status</h3>
+                </div>
+                <div class="keys-card__actions">
+                    <button
+                        class="keys-icon-btn"
+                        type="button"
+                        data-keys-create-open
+                        aria-label="Create new key"
+                        title="New key"
+                    >
+                        <img
+                            src="{{ url_for('static', path='icons/add_icon.svg') }}"
+                            alt=""
+                            aria-hidden="true"
+                            width="20"
+                            height="20"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </button>
+                    <button
+                        class="keys-icon-btn"
+                        type="button"
+                        data-keys-refresh
+                        aria-label="Refresh list"
+                        title="Refresh"
+                    >
+                        <img
+                            src="{{ url_for('static', path='icons/refresh_icon.svg') }}"
+                            alt=""
+                            aria-hidden="true"
+                            width="20"
+                            height="20"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </button>
+                </div>
+            </div>
+            <ul class="keys-list" data-keys-list>
+                <li class="keys-list__item is-empty">Keys will appear after loading.</li>
+            </ul>
+            <p class="keys-empty" data-keys-empty hidden>You have not issued any keys yet.</p>
+            <div class="keys-secret" data-keys-secret hidden>
+                <p>Copy the secret now - it will not be shown again.</p>
+                <code data-keys-secret-value></code>
+                <button class="account-cta account-cta--ghost" type="button" data-keys-secret-copy>Copy secret</button>
+            </div>
+        </article>
+
+        <article class="keys-card keys-card--detail">
+            <div class="keys-card__header">
+                <div>
+                    <p class="keys-eyebrow">Key settings</p>
+                    <h3 data-keys-detail-title>Select a key</h3>
+                </div>
+            </div>
+            <form class="keys-form" data-keys-detail-form>
+                <label class="keys-field">
+                    <span>Label*</span>
+                    <input type="text" name="label" minlength="3" maxlength="160" required>
+                </label>
+                <label class="keys-field">
+                    <span>Application</span>
+                    <input type="text" name="application_name" maxlength="160">
+                </label>
+                <label class="keys-field">
+                    <span>Role</span>
+                    <select name="role" data-keys-detail-role></select>
+                </label>
+                <label class="keys-field">
+                    <span>Tags</span>
+                    <input type="text" name="tags" placeholder="alpha,beta">
+                </label>
+                <label class="keys-field">
+                    <span>IP allowlist</span>
+                    <textarea name="ip_allowlist" rows="3"></textarea>
+                </label>
+                <label class="keys-field">
+                    <span>Label constraints</span>
+                    <textarea name="label_constraints" rows="3"></textarea>
+                </label>
+                <div class="keys-detail-actions">
+                    <button class="account-cta account-cta--primary" type="submit">Save</button>
+                    <button class="account-cta account-cta--secondary" type="button" data-keys-rotate>Rotate</button>
+                    <button class="account-cta account-cta--danger" type="button" data-keys-revoke>Revoke</button>
+                </div>
+            </form>
+            <p class="keys-error" data-keys-detail-error></p>
+        </article>
+
+        <article class="keys-card keys-card--activity">
+            <div class="keys-card__header">
+                <div>
+                    <p class="keys-eyebrow">Activity history</p>
+                </div>
+            </div>
+            <div class="keys-activity">
+                <div class="keys-activity__header" aria-hidden="true">
+                    <span class="keys-activity__column">Event</span>
+                    <span class="keys-activity__column">Details</span>
+                    <span class="keys-activity__column">Actor</span>
+                    <span class="keys-activity__column">When</span>
+                </div>
+                <div class="keys-activity__body" data-keys-activity-list>
+                    <div class="keys-activity__row is-empty">Select a key to view history.</div>
+                </div>
+            </div>
+            <p class="keys-empty" data-keys-activity-empty hidden>No events yet. Rotations, updates, and limits will show here.</p>
+        </article>
+    </section>
+</div>
+
+<div class="keys-modal" data-keys-create-modal hidden>
+    <div class="keys-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="keys-create-title">
+        <div class="keys-modal__header">
+            <div>
+                <p class="keys-eyebrow">New key</p>
+                <h3 id="keys-create-title">Issuance and limits</h3>
+            </div>
+            <button class="keys-modal__close" type="button" data-keys-create-close aria-label="Close new key dialog">&times;</button>
+        </div>
+        <form class="keys-form" data-keys-create-form>
+            <label class="keys-field">
+                <span>Label*</span>
+                <input type="text" name="label" minlength="3" maxlength="160" placeholder="Prod ingestion" required>
+            </label>
+            <label class="keys-field">
+                <span>Application / team</span>
+                <input type="text" name="application_name" maxlength="160" placeholder="Risk engine">
+            </label>
+            <label class="keys-field">
+                <span>Role</span>
+                <select name="role" data-keys-create-role></select>
+            </label>
+            <label class="keys-field">
+                <span>Tags</span>
+                <input type="text" name="tags" placeholder="serverless,cron" maxlength="160">
+            </label>
+            <label class="keys-field">
+                <span>IP allowlist</span>
+                <textarea name="ip_allowlist" rows="2" placeholder="203.0.113.10, 198.51.100.0/24"></textarea>
+                <small>Comma or newline separated list.</small>
+            </label>
+            <label class="keys-field">
+                <span>Label constraints</span>
+                <textarea name="label_constraints" rows="2" placeholder="prod,etl"></textarea>
+                <small>Required X-AICI-Label header.</small>
+            </label>
+            <div class="keys-modal__actions">
+                <button class="account-cta account-cta--primary" type="submit">Create key</button>
+                <button class="account-cta account-cta--ghost" type="button" data-keys-create-close>Cancel</button>
+            </div>
+        </form>
+        <p class="keys-error" data-keys-create-error></p>
+    </div>
+</div>
+{% endblock %}

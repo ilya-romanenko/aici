@@ -1,0 +1,78 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Python cache / build artefacts
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.eggs/
+build/
+dist/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Notebooks
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Data / research artefacts
+data/
+analysis_data/
+backtest_data/
+datasets/
+outputs/
+results/
+runs/
+logs/
+artifacts/
+figs/
+examples/
+notebooks/
+Results_Backup/
+reports/
+
+
+# Large models / serializations
+*.pkl
+*.joblib
+*.h5
+*.pt
+
+# Misc
+structure_*.txt
+tmp_icon_32.png
+.ruff_cache/
+node_modules/
+.env
+.env.*
+!.env.example
+cloudflared.exe
+
+# AI assistant internal files
+CLAUDE.md
+.claude/
+AGENTS.md
+docs/rules/
+docs/deployment/
+docs/important_commands.md
+docs/backlog.md
+docs/billing_tariff_model.md
+docs/stage0_audit.md
+docs/stage0_self_serve_plan.md
+docs/phase1_research.md
+docs/latest_allocation_split.md
+docs/operational_flow.md

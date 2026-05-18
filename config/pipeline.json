@@ -1,0 +1,236 @@
+{
+  "data": {
+    "root": "data",
+    "min_history_days": 365,
+    "allow_internal_gaps": false,
+    "include_delisted": false,
+    "dropna_all": true
+  },
+  "market_data": {
+    "provider": "binance",
+    "top_n": 100,
+    "start_date": "2021-01-01",
+    "fresh_download": false
+  },
+  "execution_realism": {
+    "enabled": true,
+    "target_venue": "binance_spot",
+    "target_region": "EEA",
+    "require_tradable_on_target_venue": true,
+    "require_region_allowed": true,
+    "require_not_delisted_at_t": true,
+    "tail_grace_days": 3,
+    "listings": {
+      "binance_spot": {
+        "unlisted_symbols": []
+      }
+    },
+    "region_restrictions": {
+      "binance_spot": {
+        "EEA": {
+          "blocked_symbols": [
+            "PAXG"
+          ]
+        }
+      }
+    },
+    "delisted_at": {
+      "binance_spot": {}
+    }
+  },
+  "runs": {
+    "root": "runs",
+    "expected_files": [
+      "weights.csv",
+      "perf.json",
+      "equity_curve.csv",
+      "log.txt"
+    ]
+  },
+  "auth": {
+    "database_url": "postgresql+asyncpg://aici:aici_local@auth-db:5432/aici_auth",
+    "jwt_secret_key": "change-me-in-prod",
+    "jwt_algorithm": "HS256",
+    "access_token_ttl_seconds": 3600,
+    "refresh_token_ttl_seconds": 2592000,
+    "email_token_ttl_seconds": 259200,
+    "password_reset_ttl_seconds": 3600,
+    "session_cookie_name": "aici_session",
+    "session_cookie_secure": false,
+    "session_cookie_domain": null,
+    "public_app_url": "https://aici.pro",
+    "expose_tokens_in_responses": false,
+    "echo_sql": false
+  },
+  "billing": {
+    "provider": "crypto",
+    "currency": "usd",
+    "trial_days": 14,
+    "enterprise_invoice_terms_days": 30,
+    "plans": {
+      "free": {
+        "code": "free",
+        "name": "Free trial",
+        "price_id_env": "AICI_STRIPE_PRICE_FREE",
+        "price_id": "price_FREE_TRIAL_API",
+        "unit_amount_cents": 0,
+        "interval": "month",
+        "trial_days": 0,
+        "self_serve": true
+      },
+      "pro": {
+        "code": "pro",
+        "name": "Pro",
+        "price_id_env": "AICI_STRIPE_PRICE_PRO",
+        "price_id": "price_PRO_MONTHLY_API",
+        "unit_amount_cents": 999,
+        "interval": "month",
+        "trial_days": 14,
+        "self_serve": true
+      },
+      "ultra": {
+        "code": "ultra",
+        "name": "Ultra",
+        "price_id_env": "AICI_STRIPE_PRICE_ULTRA",
+        "price_id": "price_ULTRA_MONTHLY_API",
+        "unit_amount_cents": 3999,
+        "interval": "month",
+        "trial_days": 14,
+        "self_serve": true
+      },
+      "enterprise": {
+        "code": "enterprise",
+        "name": "Enterprise",
+        "price_id_env": "AICI_STRIPE_PRICE_ENTERPRISE",
+        "price_id": "price_ENTERPRISE_ANNUAL",
+        "unit_amount_cents": 0,
+        "interval": "month",
+        "trial_days": 30,
+        "self_serve": false
+      }
+    },
+    "stripe": {
+      "secret_key": null,
+      "publishable_key": null,
+      "webhook_secret": null,
+      "checkout_success_path": "/app?billing=success",
+      "checkout_cancel_path": "/app?billing=cancelled",
+      "portal_return_path": "/app?billing=portal",
+      "default_domain": "https://aici.pro"
+    },
+    "crypto": {
+      "provider": "nowpayments",
+      "api_key_env": "AICI_CRYPTO_API_KEY",
+      "api_key": null,
+      "api_secret_env": "AICI_CRYPTO_API_SECRET",
+      "api_secret": null,
+      "webhook_secret_env": "AICI_CRYPTO_WEBHOOK_SECRET",
+      "webhook_secret": null,
+      "default_currency": "usdc",
+      "default_network": "usdc_bsc",
+      "usd_rate_env": "AICI_CRYPTO_USD_RATE",
+      "usd_to_crypto_rate": 1.0,
+      "fee_percent_env": "AICI_CRYPTO_FEE_PERCENT",
+      "service_fee_percent": 0.5,
+      "networks": {
+        "usdc_bsc": {
+          "code": "usdc_bsc",
+          "currency": "usdc",
+          "chain": "bsc",
+          "confirmations_required": 15,
+          "fee_percent": 0.5
+        },
+        "usdt_trc20": {
+          "code": "usdt_trc20",
+          "currency": "usdt",
+          "chain": "trc20",
+          "confirmations_required": 20,
+          "fee_percent": 0.5
+        },
+        "usdt_polygon": {
+          "code": "usdt_polygon",
+          "currency": "usdt",
+          "chain": "polygon",
+          "confirmations_required": 64,
+          "fee_percent": 0.5
+        }
+      }
+    }
+  },
+  "api_keys": {
+    "key_prefix": "aici_live_",
+    "default_plan_code": "free",
+    "max_keys_per_account": 5,
+    "notification_thresholds": [
+      0.8,
+      1.0
+    ],
+    "token_pricing": {
+      "per_call_tokens": 1,
+      "pipeline_trigger_tokens": 2,
+      "minimum_debit_tokens": 1
+    },
+    "webhooks": {
+      "rotation": [],
+      "usage_alerts": []
+    },
+    "plans": {
+      "free": {
+        "code": "free",
+        "daily_quota": 500,
+        "monthly_quota": 500,
+        "burst_per_minute": 60,
+        "burst_per_second": 5,
+        "data_latency_seconds": 86400,
+        "max_keys": 2,
+        "default_role": "reader",
+        "roles": [
+          "reader"
+        ]
+      },
+      "pro": {
+        "code": "pro",
+        "daily_quota": 1000,
+        "monthly_quota": 10000,
+        "burst_per_minute": 600,
+        "burst_per_second": 40,
+        "data_latency_seconds": 900,
+        "max_keys": 5,
+        "default_role": "standard",
+        "roles": [
+          "standard",
+          "automation"
+        ]
+      },
+      "ultra": {
+        "code": "ultra",
+        "daily_quota": 10000,
+        "monthly_quota": 100000,
+        "burst_per_minute": 1200,
+        "burst_per_second": 80,
+        "data_latency_seconds": 0,
+        "max_keys": 10,
+        "default_role": "standard",
+        "roles": [
+          "standard",
+          "automation"
+        ]
+      },
+      "enterprise": {
+        "code": "enterprise",
+        "daily_quota": null,
+        "monthly_quota": null,
+        "burst_per_minute": 2000,
+        "burst_per_second": 200,
+        "data_latency_seconds": 0,
+        "max_keys": 20,
+        "default_role": "standard",
+        "roles": [
+          "standard",
+          "automation",
+          "admin"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,253 @@
+{% extends "account_base.html" %}
+{% block page_title %}Billing & Plans - AI Crypto Index{% endblock %}
+{% block body_attrs %}
+    data-api-billing-status-url="{{ api_url('api_billing_status') }}"
+    data-api-billing-checkout-crypto-url="{{ api_url('api_billing_checkout_crypto') }}"
+    data-api-billing-cancel-url="{{ api_url('api_billing_cancel_crypto') }}"
+{% endblock %}
+{% block content %}
+{% set free_plan_copy = "Free is a starter tier with API access, basic rate limits, and up to 500 tokens per month." %}
+{% set token_model_copy = "Status checks are free; data reads (weights/perf/export) cost 5 tokens per call; pipeline triggers charge base + parameter add-ons." %}
+<div class="account-container">
+<section class="billing-plans" data-billing-root>
+    <header class="billing-plans__header">
+        <h2>Manage subscription and billing</h2>
+        <p>
+            Use this page to upgrade, renew, or cancel your current subscription. For public plan comparison before signup, see
+            <a
+                href="{{ request.url_for('render_pricing_page') }}"
+                data-cta-id="app_billing_open_public_pricing"
+                data-cta-format="link"
+                data-cta-location="/app/billing"
+                data-cta-placement="billing_header"
+                data-cta-scenario="open_pricing"
+            >/pricing</a>.
+        </p>
+        <p>Token model: {{ token_model_copy }} Quotas below are tokens per month.</p>
+    </header>
+    {% set plan_specs = [
+        {
+            "code": "free",
+            "name": "Free",
+            "price_env": "AICI_STRIPE_PRICE_FREE",
+            "price_label": "$0 / mo",
+            "trial_days": 0,
+            "note": free_plan_copy,
+            "self_serve": True,
+            "features": [
+                "Limited history (about 3 heavy pipeline runs)",
+                "T+1 data refresh for historical metrics",
+                "Email support within 48 hours"
+            ]
+        },
+        {
+            "code": "pro",
+            "name": "Pro",
+            "price_env": "AICI_STRIPE_PRICE_PRO",
+            "price_label": "$9.99 / mo",
+            "price_override": True,
+            "trial_days": 14,
+            "note": "API-first plan with higher limits, in-app checkout, and standard email support.",
+            "self_serve": True,
+            "features": [
+                "Up to 10k tokens per month",
+                "Priority queueing and higher burst limits",
+                "Same-day email support",
+                "Designed for recurring production API usage"
+            ]
+        },
+        {
+            "code": "ultra",
+            "name": "Ultra",
+            "price_env": "AICI_STRIPE_PRICE_ULTRA",
+            "price_label": "$39.99 / mo",
+            "price_override": True,
+            "trial_days": 14,
+            "note": "For production workloads: faster limits, reliability tooling, and richer support.",
+            "self_serve": True,
+            "features": [
+                "Up to 100k tokens per month",
+                "Priority rate limits and latency-focused SLAs",
+                "Incident webhooks and audit-ready logging",
+                "Built for high-frequency workloads"
+            ]
+        },
+        {
+            "code": "enterprise",
+            "name": "Enterprise",
+            "price_env": "AICI_STRIPE_PRICE_ENTERPRISE",
+            "price_label": "Custom pricing",
+            "price_override": True,
+            "trial_days": 30,
+            "note": "Tailored limits, invoicing, and security reviews for larger teams.",
+            "self_serve": False,
+            "features": [
+                "Custom SLAs and dedicated support",
+                "Private endpoints with contractual uptime",
+                "Security reviews, invoicing, and compliance docs"
+            ]
+        }
+    ] %}
+    {% set available_codes = namespace(items=[]) %}
+    {% for plan in billing_plans %}
+        {% set _ = available_codes.items.append(plan.code) %}
+    {% endfor %}
+    <div class="billing-carousel" data-plans-carousel data-carousel-mobile-breakpoint="900">
+        <button class="billing-carousel__nav billing-carousel__nav--prev" type="button" aria-label="Previous plan" data-carousel-prev>
+            &#8249;
+        </button>
+        <div class="billing-carousel__viewport" data-carousel-viewport>
+            <div class="billing-plans__grid" data-carousel-track>
+            {% for spec in plan_specs %}
+                {% set plan_data = (billing_plans | selectattr('code', 'equalto', spec.code) | list | first) %}
+                {% if spec.price_override %}
+                    {% set price_label = spec.price_label %}
+                {% else %}
+                    {% set price_label = plan_data.price_display if plan_data and plan_data.price_display else spec.price_label %}
+                {% endif %}
+                {% if spec.code == 'free' %}
+                    {% set plan_ready = True %}
+                {% else %}
+                    {% set plan_ready = spec.self_serve and spec.code in available_codes.items and price_label %}
+                {% endif %}
+                <article
+                        class="billing-plan"
+                        data-plan-card="{{ spec.code }}"
+                        data-plan-name="{{ spec.name }}"
+                        data-plan-price="{{ price_label }}"
+                        data-plan-trial="0"
+                        data-plan-features="{{ spec.features | join('||') }}"
+                    >
+                        <div class="billing-plan__heading">
+                            <h3>{{ spec.name }}</h3>
+                            <span class="billing-plan__badge" aria-label="Active plan" data-plan-active-badge hidden>Active plan</span>
+                        </div>
+                        <p class="billing-plan__price">{{ price_label }}</p>
+                        <ul class="billing-plan__features">
+                            {% for feature in spec.features %}
+                                <li>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                        <p class="billing-plan__note">{{ spec.note }}</p>
+                        <div class="billing-plan__cta" data-plan-cta>
+                            {% if spec.self_serve %}
+                                {% if spec.code == 'free' %}
+                                    <p class="billing-plan__note billing-plan__note--highlight">
+                                        Cancel a paid plan and you will automatically move back to Free when the paid period ends.
+                                    </p>
+                                {% else %}
+                                    <button
+                                        class="account-cta account-cta--primary"
+                                        type="button"
+                                        data-plan-trigger="{{ spec.code }}"
+                                        data-cta-id="app_billing_plan_{{ spec.code }}_checkout"
+                                        data-cta-format="button"
+                                        data-cta-location="/app/billing"
+                                        data-cta-placement="billing_plan_card"
+                                        data-cta-scenario="checkout_crypto"
+                                        {% if not plan_ready %}disabled aria-disabled="true" title="Pricing is still loading; contact support if this persists"{% endif %}
+                                    >
+                                        Pay with crypto
+                                    </button>
+                                    <button
+                                        class="account-cta account-cta--ghost"
+                                        type="button"
+                                        data-plan-cancel="{{ spec.code }}"
+                                        data-cta-id="app_billing_plan_{{ spec.code }}_cancel"
+                                        data-cta-format="button"
+                                        data-cta-location="/app/billing"
+                                        data-cta-placement="billing_plan_card"
+                                        data-cta-scenario="cancel_renewal"
+                                        hidden
+                                    >
+                                        Cancel renewal
+                                    </button>
+                                    <button
+                                        class="account-cta account-cta--ghost"
+                                        type="button"
+                                        data-plan-resume="{{ spec.code }}"
+                                        data-cta-id="app_billing_plan_{{ spec.code }}_resume"
+                                        data-cta-format="button"
+                                        data-cta-location="/app/billing"
+                                        data-cta-placement="billing_plan_card"
+                                        data-cta-scenario="resume_plan"
+                                        hidden
+                                    >
+                                        Resume plan
+                                    </button>
+                                    <p class="billing-plan__active-note" data-plan-cancel-note hidden>
+                                        Renewal stopped. Access stays until the current period ends. Resume anytime above.
+                                    </p>
+                                {% endif %}
+                            {% else %}
+                                <a
+                                    class="account-cta account-cta--primary"
+                                    href="mailto:contact@aici.pro"
+                                    data-cta-id="app_billing_enterprise_contact_sales"
+                                    data-cta-format="button"
+                                    data-cta-location="/app/billing"
+                                    data-cta-placement="billing_plan_card"
+                                    data-cta-scenario="contact_sales"
+                                >
+                                    Contact sales
+                                </a>
+                            {% endif %}
+                        </div>
+                        {% if spec.self_serve and not plan_ready %}
+                            <p class="billing-plan__hint">Pricing is still loading for this plan. Refresh or contact support.</p>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+        <button class="billing-carousel__nav billing-carousel__nav--next" type="button" aria-label="Next plan" data-carousel-next>
+            &#8250;
+        </button>
+    </div>
+</section>
+
+
+<section class="billing-history">
+    <header class="billing-history__header">
+        <h2>Billing history</h2>
+        <p>Receipts and invoices arrive via email after each crypto payment. Contact support if you need a billing update.</p>
+    </header>
+    <div class="billing-history__placeholder">
+        <p>Invoices appear after your first payment. We will email confirmations and invoices for your records.</p>
+    </div>
+</section>
+</div>
+
+<div class="billing-modals" aria-live="polite">
+    <div class="billing-modal" data-plan-modal hidden>
+        <div class="billing-modal__dialog" role="dialog" aria-modal="true">
+            <div class="billing-modal__header">
+                <div>
+                    <p class="billing-modal__eyebrow">Confirm your plan change</p>
+                    <h3 data-modal-title>Plan selection</h3>
+                </div>
+                <button class="billing-modal__close" type="button" aria-label="Close modal" data-plan-close>&times;</button>
+            </div>
+            <p class="billing-modal__price" data-modal-price></p>
+            <ul class="billing-modal__features" data-modal-features></ul>
+            <p class="billing-modal__trial" data-modal-trial></p>
+            <div class="billing-modal__actions">
+                <button
+                    class="account-cta account-cta--primary"
+                    type="button"
+                    data-plan-confirm
+                    data-cta-id="app_billing_modal_confirm_subscribe"
+                    data-cta-format="modal"
+                    data-cta-location="/app/billing"
+                    data-cta-placement="billing_confirm_modal"
+                    data-cta-scenario="confirm_checkout"
+                >
+                    Confirm and subscribe
+                </button>
+                <button class="account-cta account-cta--ghost" type="button" data-plan-close>Cancel</button>
+            </div>
+            <p class="billing-modal__error" data-plan-error></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% set resolved_action = form_action or api_url('api_submit_demo_request') %}
+{% set resolved_success = form_success_message or 'Thanks for your submission - we will reach out shortly.' %}
+{% set resolved_form_id = form_id or 'demo-request-form' %}
+{% set initial_run_id = (prefill_run_id or run_id) %}
+<form
+    id="{{ resolved_form_id }}"
+    class="landing-intake__form"
+    method="post"
+    action="{{ resolved_action }}"
+    data-intake-form="demo-request"
+    data-success-message="{{ resolved_success }}"
+    data-bool-fields="newsletter_opt_in,terms_accepted"
+    novalidate
+>
+    <input
+        type="hidden"
+        name="run_id"
+        value="{{ initial_run_id or '' }}"
+    >
+    <div class="landing-intake__grid">
+        <label class="landing-intake__field">
+            <span class="landing-intake__label">Full name</span>
+            <input
+                class="landing-intake__input"
+                type="text"
+                name="name"
+                required
+                minlength="2"
+                maxlength="120"
+                autocomplete="name"
+                placeholder="Ada Lovelace"
+            >
+        </label>
+        <label class="landing-intake__field">
+            <span class="landing-intake__label">Work email</span>
+            <input
+                class="landing-intake__input"
+                type="email"
+                name="email"
+                required
+                maxlength="160"
+                autocomplete="email"
+                placeholder="ada@yourcompany.com"
+            >
+        </label>
+        <label class="landing-intake__field">
+            <span class="landing-intake__label">
+                <span class="landing-intake__label-text">Company or fund</span>
+                <span class="landing-intake__label-optional">Optional</span>
+            </span>
+            <input
+                class="landing-intake__input"
+                type="text"
+                name="company"
+                maxlength="120"
+                autocomplete="organization"
+                placeholder="AICI Labs"
+            >
+        </label>
+        <label class="landing-intake__field">
+            <span class="landing-intake__label">
+                <span class="landing-intake__label-text">Role</span>
+                <span class="landing-intake__label-optional">Optional</span>
+            </span>
+            <input
+                class="landing-intake__input"
+                type="text"
+                name="role"
+                maxlength="80"
+                autocomplete="organization-title"
+                placeholder="Head of Quant Research"
+            >
+        </label>
+        <label class="landing-intake__field landing-intake__field--full">
+            <span class="landing-intake__label">
+                <span class="landing-intake__label-text">Team size</span>
+                <span class="landing-intake__label-optional">Optional</span>
+            </span>
+            <select
+                class="landing-intake__input landing-intake__select"
+                name="team_size"
+            >
+                <option value="">Select team size</option>
+                <option value="1-5">1-5</option>
+                <option value="6-15">6-15</option>
+                <option value="16-50">16-50</option>
+                <option value="51-150">51-150</option>
+                <option value="150+">150+</option>
+            </select>
+        </label>
+    </div>
+    <label class="landing-intake__field landing-intake__field--full">
+        <span class="landing-intake__label">Primary use case</span>
+        <textarea
+            class="landing-intake__input landing-intake__textarea"
+            name="use_case"
+            rows="4"
+            required
+            minlength="10"
+            maxlength="600"
+            placeholder="Outline how the index will integrate with your workflows or reporting cadence."
+        ></textarea>
+    </label>
+    <label class="landing-intake__field landing-intake__field--full">
+        <span class="landing-intake__label">
+            <span class="landing-intake__label-text">Additional notes</span>
+            <span class="landing-intake__label-optional">Optional</span>
+        </span>
+        <textarea
+            class="landing-intake__input landing-intake__textarea"
+            name="notes"
+            rows="3"
+            maxlength="800"
+            placeholder="Team members to invite, datasets of interest, timelines, or compliance questions."
+        ></textarea>
+    </label>
+    <div class="landing-intake__options">
+        <label class="landing-intake__checkbox">
+            <input
+                class="landing-intake__checkbox-input"
+                type="checkbox"
+                name="newsletter_opt_in"
+                value="true"
+            >
+            <span class="landing-intake__checkbox-text">Send me product updates and roadmap releases</span>
+        </label>
+        <label class="landing-intake__checkbox">
+            <input
+                class="landing-intake__checkbox-input"
+                type="checkbox"
+                name="terms_accepted"
+                value="true"
+                required
+            >
+            <span class="landing-intake__checkbox-text">I agree to the <a href="{{ url_for('render_terms_of_service') }}" class="landing-intake__link">terms of service</a> and <a href="{{ url_for('render_privacy_policy') }}" class="landing-intake__link">privacy policy</a>.</span>
+        </label>
+    </div>
+    <div class="landing-intake__actions">
+        <button class="landing-cta landing-cta--primary landing-intake__submit" type="submit">
+            <span class="landing-cta__text">Request a walkthrough</span>
+        </button>
+        <p class="landing-intake__status" role="status" aria-live="polite"></p>
+    </div>
+    <p class="landing-intake__footnote">We typically respond within one business day. All requests go directly to the product team.</p>
+</form>

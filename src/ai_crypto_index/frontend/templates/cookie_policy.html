@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cookie Policy - AI Crypto Index</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="legal-page">
+    <div id="page-start" aria-hidden="true"></div>
+    <a class="visually-hidden" href="#main-content" aria-label="Skip to main content">Skip to main content</a>
+    <header class="legal-header">
+        <div class="legal-header__inner">
+            <a class="legal-header__logo" href="{{ url_for('render_landing_page') }}" tabindex="0" aria-label="Back to AI Crypto Index landing page">
+                <img class="legal-header__logo-mark" src="{{ url_for('static', path='icons/Logo_AICI_monochrome.svg') }}" alt="" aria-hidden="true" width="36" height="36" decoding="async">
+                <span class="legal-header__logo-text">AI Crypto Index</span>
+            </a>
+            <div class="legal-header__meta">
+                <span class="legal-header__label">Document</span>
+                <span class="legal-header__value">Cookie policy</span>
+            </div>
+        </div>
+    </header>
+    <main class="legal-main" id="main-content" role="main">
+        <div class="legal-container">
+            <article class="legal-article" aria-labelledby="cookie-policy-title">
+                <div class="legal-policy" id="cookie-policy-content" role="document">
+                    <p class="legal-updated">Last updated {{ last_updated }}</p>
+                    <h1 class="legal-title" id="cookie-policy-title">Cookie Policy</h1>
+                    <p class="legal-intro">This Cookie Policy explains how AI-Powered Crypto Index ("Company," "we," "us," and "our") uses cookies and similar technologies to recognize you when you visit our website at <a class="legal-link" href="http://www.aici.pro" target="_blank" rel="noopener">http://www.aici.pro</a> or any site that links to this policy. It also describes what these technologies are, why we use them, and how you can control them.</p>
+                    <p class="legal-intro">If you have any questions, contact us at <a class="legal-link" href="mailto:contact@aici.pro">contact@aici.pro</a>.</p>
+
+                    <section class="legal-section" id="what-are-cookies">
+                        <h2 class="legal-section__title">What are cookies?</h2>
+                        <p class="legal-section__text">Cookies are small data files placed on your computer or mobile device when you visit a website. First-party cookies are set by the website owner (AI-Powered Crypto Index); third-party cookies are set by other providers. Cookies help sites work, measure performance, and remember your preferences.</p>
+                    </section>
+
+                    <section class="legal-section" id="why-we-use-cookies">
+                        <h2 class="legal-section__title">Why we use cookies</h2>
+                        <p class="legal-section__text">We rely on a minimal set of first-party cookies to keep the AI Crypto Index dashboard and API authentication working. We do not load advertising pixels or third-party analytics cookies by default.</p>
+                    </section>
+
+                    <section class="legal-section" id="cookies-we-use">
+                        <h2 class="legal-section__title">Cookies we use</h2>
+                        <p class="legal-section__text">The list below shows the cookies currently in use and what they do.</p>
+                        <div class="legal-section__text"><strong>{{ session_cookie_name }}</strong> (essential, first-party)</div>
+                        <ul class="legal-list">
+                            <li>Purpose: stores the refresh token that keeps you signed in to the account portal; required for secure access to dashboards, billing, and API key management.</li>
+                            <li>Expires: {{ refresh_cookie_ttl_human }} ({{ refresh_cookie_ttl_seconds }} seconds); removed when you log out or clear cookies.</li>
+                            <li>Scope: {{ cookie_domain or "set for the current domain" }}; SameSite=Lax; HttpOnly; Secure{% if cookie_secure %} enabled{% else %} applied when the site is served over HTTPS{% endif %}.</li>
+                            <li>Who sets it: AI Crypto Index backend during login and token refresh. It is not used for tracking or advertising and is never shared with third parties.</li>
+                        </ul>
+                        <p class="legal-section__text">No other cookies are set by default.</p>
+                    </section>
+
+                    <section class="legal-section" id="managing-cookies">
+                        <h2 class="legal-section__title">How to control cookies</h2>
+                        <p class="legal-section__text">You can manage cookies through your browser settings—block third-party cookies, delete stored cookies, or prompt before saving. Blocking our essential cookie may prevent you from signing in or keeping an active session.</p>
+                        <p class="legal-section__text">Most browsers provide detailed guides on managing cookies, including Google Chrome, Mozilla Firefox, Apple Safari, Microsoft Edge, and Opera. You can also clear cookies at any time to remove stored data.</p>
+                    </section>
+
+                    <section class="legal-section" id="other-technologies">
+                        <h2 class="legal-section__title">Other tracking technologies</h2>
+                        <p class="legal-section__text">We may use similar technologies (such as pixels or local storage) to keep the service functional. If they rely on cookies, disabling cookies may affect their operation. We do not deploy third-party advertising trackers.</p>
+                    </section>
+
+                    <section class="legal-section" id="updates">
+                        <h2 class="legal-section__title">Updates to this policy</h2>
+                        <p class="legal-section__text">We will update this page when our use of cookies changes. The "Last updated" date shows the latest version.</p>
+                    </section>
+
+                    <section class="legal-section" id="contact">
+                        <h2 class="legal-section__title">Contact us</h2>
+                        <p class="legal-section__text">If you have questions about our cookie practices, reach us at <a class="legal-link" href="mailto:contact@aici.pro">contact@aici.pro</a>.</p>
+                    </section>
+                </div>
+            </article>
+        </div>
+    </main>
+    <footer class="legal-footer">
+        <div class="legal-container legal-footer__inner">
+            <a class="legal-footer__home" href="{{ url_for('render_landing_page') }}" aria-label="Return to landing page">Back to home page</a>
+            <p class="legal-footer__copyright">&copy; {{ current_year }} AI Crypto Index</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

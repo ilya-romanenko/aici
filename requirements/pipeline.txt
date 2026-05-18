@@ -1,0 +1,4 @@
+# Full analytics stack for the unified aici-app image
+-r base.txt
+
+tensorflow==2.18.0

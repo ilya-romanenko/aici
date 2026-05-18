@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AICI Admin - Moderation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        body {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fc;
+            color: #0f1d40;
+            margin: 0;
+        }
+        .admin-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+        }
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .admin-nav__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #d8e5ff;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(216, 229, 255, 0.4);
+            background: rgba(15, 31, 68, 0.32);
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+        .admin-nav__link:hover,
+        .admin-nav__link:focus-visible {
+            color: #f8fbff;
+            border-color: rgba(216, 229, 255, 0.8);
+            background: rgba(15, 31, 68, 0.54);
+        }
+        .admin-nav__link.is-active {
+            color: #0f2550;
+            border-color: #ecf3ff;
+            background: #ecf3ff;
+        }
+        .admin-shell > .admin-header,
+        .admin-shell > .admin-header h1,
+        .admin-shell > .admin-header p {
+            color: #f7f9ff;
+            text-shadow: 0 1px 10px rgba(9, 20, 46, 0.4);
+        }
+        .admin-card {
+            background: #fff;
+            border: 1px solid #dfe7ff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(12, 22, 58, 0.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #eef2ff;
+            vertical-align: top;
+        }
+        th {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #5c6f9d;
+        }
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            text-transform: capitalize;
+            background: #e8edff;
+            color: #31406e;
+        }
+        .admin-badge.is-success {
+            background: #e5f5ec;
+            color: #0f8a4a;
+        }
+        .admin-badge.is-warning {
+            background: #fff7e6;
+            color: #b07000;
+        }
+        .admin-badge.is-danger {
+            background: #ffe9ed;
+            color: #b9314f;
+        }
+        .admin-forms {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .admin-forms form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .admin-forms input,
+        .admin-forms select,
+        .admin-forms button,
+        textarea {
+            font: inherit;
+            border-radius: 8px;
+            border: 1px solid #c5d3f6;
+            padding: 6px 10px;
+        }
+        .admin-forms button {
+            background: #0f62fe;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 8px 14px;
+        }
+        .admin-forms button.is-danger {
+            background: #d7263d;
+        }
+        .admin-toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            background: #0f62fe;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 999px;
+            box-shadow: 0 10px 30px rgba(15, 98, 254, 0.25);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .admin-toast.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .admin-entry {
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #e0e6ff;
+            background: #fff;
+        }
+        .admin-entry time {
+            display: block;
+            font-size: 13px;
+            color: #5c6f9d;
+            margin-bottom: 8px;
+        }
+        .admin-usage-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .admin-usage-bar {
+            flex: 1;
+            height: 8px;
+            background: #e2e8ff;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .admin-usage-bar__fill {
+            height: 100%;
+            width: 0;
+            background: #0f62fe;
+            border-radius: inherit;
+            transition: width 0.2s ease;
+        }
+        textarea {
+            min-width: 160px;
+            min-height: 48px;
+            resize: vertical;
+        }
+        .admin-meta {
+            display: grid;
+            gap: 6px;
+            color: #1b2a4d;
+            font-size: 14px;
+        }
+        .admin-meta strong {
+            color: #0f1d40;
+        }
+        .admin-meta__group {
+            border: 1px solid #e6ebff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #f9fbff;
+        }
+        .admin-meta__row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .admin-meta__limits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: #31406e;
+        }
+        .admin-meta__label {
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #5c6f9d;
+        }
+        .admin-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #1c2c54;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        select[multiple] {
+            min-width: 180px;
+            min-height: 96px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <header class="admin-header">
+            <div>
+                <h1>Moderation Console</h1>
+                <p>Manage accounts, align plans and roles, monitor latest registrations.</p>
+            </div>
+        </header>
+        <nav class="admin-nav" aria-label="Admin sections">
+            <a class="admin-nav__link {% if admin_section == 'moderation' %}is-active{% endif %}" href="/admin/moderation">
+                Moderation
+            </a>
+            <a class="admin-nav__link {% if admin_section == 'cta_analytics' %}is-active{% endif %}" href="/admin/cta-analytics">
+                CTA Analytics
+            </a>
+        </nav>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>Performance refresh</h2>
+                    <p>Monthly auto-run for classic, conservative, and risky portfolios.</p>
+                </div>
+                <span class="admin-badge" data-perf-state>Idle</span>
+            </div>
+            <div class="admin-forms">
+                <form data-perf-config-form>
+                    <label>
+                        <input type="checkbox" name="enabled" value="1" data-perf-toggle>
+                        Enable auto refresh
+                    </label>
+                    <label>Next run:
+                        <input type="date" name="next_run_date" data-perf-next-run>
+                    </label>
+                    <button type="submit">Save schedule</button>
+                </form>
+                <button type="button" data-perf-run-now>Run current month</button>
+            </div>
+            <div class="admin-meta admin-meta__group">
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Next run</span>
+                    <div data-perf-next-label>-</div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Last run</span>
+                    <div data-perf-last-run>-</div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Variants</span>
+                    <div class="admin-meta__limits" data-perf-variants></div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Benchmarks</span>
+                    <div class="admin-meta__limits" data-perf-benchmarks></div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Last report</span>
+                    <div data-perf-report>-</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>Index auto rebalance</h2>
+                    <p>Monthly auto-runs for Classic, Conservative, and Aggressive (landing uses Classic).</p>
+                </div>
+                <span class="admin-badge" data-index-state>Idle</span>
+            </div>
+            <div class="admin-forms">
+                <form data-index-config-form>
+                    <label>
+                        <input type="checkbox" name="enabled" value="1" data-index-toggle>
+                        Enable auto rebalance
+                    </label>
+                    <label>Next run:
+                        <input type="date" name="next_run_date" data-index-next-run>
+                    </label>
+                    <button type="submit">Save schedule</button>
+                </form>
+                <button type="button" data-index-run-now>Run all strategies now</button>
+            </div>
+            <div class="admin-meta admin-meta__group">
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Next run</span>
+                    <div data-index-next-label>-</div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Last run</span>
+                    <div data-index-last-run>-</div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Run id (classic)</span>
+                    <div data-index-last-id>-</div>
+                </div>
+                <div class="admin-meta__row">
+                    <span class="admin-meta__label">Summary</span>
+                    <div data-index-summary>-</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <h2>Accounts</h2>
+            <div class="admin-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>Organization</th>
+                            <th>Access & Limits</th>
+                            <th>Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody data-accounts-table-body>
+                        {% for account in accounts %}
+                        <tr data-account-row="{{ account.id }}">
+                            <td>
+                                <strong>{{ account.full_name }}</strong><br>
+                                <a href="mailto:{{ account.email }}">{{ account.email }}</a><br>
+                                {% set status_class = "is-success" if account.status == "active" else ("is-danger" if account.status == "locked" else "is-warning") %}
+                                <span class="admin-badge {{ status_class }}" data-status-badge>{{ account.status }}</span>
+                                <div class="admin-forms">
+                                    <form data-status-form action="{{ api_base }}/admin/accounts/{{ account.id }}/status" method="post" data-success-message="Status updated">
+                                        <label>Status:
+                                            <select name="status">
+                                                {% for status_value in ["pending_activation", "active", "locked", "invited"] %}
+                                                <option value="{{ status_value }}"{% if account.status == status_value %} selected{% endif %}>{{ status_value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <button type="submit">Update</button>
+                                    </form>
+                                    <form
+                                        data-delete-form
+                                        action="{{ api_base }}/admin/accounts/{{ account.id }}"
+                                        method="post"
+                                        data-http-method="DELETE"
+                                        data-success-message="Account deleted"
+                                        data-confirm-message="Delete account {{ account.email }}? This action cannot be undone."
+                                    >
+                                        <button type="submit" class="is-danger">Delete account</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                {% if account.organization %}
+                                    <div><strong>{{ account.organization.name or "-" }}</strong></div>
+                                    <div>{{ account.organization.size_label or "" }}</div>
+                                    <div>{{ account.organization.primary_use_case or "" }}</div>
+                                {% else %}
+                                    <em>No organization</em>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set active_plan = account.subscription_plan_code or account.plan.code %}
+                                <div class="admin-meta admin-meta__group">
+                                    <div class="admin-meta__row">
+                                        <span class="admin-meta__label">Subscription</span>
+                                        <span class="admin-badge" data-subscription-status>{{ account.subscription.status if account.subscription else "none" }}</span>
+                                        <span class="admin-pill" data-plan-code>{{ active_plan|upper }}</span>
+                                    </div>
+                                    <div class="admin-meta__limits">
+                                        <span data-plan-monthly>Monthly: {{ account.plan.monthly_quota if account.plan.monthly_quota is not none else "Unlimited" }}</span>
+                                        <span data-plan-daily>Daily: {{ account.plan.daily_quota if account.plan.daily_quota is not none else "Unlimited" }}</span>
+                                        <span data-plan-burst>Burst: {{ account.plan.burst_per_second }} rps / {{ account.plan.burst_per_minute }} rpm</span>
+                                        <span data-plan-latency>Latency: {{ account.plan.data_latency_seconds }}s</span>
+                                    </div>
+                                    <div class="admin-meta__row">
+                                        <span class="admin-meta__label">Roles</span>
+                                        <div class="admin-meta__row" data-role-list>
+                                            {% if account.roles %}
+                                                {% for role in account.roles %}
+                                                <span class="admin-pill">{{ role }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="admin-pill">member</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="admin-forms">
+                                    <form data-plan-form action="{{ api_base }}/admin/accounts/{{ account.id }}/plan" method="post" data-success-message="Plan updated">
+                                        <label>Plan:
+                                            <select name="plan_code">
+                                                {% for plan in plan_options %}
+                                                <option value="{{ plan.code }}"{% if active_plan == plan.code %} selected{% endif %}>
+                                                    {{ plan.label }} (M: {{ plan.monthly_quota if plan.monthly_quota is not none else "unlimited" }} / D: {{ plan.daily_quota if plan.daily_quota is not none else "unlimited" }})
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <button type="submit">Update plan</button>
+                                    </form>
+                                    <form data-roles-form action="{{ api_base }}/admin/accounts/{{ account.id }}/roles" method="post" data-success-message="Roles updated">
+                                        <label>Roles:
+                                            <select name="roles" multiple>
+                                                {% for role in role_options %}
+                                                <option value="{{ role.slug }}"{% if role.slug in account.roles %} selected{% endif %}>{{ role.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <button type="submit">Save roles</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <div>Email verified: {{ account.email_verified_at or "-" }}</div>
+                                <div>Last login: {{ account.last_login_at or "-" }}</div>
+                                <div>Subscription status: {{ account.subscription.status if account.subscription else "none" }}</div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4"><em>No accounts found.</em></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>Recent Registrations</h2>
+                    <p>Latest raw submissions from the legacy intake flow.</p>
+                </div>
+            </div>
+            <div class="admin-grid">
+                {% for record in registrations %}
+                <article class="admin-entry">
+                    <time>{{ record.received_at or "-" }}</time>
+                    <div><strong>{{ record.full_name or "Unknown" }}</strong> - {{ record.email }}</div>
+                    <div>Company: {{ record.company or "-" }}</div>
+                    <div>Team size: {{ record.team_size or "-" }}</div>
+                    <p>{{ record.objectives or "No context provided." }}</p>
+                </article>
+                {% else %}
+                <p><em>No recent entries.</em></p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="admin-card">
+            <div class="admin-header">
+                <div>
+                    <h2>API Key Telemetry</h2>
+                    <p>Quick glance at burst offenders and quota usage.</p>
+                </div>
+                <span class="admin-badge">{{ api_keys|length }} tracked</span>
+            </div>
+            {% if api_keys %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Account</th>
+                        <th>Status</th>
+                        <th>Last call</th>
+                        <th style="width:30%;">Monthly usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key in api_keys %}
+                    {% set usage = key.usage %}
+                    {% set pct = usage.monthly_pct or 0 %}
+                    <tr>
+                        <td>
+                            <strong>{{ key.label }}</strong><br>
+                            <small>{{ key.token_preview }}</small>
+                        </td>
+                        <td>
+                            <div>{{ key.account_email }}</div>
+                            <small>{{ key.plan_code|upper }}</small>
+                        </td>
+                        <td><span class="admin-badge">{{ key.status }}</span></td>
+                        <td>
+                            <div>{{ key.last_used_at or "-" }}</div>
+                        </td>
+                        <td>
+                            <div class="admin-usage-row">
+                                <div class="admin-usage-bar" data-usage="{{ ((pct or 0) * 100)|round(2) }}">
+                                    <div class="admin-usage-bar__fill"></div>
+                                </div>
+                                <span>{{ ((pct or 0)*100)|round(1) }}%</span>
+                            </div>
+                            <small>{{ usage.monthly_calls }} / {{ usage.monthly_quota or "unlimited" }} calls</small>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p><em>No API key usage has been recorded yet.</em></p>
+            {% endif %}
+        </section>
+    </div>
+
+    <div class="admin-toast" id="admin-toast">Saved</div>
+    <script>
+        (function () {
+            const planOptionsRaw = '{{ plan_options_json | safe }}';
+            const planOptions = planOptionsRaw ? JSON.parse(planOptionsRaw) || [] : [];
+            const planCatalog = Object.fromEntries(planOptions.map((plan) => [plan.code, plan]));
+            const toast = document.getElementById('admin-toast');
+            const showToast = (message, variant = 'success') => {
+                if (!toast) {
+                    return;
+                }
+                toast.textContent = message;
+                toast.style.background = variant === 'error' ? '#d7263d' : '#0f62fe';
+                toast.classList.add('is-visible');
+                window.setTimeout(() => toast.classList.remove('is-visible'), 2800);
+            };
+
+            const formatLimit = (value) => {
+                if (value === null || value === undefined) {
+                    return 'Unlimited';
+                }
+                const numeric = Number(value);
+                return Number.isNaN(numeric) ? value : numeric.toLocaleString();
+            };
+
+            const buildPayload = (form) => {
+                const payload = {};
+                const append = (key, value) => {
+                    if (payload[key] === undefined) {
+                        payload[key] = value;
+                        return;
+                    }
+                    const existing = payload[key];
+                    payload[key] = Array.isArray(existing) ? [...existing, value] : [existing, value];
+                };
+                const data = new FormData(form);
+                data.forEach((value, key) => {
+                    append(key, value === '' ? null : value);
+                });
+                Object.entries(payload).forEach(([key, value]) => {
+                    if (Array.isArray(value)) {
+                        payload[key] = value.filter((item) => item !== null);
+                    }
+                });
+                return payload;
+            };
+
+            const findRow = (element) => element.closest('tr[data-account-row]');
+            const accountsTableBody = document.querySelector('[data-accounts-table-body]');
+
+            const updateStatusDisplay = (row, statusValue) => {
+                if (!row || !statusValue) {
+                    return;
+                }
+                const badge = row.querySelector('[data-status-badge]');
+                if (badge) {
+                    badge.textContent = statusValue;
+                    badge.classList.toggle('is-success', statusValue === 'active');
+                    badge.classList.toggle('is-warning', ['pending_activation', 'invited'].includes(statusValue));
+                    badge.classList.toggle('is-danger', statusValue === 'locked');
+                }
+                const select = row.querySelector('[data-status-form] select[name="status"]');
+                if (select) {
+                    select.value = statusValue;
+                }
+            };
+
+            const updatePlanDisplay = (row, planCode, subscriptionStatus) => {
+                if (!row) {
+                    return;
+                }
+                const plan = planCatalog[planCode] || {};
+                const codeEl = row.querySelector('[data-plan-code]');
+                if (codeEl) {
+                    codeEl.textContent = planCode ? planCode.toUpperCase() : 'N/A';
+                }
+                const monthlyEl = row.querySelector('[data-plan-monthly]');
+                if (monthlyEl) {
+                    monthlyEl.textContent = `Monthly: ${formatLimit(plan.monthly_quota)}`;
+                }
+                const dailyEl = row.querySelector('[data-plan-daily]');
+                if (dailyEl) {
+                    dailyEl.textContent = `Daily: ${formatLimit(plan.daily_quota)}`;
+                }
+                const burstEl = row.querySelector('[data-plan-burst]');
+                if (burstEl) {
+                    burstEl.textContent = `Burst: ${formatLimit(plan.burst_per_second)} rps / ${formatLimit(plan.burst_per_minute)} rpm`;
+                }
+                const latencyEl = row.querySelector('[data-plan-latency]');
+                if (latencyEl) {
+                    latencyEl.textContent = `Latency: ${formatLimit(plan.data_latency_seconds)}s`;
+                }
+                const badge = row.querySelector('[data-subscription-status]');
+                if (badge) {
+                    const statusLabel = subscriptionStatus || badge.textContent || 'none';
+                    badge.textContent = statusLabel;
+                    badge.classList.toggle('is-success', statusLabel === 'active');
+                    badge.classList.toggle('is-warning', ['trialing', 'past_due'].includes(statusLabel));
+                    badge.classList.toggle('is-danger', ['canceled', 'unpaid'].includes(statusLabel));
+                }
+                const select = row.querySelector('[data-plan-form] select[name="plan_code"]');
+                if (select && planCode) {
+                    select.value = planCode;
+                }
+            };
+
+            const updateRolesDisplay = (row, roles) => {
+                if (!row) {
+                    return;
+                }
+                const normalized = Array.isArray(roles)
+                    ? roles.map((role) => String(role || '').trim().toLowerCase()).filter(Boolean)
+                    : roles
+                    ? [String(roles).trim().toLowerCase()]
+                    : [];
+                const container = row.querySelector('[data-role-list]');
+                if (container) {
+                    container.innerHTML = '';
+                    if (normalized.length === 0) {
+                        const fallback = document.createElement('span');
+                        fallback.className = 'admin-pill';
+                        fallback.textContent = 'member';
+                        container.appendChild(fallback);
+                    } else {
+                        normalized.forEach((role) => {
+                            const pill = document.createElement('span');
+                            pill.className = 'admin-pill';
+                            pill.textContent = role;
+                            container.appendChild(pill);
+                        });
+                    }
+                }
+                const select = row.querySelector('[data-roles-form] select[name="roles"]');
+                if (select) {
+                    Array.from(select.options).forEach((option) => {
+                        option.selected = normalized.includes(option.value);
+                    });
+                }
+            };
+
+            const removeAccountRow = (row) => {
+                if (!row) {
+                    return;
+                }
+                row.remove();
+                if (!accountsTableBody || accountsTableBody.querySelector('[data-account-row]')) {
+                    return;
+                }
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="4"><em>No accounts found.</em></td>';
+                accountsTableBody.appendChild(emptyRow);
+            };
+
+            const handleFormSubmit = async (event) => {
+                event.preventDefault();
+                const form = event.currentTarget;
+                const url = form.getAttribute('action');
+                const method = (form.getAttribute('data-http-method') || 'POST').toUpperCase();
+                const isDelete = method === 'DELETE';
+                const payload = isDelete ? null : buildPayload(form);
+                const formType = form.hasAttribute('data-plan-form')
+                    ? 'plan'
+                    : form.hasAttribute('data-roles-form')
+                    ? 'roles'
+                    : form.hasAttribute('data-delete-form')
+                    ? 'delete'
+                    : 'status';
+                const successMessage = form.getAttribute('data-success-message') || 'Saved';
+                const errorMessage = formType === 'delete' ? 'Failed to delete account' : 'Failed to save';
+
+                if (isDelete) {
+                    const confirmationMessage = form.getAttribute('data-confirm-message') || 'Delete this account?';
+                    if (!window.confirm(confirmationMessage)) {
+                        return;
+                    }
+                }
+
+                try {
+                    const fetchOptions = {
+                        method,
+                        headers: {
+                            Accept: 'application/json',
+                        },
+                    };
+                    if (payload !== null) {
+                        fetchOptions.headers['Content-Type'] = 'application/json';
+                        fetchOptions.body = JSON.stringify(payload);
+                    }
+                    const response = await fetch(url, fetchOptions);
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+                    const row = findRow(form);
+                    if (formType === 'delete') {
+                        removeAccountRow(row);
+                    } else {
+                        const data = await response.json();
+                        if (formType === 'status') {
+                            updateStatusDisplay(row, data.status || payload.status);
+                        } else if (formType === 'plan') {
+                            const planCode = (data.subscription && data.subscription.plan_code) || payload.plan_code;
+                            updatePlanDisplay(row, planCode, data.subscription ? data.subscription.status : undefined);
+                        } else if (formType === 'roles') {
+                            updateRolesDisplay(row, data.roles || payload.roles);
+                        }
+                    }
+                    showToast(successMessage, 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast(errorMessage, 'error');
+                }
+            };
+
+            const updateUsageBars = () => {
+                document.querySelectorAll('[data-usage]').forEach((bar) => {
+                    const fill = bar.querySelector('.admin-usage-bar__fill');
+                    if (!fill) {
+                        return;
+                    }
+                    const value = parseFloat(bar.getAttribute('data-usage'));
+                    if (Number.isNaN(value)) {
+                        fill.style.width = '0%';
+                        return;
+                    }
+                    const clamped = Math.min(Math.max(value, 0), 100);
+                    fill.style.width = `${clamped}%`;
+                });
+            };
+
+            const performanceStatusRaw = '{{ performance_status_json | safe }}';
+            let performanceStatus = performanceStatusRaw ? JSON.parse(performanceStatusRaw || '{}') : null;
+            const perfToggle = document.querySelector('[data-perf-toggle]');
+            const perfNextInput = document.querySelector('[data-perf-next-run]');
+            const perfNextLabel = document.querySelector('[data-perf-next-label]');
+            const perfLastRunEl = document.querySelector('[data-perf-last-run]');
+            const perfVariantsEl = document.querySelector('[data-perf-variants]');
+            const perfBenchmarksEl = document.querySelector('[data-perf-benchmarks]');
+            const perfReportEl = document.querySelector('[data-perf-report]');
+            const perfStateEl = document.querySelector('[data-perf-state]');
+            const perfRunBtn = document.querySelector('[data-perf-run-now]');
+            const perfConfigForm = document.querySelector('[data-perf-config-form]');
+            const indexStatusRaw = '{{ index_auto_status_json | safe }}';
+            let indexStatus = indexStatusRaw ? JSON.parse(indexStatusRaw || '{}') : null;
+            const indexToggle = document.querySelector('[data-index-toggle]');
+            const indexNextInput = document.querySelector('[data-index-next-run]');
+            const indexNextLabel = document.querySelector('[data-index-next-label]');
+            const indexLastRunEl = document.querySelector('[data-index-last-run]');
+            const indexLastIdEl = document.querySelector('[data-index-last-id]');
+            const indexSummaryEl = document.querySelector('[data-index-summary]');
+            const indexStateEl = document.querySelector('[data-index-state]');
+            const indexRunBtn = document.querySelector('[data-index-run-now]');
+            const indexConfigForm = document.querySelector('[data-index-config-form]');
+
+            const formatIsoDate = (value) => {
+                if (!value) {
+                    return '-';
+                }
+                try {
+                    return new Date(value).toISOString().split('T')[0];
+                } catch (error) {
+                    return String(value);
+                }
+            };
+
+            const describeReport = (report) => {
+                if (!report) {
+                    return 'No recent runs';
+                }
+                const latest = report.latest_date || report.latestDate || null;
+                const added = typeof report.total_added === 'number' ? report.total_added : null;
+                const benchAdded = typeof report.benchmark_total_added === 'number' ? report.benchmark_total_added : null;
+                const parts = [];
+                if (latest) {
+                    parts.push(`latest ${formatIsoDate(latest)}`);
+                }
+                if (added !== null) {
+                    parts.push(`added ${added} rows`);
+                }
+                if (benchAdded !== null) {
+                    parts.push(`benchmarks +${benchAdded}`);
+                }
+                return parts.length ? parts.join(' · ') : 'Run completed';
+            };
+
+            const describeIndexSummary = (summary) => {
+                if (!summary || typeof summary !== 'object') {
+                    return 'No recent runs';
+                }
+                const strategyRuns = Array.isArray(summary.strategy_runs || summary.strategyRuns)
+                    ? (summary.strategy_runs || summary.strategyRuns)
+                    : [];
+                if (strategyRuns.length) {
+                    const parts = strategyRuns.map((item) => {
+                        const strategyKey = (item.strategy_key || item.strategy || item.run_prefix || 'strategy').toString();
+                        const runId = item.run_id || item.runId || null;
+                        const assetCount = item.asset_count ?? item.assets ?? null;
+                        const suffix = assetCount !== null ? ` (${assetCount} assets)` : '';
+                        return runId ? `${strategyKey}: ${runId}${suffix}` : `${strategyKey}${suffix}`;
+                    });
+                    return parts.join(' · ');
+                }
+                const runId = summary.run_id || summary.runId || null;
+                const assetCount = summary.asset_count ?? summary.assets ?? null;
+                const perfKeys = Array.isArray(summary.perf_keys || summary.perfKeys) ? (summary.perf_keys || summary.perfKeys) : [];
+                const parts = [];
+                if (assetCount !== null) {
+                    parts.push(`${assetCount} assets`);
+                }
+                if (perfKeys.length) {
+                    parts.push(`metrics: ${perfKeys.join(', ')}`);
+                }
+                if (runId && !parts.length) {
+                    parts.push(runId);
+                }
+                return parts.length ? parts.join(' · ') : 'Run completed';
+            };
+
+            const renderPerformanceStatus = (status) => {
+                if (!status) {
+                    return;
+                }
+                performanceStatus = status;
+                const { config = {}, runtime = {}, snapshots = [], benchmarks = [], report = null } = status;
+                if (perfToggle) {
+                    perfToggle.checked = Boolean(config.enabled);
+                }
+                if (perfNextInput) {
+                    perfNextInput.value = config.next_run_date || '';
+                }
+                if (perfNextLabel) {
+                    perfNextLabel.textContent = config.next_run_date ? formatIsoDate(config.next_run_date) : 'Not scheduled';
+                }
+                if (perfLastRunEl) {
+                    const last = config.last_run_at || runtime.last_run_at;
+                    perfLastRunEl.textContent = last ? formatIsoDate(last) : 'Never';
+                }
+                if (perfStateEl) {
+                    const state = (runtime.state || (runtime.is_running ? 'running' : 'idle')).toLowerCase();
+                    perfStateEl.textContent = state === 'running' ? 'Running' : state === 'error' ? 'Error' : 'Idle';
+                    perfStateEl.classList.toggle('is-success', state === 'idle');
+                    perfStateEl.classList.toggle('is-warning', state === 'running');
+                    perfStateEl.classList.toggle('is-danger', state === 'error');
+                }
+                if (perfVariantsEl) {
+                    perfVariantsEl.innerHTML = '';
+                    (snapshots || []).forEach((snapshot) => {
+                        const item = document.createElement('span');
+                        item.className = 'admin-pill';
+                        const name = (snapshot.key || snapshot.strategy || '').toString();
+                        const lastDate = snapshot.last_date || snapshot.lastDate || null;
+                        const rows = snapshot.rows ?? null;
+                        item.textContent = `${name}: ${lastDate ? formatIsoDate(lastDate) : 'n/a'}${rows ? ` (${rows})` : ''}`;
+                        perfVariantsEl.appendChild(item);
+                    });
+                }
+                if (perfBenchmarksEl) {
+                    perfBenchmarksEl.innerHTML = '';
+                    (benchmarks || []).forEach((snapshot) => {
+                        const item = document.createElement('span');
+                        item.className = 'admin-pill';
+                        const name = (snapshot.key || snapshot.column || '').toString();
+                        const lastDate = snapshot.last_date || snapshot.lastDate || null;
+                        const rows = snapshot.rows ?? null;
+                        item.textContent = `${name}: ${lastDate ? formatIsoDate(lastDate) : 'n/a'}${rows ? ` (${rows})` : ''}`;
+                        perfBenchmarksEl.appendChild(item);
+                    });
+                }
+                if (perfReportEl) {
+                    perfReportEl.textContent = describeReport(report || config.last_summary);
+                }
+                if (perfRunBtn) {
+                    perfRunBtn.disabled = Boolean(runtime.is_running);
+                }
+            };
+
+            const renderIndexStatus = (status) => {
+                if (!status) {
+                    return;
+                }
+                indexStatus = status;
+                const { config = {}, runtime = {}, last_run_id = null, last_summary = null } = status;
+                if (indexToggle) {
+                    indexToggle.checked = Boolean(config.enabled);
+                }
+                if (indexNextInput) {
+                    indexNextInput.value = config.next_run_date || '';
+                }
+                if (indexNextLabel) {
+                    indexNextLabel.textContent = config.next_run_date ? formatIsoDate(config.next_run_date) : 'Not scheduled';
+                }
+                const last = config.last_run_at || runtime.last_run_at;
+                if (indexLastRunEl) {
+                    indexLastRunEl.textContent = last ? formatIsoDate(last) : 'Never';
+                }
+                if (indexLastIdEl) {
+                    indexLastIdEl.textContent = last_run_id || runtime.last_run_id || '-';
+                }
+                if (indexSummaryEl) {
+                    indexSummaryEl.textContent = describeIndexSummary(last_summary || {});
+                }
+                if (indexStateEl) {
+                    const state = (runtime.state || (runtime.is_running ? 'running' : 'idle')).toLowerCase();
+                    indexStateEl.textContent = state === 'running' ? 'Running' : state === 'error' ? 'Error' : 'Idle';
+                    indexStateEl.classList.toggle('is-success', state === 'idle');
+                    indexStateEl.classList.toggle('is-warning', state === 'running');
+                    indexStateEl.classList.toggle('is-danger', state === 'error');
+                }
+                if (indexRunBtn) {
+                    indexRunBtn.disabled = Boolean(runtime.is_running);
+                }
+            };
+
+            const handlePerformanceConfigSubmit = async (event) => {
+                event.preventDefault();
+                const payload = {
+                    enabled: perfToggle ? perfToggle.checked : undefined,
+                    next_run_date: perfNextInput ? perfNextInput.value || null : null,
+                };
+                try {
+                    const response = await fetch('/admin/performance/config', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+                    const data = await response.json();
+                    renderPerformanceStatus(data);
+                    showToast('Schedule updated', 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to update schedule', 'error');
+                }
+            };
+
+            const handlePerformanceRun = async () => {
+                if (perfRunBtn) {
+                    perfRunBtn.disabled = true;
+                }
+                try {
+                    const response = await fetch('/admin/performance/run', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+                    const data = await response.json();
+                    renderPerformanceStatus(data);
+                    showToast('Simulation refreshed', 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to run simulation', 'error');
+                } finally {
+                    if (perfRunBtn) {
+                        perfRunBtn.disabled = false;
+                    }
+                }
+            };
+
+            const handleIndexConfigSubmit = async (event) => {
+                event.preventDefault();
+                const payload = {
+                    enabled: indexToggle ? indexToggle.checked : undefined,
+                    next_run_date: indexNextInput ? indexNextInput.value || null : null,
+                };
+                try {
+                    const response = await fetch('/admin/index-auto/config', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+                    const data = await response.json();
+                    renderIndexStatus(data);
+                    showToast('Index schedule updated', 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to update index schedule', 'error');
+                }
+            };
+
+            const handleIndexRun = async () => {
+                if (indexRunBtn) {
+                    indexRunBtn.disabled = true;
+                }
+                try {
+                    const response = await fetch('/admin/index-auto/run', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+                    const data = await response.json();
+                    renderIndexStatus(data);
+                    showToast('Auto-runs triggered', 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to run auto-runs', 'error');
+                } finally {
+                    if (indexRunBtn) {
+                        indexRunBtn.disabled = false;
+                    }
+                }
+            };
+
+            document.querySelectorAll('[data-status-form]').forEach((form) => {
+                form.addEventListener('submit', handleFormSubmit);
+            });
+            document.querySelectorAll('[data-plan-form]').forEach((form) => {
+                form.addEventListener('submit', handleFormSubmit);
+            });
+            document.querySelectorAll('[data-roles-form]').forEach((form) => {
+                form.addEventListener('submit', handleFormSubmit);
+            });
+            document.querySelectorAll('[data-delete-form]').forEach((form) => {
+                form.addEventListener('submit', handleFormSubmit);
+            });
+            if (perfConfigForm) {
+                perfConfigForm.addEventListener('submit', handlePerformanceConfigSubmit);
+            }
+            if (perfRunBtn) {
+                perfRunBtn.addEventListener('click', handlePerformanceRun);
+            }
+            if (indexConfigForm) {
+                indexConfigForm.addEventListener('submit', handleIndexConfigSubmit);
+            }
+            if (indexRunBtn) {
+                indexRunBtn.addEventListener('click', handleIndexRun);
+            }
+            updateUsageBars();
+            renderPerformanceStatus(performanceStatus);
+            renderIndexStatus(indexStatus);
+        })();
+    </script>
+</body>
+</html>

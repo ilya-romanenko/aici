@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}AI Crypto Index - account portal{% endblock %}</title>
+    <meta name="description" content="AI Crypto Index dashboard: manage API keys, billing, usage, and the playground.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='icons/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/account.css') }}">
+    {% block head_extra %}{% endblock %}
+</head>
+{% set tabs = account_nav_tabs or [] %}
+{% set profile = user_profile or {} %}
+<body
+    class="account-shell"
+    data-active-tab="{{ active_tab }}"
+    {% if api_url %}
+        data-auth-refresh-url="{{ api_url('api_auth_refresh') }}"
+        data-profile-update-url="{{ api_url('api_auth_update_profile') }}"
+        data-profile-fetch-url="{{ api_url('api_auth_profile') }}"
+        data-auth-resend-confirmation-url="{{ api_url('api_auth_resend_confirmation') }}"
+        data-auth-logout-url="{{ api_url('api_auth_logout') }}"
+        data-cta-endpoint="{{ api_url('api_track_cta_event') }}"
+        data-is-authenticated="true"
+    {% endif %}
+    {% block body_attrs %}{% endblock %}
+>
+    <a class="account-shell__skip-link" href="#main-content" tabindex="0">Skip to main content</a>
+    <div class="account-shell__toast-region" role="status" aria-live="polite" data-toast-region>
+        {% for toast in toast_messages or [] %}
+            <div
+                class="account-toast account-toast--{{ toast.level or 'info' }}"
+                data-toast-message
+                data-toast-id="{{ toast.id or ('toast-' ~ loop.index0) }}"
+                {% if toast.auto_close %}
+                    data-auto-close="{{ toast.auto_close }}"
+                {% endif %}
+            >
+                <div class="account-toast__header">
+                    <span class="account-toast__title">{{ toast.title }}</span>
+                    <button
+                        class="account-toast__close"
+                        type="button"
+                        aria-label="Dismiss notification"
+                        data-toast-dismiss
+                    >
+                        &times;
+                    </button>
+                </div>
+                <p class="account-toast__body">{{ toast.body }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="account-shell__layout" data-sidebar-layout>
+        <aside class="account-shell__sidebar" id="account-sidebar" role="complementary" data-sidebar tabindex="-1">
+            <div
+                class="account-shell__sidebar-header"
+                data-sidebar-header-home
+                data-home-url="{{ request.url_for('render_landing_page') }}"
+                role="link"
+                tabindex="0"
+                aria-label="Back to AI Crypto Index home"
+            >
+                <a class="account-shell__brand" href="{{ request.url_for('render_landing_page') }}" aria-label="AI Crypto Index home">
+                    <span class="account-shell__brand-text" translate="no">AI Crypto Index</span>
+                </a>
+                <button
+                    class="account-shell__sidebar-close"
+                    type="button"
+                    aria-label="Close menu"
+                    data-sidebar-close
+                >
+                    &times;
+                </button>
+            </div>
+            <div class="account-shell__sidebar-profile">
+                <img
+                    class="account-shell__avatar"
+                    src="{{ profile.avatar_url or url_for('static', path='icons/Logo_AICI_blue-footer.svg') }}"
+                    alt="User avatar"
+                    width="48"
+                    height="48"
+                    decoding="async"
+                >
+                <div class="account-shell__profile-meta">
+                    <strong class="account-shell__profile-name">{{ profile.name or 'Account owner' }}</strong>
+                    <span class="account-shell__profile-plan-row">
+                        <span class="account-shell__profile-plan account-shell__profile-status status-badge status-badge--{{ profile.status or 'active' }}">
+                            <span class="status-badge__primary">{{ profile.plan_label or 'Trial plan' }}</span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <nav class="account-shell__nav" aria-label="Primary account navigation">
+                <ul class="account-shell__nav-list">
+                    {% for tab in tabs %}
+                        <li>
+                            <a
+                                class="account-shell__nav-link{% if tab.slug == active_tab %} is-active{% endif %}"
+                                href="{{ tab.href }}"
+                                aria-current="{{ 'page' if tab.slug == active_tab else 'false' }}"
+                                tabindex="0"
+                                data-nav-tab="{{ tab.slug }}"
+                                data-cta-id="app_nav_{{ tab.slug }}"
+                                data-cta-format="nav"
+                                data-cta-location="/app/nav"
+                                data-cta-placement="sidebar_nav"
+                                data-cta-scenario="switch_tab_{{ tab.slug }}"
+                            >
+                                <span class="account-shell__nav-icon" aria-hidden="true">
+                                    <img
+                                        src="{{ url_for('static', path='icons/' ~ tab.icon) }}"
+                                        alt=""
+                                        width="24"
+                                        height="24"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                </span>
+                                <span class="account-shell__nav-text">{{ tab.label }}</span>
+                                {% if tab.badge %}
+                                    <span class="account-shell__nav-badge">{{ tab.badge }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            <div class="account-shell__sidebar-footer">
+                <div class="account-shell__system-status" role="status">
+                    <span class="dot dot--success" aria-hidden="true"></span>
+                    <span>API status: <strong>Operational</strong></span>
+                </div>
+                <a
+                    class="account-shell__help-link"
+                    href="{{ request.url_for('render_docs') }}"
+                    tabindex="0"
+                    data-cta-id="app_sidebar_docs_faq"
+                    data-cta-format="link"
+                    data-cta-location="/app/sidebar"
+                    data-cta-placement="sidebar_footer"
+                    data-cta-scenario="open_docs"
+                >
+                    Docs &amp; FAQ
+                </a>
+            </div>
+        </aside>
+        <div class="account-shell__scrim" aria-hidden="true" data-sidebar-scrim hidden></div>
+    <div class="account-shell__content" data-sidebar-content>
+            <header class="account-shell__header" data-shell-header>
+                <button
+                    class="account-shell__sidebar-trigger"
+                    type="button"
+                    aria-label="Open menu"
+                    aria-expanded="false"
+                    aria-controls="account-sidebar"
+                    data-sidebar-trigger
+                >
+                    <img
+                        class="account-shell__sidebar-trigger-icon"
+                        src="{{ url_for('static', path='icons/sidebar-left.svg') }}"
+                        alt=""
+                        width="20"
+                        height="20"
+                        loading="lazy"
+                        decoding="async"
+                        aria-hidden="true"
+                    >
+                </button>
+                <h1 class="account-shell__breadcrumbs" data-shell-breadcrumbs>
+                    {{ active_tab_title }}
+                </h1>
+                <div class="account-shell__header-actions" data-sidebar-inert>
+                    <div class="account-shell__notifications" data-notifications-root>
+                        <button
+                            class="account-shell__bell"
+                            type="button"
+                            aria-label="Notifications"
+                            aria-haspopup="menu"
+                            aria-expanded="false"
+                            aria-controls="account-notifications-menu"
+                            data-notifications-button
+                        >
+                            <span
+                                class="account-shell__bell-dot{% if not header_unread_count %} is-hidden{% endif %}"
+                                aria-hidden="true"
+                            ></span>
+                            <img
+                                class="account-shell__bell-icon"
+                                src="{{ url_for('static', path='icons/notifications.svg') }}"
+                                alt=""
+                                width="20"
+                                height="20"
+                                loading="lazy"
+                                decoding="async"
+                                aria-hidden="true"
+                            >
+                        </button>
+                        <div
+                            class="account-shell__notifications-panel"
+                            id="account-notifications-menu"
+                            role="menu"
+                            data-notifications-panel
+                            hidden
+                        >
+                            <div class="account-shell__notifications-header">
+                                <span>Latest notifications</span>
+                                <span class="account-shell__notifications-counter">
+                                    {% if header_unread_count %}
+                                        {{ header_unread_count }} new
+                                    {% else %}
+                                        No new
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <ul class="account-shell__notifications-list">
+                                {% for notification in header_notifications %}
+                                    <li
+                                        class="account-notification{% if notification.unread %} is-unread{% endif %}"
+                                        role="menuitem"
+                                        data-notification-id="{{ notification.id or ('toast-' ~ loop.index0) }}"
+                                    >
+                                        <div class="account-notification__meta">
+                                            <span class="account-notification__timestamp">{{ notification.timestamp }}</span>
+                                            <span class="account-notification__level account-notification__level--{{ notification.level }}">
+                                                {{ notification.level|capitalize }}
+                                            </span>
+                                        </div>
+                                        <p class="account-notification__title">{{ notification.title }}</p>
+                                        <p class="account-notification__body">{{ notification.body }}</p>
+                                        {% if notification.href %}
+                                            <a class="account-notification__action" href="{{ notification.href }}">
+                                                Open
+                                            </a>
+                                        {% endif %}
+                                    </li>
+                                {% else %}
+                                    <li class="account-notification account-notification--empty" role="menuitem">
+                                        <p class="account-notification__title">No new notifications</p>
+                                        <p class="account-notification__body">We will let you know when something important arrives.</p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <button
+                        class="account-shell__bell account-shell__profile-button"
+                        type="button"
+                        aria-label="Edit profile"
+                        aria-haspopup="dialog"
+                        aria-expanded="false"
+                        aria-controls="account-profile-modal"
+                        data-profile-open
+                    >
+                        <img
+                            class="account-shell__bell-icon"
+                            src="{{ url_for('static', path='icons/edit-profile.svg') }}"
+                            alt=""
+                            width="20"
+                            height="20"
+                            loading="lazy"
+                            decoding="async"
+                            aria-hidden="true"
+                        >
+                    </button>
+                </div>
+            </header>
+            <main class="account-shell__main" id="main-content" tabindex="-1" data-sidebar-inert>
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <div class="keys-modal account-profile-modal" id="account-profile-modal" data-profile-modal hidden>
+        <div class="keys-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="account-profile-title">
+            <div class="keys-modal__header">
+                <div>
+                    <p class="keys-eyebrow">Profile</p>
+                    <h3 id="account-profile-title">Edit profile</h3>
+                </div>
+                <button
+                    class="keys-modal__close"
+                    type="button"
+                    data-profile-close
+                    aria-label="Close profile dialog"
+                >
+                    <img
+                        src="{{ url_for('static', path='icons/close.svg') }}"
+                        alt=""
+                        width="30"
+                        height="30"
+                        loading="lazy"
+                        decoding="async"
+                        aria-hidden="true"
+                    >
+                </button>
+            </div>
+            {% set email_verified = profile.email_verified_at %}
+            {% set email_status_text = 'Email verified' if email_verified else 'Email not verified' %}
+            {% set email_status_icon = 'copy succes.svg' if email_verified else 'close.svg' %}
+            <form class="keys-form account-profile-form" data-profile-form>
+                <label class="keys-field account-profile__field">
+                    <span>Full name</span>
+                    <input
+                        type="text"
+                        name="full_name"
+                        maxlength="160"
+                        minlength="2"
+                        autocomplete="name"
+                        placeholder="Ada Lovelace"
+                        value="{{ profile.full_name or '' }}"
+                    >
+                </label>
+                <label class="keys-field account-profile__field">
+                    <span>Role</span>
+                    <select name="job_title" autocomplete="organization-title">
+                        <option value="">Select role</option>
+                        <option value="Developer"{% if profile.job_title == 'Developer' %} selected{% endif %}>Developer</option>
+                        <option value="Data Analyst"{% if profile.job_title == 'Data Analyst' %} selected{% endif %}>Data Analyst</option>
+                        <option value="Founder"{% if profile.job_title == 'Founder' %} selected{% endif %}>Founder</option>
+                        <option value="Product Manager"{% if profile.job_title == 'Product Manager' %} selected{% endif %}>Product Manager</option>
+                        <option value="Other"{% if profile.job_title == 'Other' %} selected{% endif %}>Other</option>
+                    </select>
+                </label>
+                <label class="keys-field account-profile__field account-profile__field--full account-profile__email">
+                    <span>Email</span>
+                    <div class="account-profile__email-row">
+                        <input
+                            class="account-profile__email-input"
+                            type="email"
+                            name="email"
+                            maxlength="160"
+                            autocomplete="email"
+                            placeholder="you@company.com"
+                            value="{{ profile.email or '' }}"
+                            required
+                            readonly
+                            aria-describedby="account-profile-email-status"
+                            data-profile-email-input
+                        >
+                        <button
+                            class="account-cta account-cta--ghost account-profile__email-edit"
+                            type="button"
+                            data-profile-email-edit
+                        >
+                            Change email
+                        </button>
+                    </div>
+                    <div
+                        class="account-profile__email-status{% if email_verified %} is-verified{% else %} is-pending{% endif %}"
+                        id="account-profile-email-status"
+                        aria-live="polite"
+                        data-profile-email-status
+                        data-profile-email-verified="{{ 'true' if email_verified else 'false' }}"
+                    >
+                        <span class="account-profile__email-status-text" data-profile-email-status-text>
+                            {{ email_status_text }}
+                        </span>
+                    </div>
+                    <div class="account-profile__email-actions">
+                        <button
+                            class="account-cta account-cta--secondary account-profile__email-resend"
+                            type="button"
+                            data-profile-email-resend
+                            {% if email_verified %}hidden{% endif %}
+                        >
+                            Resend confirmation
+                        </button>
+                    </div>
+                </label>
+                <label class="account-profile__checkbox">
+                    <input
+                        class="account-profile__checkbox-input"
+                        type="checkbox"
+                        name="no_company"
+                        value="true"
+                        {% if profile.no_company %}checked{% endif %}
+                    >
+                    <span class="account-profile__checkbox-text">No company - I'm exploring as an individual</span>
+                </label>
+                <label class="keys-field account-profile__field">
+                    <span>Organization</span>
+                    <input
+                        type="text"
+                        name="organization_name"
+                        maxlength="160"
+                        autocomplete="organization"
+                        placeholder="AICI Labs"
+                        value="{{ profile.organization_name or '' }}"
+                        data-profile-org-field
+                    >
+                </label>
+                <label class="keys-field account-profile__field">
+                    <span>Team size</span>
+                    <select name="organization_size" data-profile-org-field>
+                        <option value="">Select size</option>
+                        <option value="1-5"{% if profile.organization_size == '1-5' %} selected{% endif %}>1-5</option>
+                        <option value="6-15"{% if profile.organization_size == '6-15' %} selected{% endif %}>6-15</option>
+                        <option value="16-50"{% if profile.organization_size == '16-50' %} selected{% endif %}>16-50</option>
+                        <option value="51-150"{% if profile.organization_size == '51-150' %} selected{% endif %}>51-150</option>
+                        <option value="150+"{% if profile.organization_size == '150+' %} selected{% endif %}>150+</option>
+                    </select>
+                </label>
+                <label class="keys-field account-profile__field account-profile__field--full">
+                    <span>Primary use case</span>
+                    <select name="use_case">
+                        <option value="">Select use case</option>
+                        <option value="Strategy automation"{% if profile.use_case == 'Strategy automation' %} selected{% endif %}>Strategy automation</option>
+                        <option value="Risk and treasury reports"{% if profile.use_case == 'Risk and treasury reports' %} selected{% endif %}>Risk and treasury reports</option>
+                        <option value="Listing or exchange analytics"{% if profile.use_case == 'Listing or exchange analytics' %} selected{% endif %}>Listing / exchange analytics</option>
+                        <option value="Portfolio research"{% if profile.use_case == 'Portfolio research' %} selected{% endif %}>Portfolio research</option>
+                        <option value="Fintech product integration"{% if profile.use_case == 'Fintech product integration' %} selected{% endif %}>Fintech product integration</option>
+                        <option value="Other"{% if profile.use_case == 'Other' %} selected{% endif %}>Other</option>
+                    </select>
+                </label>
+                <div class="keys-modal__actions account-profile__actions">
+                    <button class="account-cta account-cta--primary" type="submit" data-profile-submit>Save changes</button>
+                    <button class="account-cta account-cta--ghost" type="button" data-profile-close>Cancel</button>
+                </div>
+                <div class="account-profile__logout">
+                    <div>
+                        <span class="account-profile__logout-title">Sign out</span>
+                        <span class="account-profile__logout-copy">End this session on the current device.</span>
+                    </div>
+                    <button
+                        class="keys-icon-btn account-profile__logout-button"
+                        type="button"
+                        aria-label="Log out"
+                        aria-haspopup="dialog"
+                        aria-controls="account-logout-modal"
+                        data-profile-logout-open
+                    >
+                        <img
+                            src="{{ url_for('static', path='icons/logout.svg') }}"
+                            alt=""
+                            width="20"
+                            height="20"
+                            loading="lazy"
+                            decoding="async"
+                            aria-hidden="true"
+                        >
+                    </button>
+                </div>
+                <p class="support-form__status account-profile__status" data-profile-status></p>
+            </form>
+        </div>
+    </div>
+    <div class="keys-modal account-logout-modal" id="account-logout-modal" data-logout-modal hidden>
+        <div class="keys-modal__dialog account-logout-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="account-logout-title">
+            <div class="keys-modal__header">
+                <div>
+                    <p class="keys-eyebrow">Account</p>
+                    <h3 id="account-logout-title">Log out?</h3>
+                </div>
+                <button
+                    class="keys-modal__close"
+                    type="button"
+                    data-logout-close
+                    aria-label="Close logout dialog"
+                >
+                    <img
+                        src="{{ url_for('static', path='icons/close.svg') }}"
+                        alt=""
+                        width="30"
+                        height="30"
+                        loading="lazy"
+                        decoding="async"
+                        aria-hidden="true"
+                    >
+                </button>
+            </div>
+            <p class="account-logout-modal__copy">Are you sure you want to log out?</p>
+            <div class="keys-modal__actions account-logout-modal__actions">
+                <button class="account-cta account-cta--ghost" type="button" data-logout-cancel>Cancel</button>
+                <button class="account-cta account-cta--danger" type="button" data-logout-confirm>
+                    <img
+                        src="{{ url_for('static', path='icons/logout_red.svg') }}"
+                        alt=""
+                        width="18"
+                        height="18"
+                        loading="lazy"
+                        decoding="async"
+                        aria-hidden="true"
+                    >
+                    Log out
+                </button>
+            </div>
+            <p class="support-form__status account-profile__status" data-logout-status></p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/account.js') }}" defer></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,2 @@
+# Runtime dependencies for aici-webapi image
+-r base.txt

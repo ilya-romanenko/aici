@@ -1,0 +1,164 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*", "release-*"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  PYTHON_VERSION: "3.10"
+  NODE_VERSION: "20"
+  DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE != '' && secrets.DOCKERHUB_NAMESPACE || github.repository_owner }}
+
+jobs:
+  tests:
+    name: Lint & Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      AICI_DAILY_SNAPSHOT_ENABLED: "0"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            requirements/base.txt
+            requirements/dev.txt
+      - name: Compose security guard
+        run: python scripts/ops/check_compose_security.py
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --prefer-binary -r requirements/dev.txt
+      - name: Create reports directory
+        run: mkdir -p reports
+      - name: Ruff check
+        run: |
+          ruff check . --output-format junit --output-file reports/ruff.xml || (cat reports/ruff.xml && exit 1)
+      - name: Pytest (unit/integration)
+        run: pytest -m "not container" --junitxml=reports/pytest-unit.xml
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            reports/
+
+  smoke:
+    name: Container smoke tests
+    runs-on: ubuntu-latest
+    needs: tests
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            requirements/base.txt
+            requirements/dev.txt
+      - name: Install pytest client deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest httpx
+      - name: Ensure reports directory
+        run: mkdir -p reports
+      - name: Create CI env file
+        run: |
+          cat <<'EOF' > .env
+          AI_CRYPTO_CONFIG=./config/pipeline.json
+          AICI_ENABLE_PIPELINE=0
+          AICI_DAILY_SNAPSHOT_ENABLED=0
+          AICI_WEBAPI_PORT=8000
+          AICI_DEV=0
+          AICI_SMTP_HOST=
+          AICI_SMTP_PORT=587
+          AICI_SMTP_USERNAME=
+          AICI_SMTP_PASSWORD=
+          AICI_EMAIL_SENDER=
+          AICI_EMAIL_RECIPIENTS=
+          AICI_SMTP_USE_TLS=1
+          AICI_SMTP_USE_SSL=0
+          EOF
+      - name: Build and start docker compose
+        run: docker compose up -d --build --wait --timeout 180
+      - name: Run container smoke tests
+        env:
+          AICI_SMOKE_BASE_URL: http://127.0.0.1:8000
+          AICI_SMOKE_TIMEOUT: "30"
+          PYTHONPATH: src
+        run: pytest tests/container -m container --junitxml=reports/pytest-container.xml
+      - name: Capture docker logs
+        if: always()
+        run: docker compose logs --no-color > reports/docker-compose.log
+      - name: Shutdown docker compose
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-reports
+          path: reports/
+
+  docker:
+    name: Build & Publish Docker images
+    runs-on: ubuntu-latest
+    needs: [tests, smoke]
+    env:
+      IMAGE_NAME: aici-app
+      SHOULD_PUSH: ${{ github.ref == 'refs/heads/main' || github.ref_type == 'tag' }}
+      TAG_MAIN_BRANCH: ${{ github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        if: env.SHOULD_PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_CI_PUSH_USERNAME || secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_CI_PUSH_TOKEN || secrets.DOCKERHUB_TOKEN }}
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKERHUB_NAMESPACE }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=short
+            type=raw,value=main,enable=${{ env.TAG_MAIN_BRANCH == 'true' }}
+            type=raw,value=latest,enable=${{ env.TAG_MAIN_BRANCH == 'true' }}
+            type=ref,event=tag
+      - name: Build and (optionally) push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.webapi
+          platforms: linux/amd64,linux/arm64
+          push: ${{ env.SHOULD_PUSH == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Publish image summary
+        if: env.SHOULD_PUSH == 'true'
+        run: |
+          {
+            echo "### Docker image published";
+            echo "";
+            echo "- Name: \`${{ env.DOCKERHUB_NAMESPACE }}/${{ env.IMAGE_NAME }}\`";
+            echo "- Tags:";
+            echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | sed 's/^/  - /';
+          } >> "$GITHUB_STEP_SUMMARY"

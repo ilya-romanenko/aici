@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Crypto Index - Run {{ run_id }}</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="landing-page mini-run-page">
+    <a class="visually-hidden" href="#main-content" aria-label="Skip to main content">Skip to main content</a>
+    <header class="landing-header mini-header" data-mobile-header="true">
+        <div class="landing-header__inner">
+            <a class="landing-header__logo" href="{{ request.url_for('render_landing_page') }}" aria-label="Back to AI Crypto Index landing" tabindex="0">
+                <img class="landing-header__logo-mark" src="{{ url_for('static', path='icons/Logo_AICI_blue-gradient.svg') }}" alt="" aria-hidden="true" width="36" height="36" decoding="async">
+                <span class="landing-header__logo-text" translate="no" data-translate="no" lang="en">AI Crypto Index</span>
+            </a>
+            <button
+                class="landing-header__burger"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="mini-header-drawer"
+                data-menu-trigger="true"
+            >
+                <span class="landing-header__burger-icon" aria-hidden="true">
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                    <span class="landing-header__burger-line"></span>
+                </span>
+            </button>
+            <div class="landing-header__drawer mini-header__drawer" id="mini-header-drawer" data-menu-drawer="true">
+                <nav class="landing-header__nav mini-header__nav" aria-label="Mini run navigation">
+                    <ul class="landing-header__nav-list">
+                        <li><a class="landing-header__nav-link" href="#overview" aria-label="Jump to overview section" tabindex="0">Overview</a></li>
+                        <li><a class="landing-header__nav-link" href="#equity-curve" aria-label="Jump to equity curve section" tabindex="0">Equity</a></li>
+                        <li><a class="landing-header__nav-link" href="#index-overview" aria-label="Jump to composition section" tabindex="0">Index</a></li>
+                        <li><a class="landing-header__nav-link" href="#policies" aria-label="Jump to policies section" tabindex="0">Policies</a></li>
+                        <li><a class="landing-header__nav-link" href="#demo-intake" aria-label="Jump to intake form" tabindex="0">Intake</a></li>
+                    </ul>
+                </nav>
+                <div class="mini-header__actions" role="group" aria-label="Quick actions for run {{ run_id }}">
+                    <a class="landing-cta landing-cta--ghost" href="{{ request.url_for('render_landing_page') }}" role="button" tabindex="0" aria-label="Return to the main platform landing">
+                        <span class="landing-cta__text">Back to platform</span>
+                    </a>
+                    <a class="landing-cta landing-cta--primary" href="{{ api_url('api_export_run', run_id=run_id) ~ '?fmt=csv' }}" role="button" tabindex="0" aria-label="Download weights as CSV">
+                        <span class="landing-cta__text">Download CSV</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="landing-header__overlay mini-header__overlay" data-menu-overlay="true" data-menu-overlay-for="mini-header-drawer" aria-hidden="true"></div>
+    </header>
+    {% set top_asset = weights[0] if weights else None %}
+    {% set top_weight_pct = ((top_asset.weight / total_weight) * 100) if top_asset and total_weight else None %}
+    {% set total_return_pct = equity_summary.total_return_pct %}
+    {% set curve_start = equity_summary.start_date %}
+    {% set curve_end = equity_summary.end_date %}
+    {% set curve_range = (curve_start ~ ' to ' ~ curve_end) if curve_start and curve_end else None %}
+    {% set start_value = equity_summary.start_value %}
+    {% set end_value = equity_summary.end_value %}
+    {% set growth_multiple = ((end_value / start_value)) if start_value else None %}
+    <main class="landing-main mini-run" id="main-content">
+        <section class="landing-section mini-hero" id="overview" aria-labelledby="mini-overview-title">
+            <span class="landing-performance__eyebrow">
+                {% if is_latest %}Latest run{% else %}Archived run{% endif %}
+            </span>
+            <h1 class="mini-hero__title" id="mini-overview-title">AI Crypto Index - run {{ run_id }}</h1>
+            <p class="mini-hero__meta">
+                {% if curve_range %}
+                    Equity curve aggregated from {{ curve_range }} ({{ equity_summary.points }} data points).
+                {% else %}
+                    Equity curve snapshot for the selected run.
+                {% endif %}
+            </p>
+            <div class="mini-hero__stats" role="list">
+                <article class="mini-hero__card" role="listitem">
+                    <p class="mini-hero__card-label">Index return</p>
+                    <p class="mini-hero__card-value">
+                        {% if total_return_pct is not none %}
+                            {{ '%+.2f%%' % total_return_pct }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                    <p class="mini-hero__card-hint">
+                        {% if total_return_pct is not none %}
+                            Relative change versus starting equity value.
+                        {% else %}
+                            Calculated return is unavailable.
+                        {% endif %}
+                    </p>
+                </article>
+                <article class="mini-hero__card" role="listitem">
+                    <p class="mini-hero__card-label">Growth multiple</p>
+                    <p class="mini-hero__card-value">
+                        {% if growth_multiple %}
+                            x{{ '%.2f' % growth_multiple }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                    <p class="mini-hero__card-hint">
+                        Closing value:
+                        {% if end_value is not none %}
+                            {{ '%.2f' % end_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                        &nbsp;|&nbsp;
+                        Starting value:
+                        {% if start_value is not none %}
+                            {{ '%.2f' % start_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="landing-section mini-chart" id="equity-curve" aria-labelledby="mini-chart-title">
+            <div class="mini-chart__heading">
+                <h2 class="mini-chart__title" id="mini-chart-title">Equity curve</h2>
+                <p class="mini-chart__subtitle">Normalized progression of the index over the selected period. Exported directly from the latest run artifacts.</p>
+            </div>
+            <figure class="mini-chart__figure">
+                <img src="{{ equity_curve_data_uri }}" alt="Equity curve for run {{ run_id }}" loading="lazy" decoding="async">
+            </figure>
+            <div class="mini-chart__meta">
+                <div class="mini-chart__meta-item">
+                    <span class="mini-chart__meta-label">Start value</span>
+                    <span class="mini-chart__meta-value">
+                        {% if start_value is not none %}
+                            {{ '%.2f' % start_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="mini-chart__meta-item">
+                    <span class="mini-chart__meta-label">End value</span>
+                    <span class="mini-chart__meta-value">
+                        {% if end_value is not none %}
+                            {{ '%.2f' % end_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="mini-chart__meta-item">
+                    <span class="mini-chart__meta-label">Min observed</span>
+                    <span class="mini-chart__meta-value">
+                        {% if equity_summary.min_value is not none %}
+                            {{ '%.2f' % equity_summary.min_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="mini-chart__meta-item">
+                    <span class="mini-chart__meta-label">Max observed</span>
+                    <span class="mini-chart__meta-value">
+                        {% if equity_summary.max_value is not none %}
+                            {{ '%.2f' % equity_summary.max_value }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </section>
+        <section class="landing-section mini-chart" id="index-overview" aria-labelledby="index-overview-title">
+            <h2 class="mini-composition__title" id="index-overview-title">Index Overview</h2>
+
+            <div class="dual-section__grid">
+                <div class="dual-section__col">
+                    <div class="mini-composition__table-wrap" role="region" aria-labelledby="mini-composition-title">
+                        <div
+                            class="composition-table__scroll"
+                            role="region"
+                            aria-label="Scroll horizontally to view weights table"
+                            tabindex="0"
+                            data-scroll-hint="true"
+                        >
+                            <table class="mini-composition__table composition-table">
+                                <caption class="visually-hidden">Asset weights for run {{ run_id }}</caption>
+                                <thead class="composition-table__head">
+                                    <tr>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--rank" translate="no" data-translate="no">#</th>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--asset" translate="no" data-translate="no">Asset</th>
+                                        <th scope="col" class="composition-table__heading composition-table__heading--numeric" translate="no" data-translate="no">Weight %</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="composition-table__body">
+                                    {% for entry in weights %}
+                                    {% set weight_pct = '%.2f%%' % ((entry.weight / total_weight) * 100) if total_weight else 'N/A' %}
+                                    <tr class="composition-table__row">
+                                        <td class="composition-table__cell composition-table__cell--rank" data-label="#" translate="no" data-translate="no">
+                                            <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ loop.index }}</span>
+                                        </td>
+                                        <td class="composition-table__cell composition-table__cell--asset" data-label="Asset" translate="no" data-translate="no">
+                                            <span class="composition-table__text" title="{{ entry.asset }}" translate="no" data-translate="no" lang="en">{{ entry.asset }}</span>
+                                        </td>
+                                        <td class="composition-table__cell composition-table__cell--numeric" data-label="Weight %" translate="no" data-translate="no">
+                                            <span class="composition-table__value" translate="no" data-translate="no" lang="en">{{ weight_pct }}</span>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr class="composition-table__row composition-table__row--empty">
+                                        <td class="composition-table__cell composition-table__cell--empty" colspan="3">
+                                            <span class="composition-table__text">No weights available for this run.</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dual-section__col">
+                    {% if perf_metrics %}
+                    <div class="mini-metrics__grid">
+                        {% for key, value in perf_metrics.items() %}
+                        {% set key_lower = key|lower if key is string else '' %}
+                        {% if value is number %}
+                            {% if 'pct' in key_lower or 'percent' in key_lower %}
+                                {% set value_text = '%.2f%%' % value %}
+                            {% else %}
+                                {% set value_text = '%.4f' % value %}
+                            {% endif %}
+                        {% else %}
+                            {% set value_text = value %}
+                        {% endif %}
+                        <article class="mini-metrics__item">
+                            <span class="mini-metrics__label">{{ key|replace('_', ' ')|title }}</span>
+                            <span class="mini-metrics__value">{{ value_text if value_text is not none else 'N/A' }}</span>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="mini-metrics__empty">No performance metrics recorded for this run.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <section class="landing-section mini-legal" id="policies" aria-labelledby="mini-legal-title">
+            <h2 class="mini-legal__title" id="mini-legal-title">Disclaimer &amp; policy snapshot</h2>
+            <div class="mini-legal__grid">
+                <article class="mini-legal__card">
+                    <h3>Disclaimer</h3>
+                    <p>This report is shared for research and product validation. It is not investment, legal, or tax advice. Backtested performance and simulated forecasts depend on historical data and do not guarantee future outcomes.</p>
+                    <p>Digital assets can experience rapid loss of value. Any allocations illustrated here assume frictionless execution and institutional risk controls. Validate data integrity before using it in production workflows.</p>
+                </article>
+                <article class="mini-legal__card">
+                    <h3>Terms &amp; privacy highlights</h3>
+                    <ul>
+                        <li>Demo intake information is used solely to coordinate onboarding and never shared with third parties.</li>
+                        <li>Operational logs and uploaded datasets remain within your deployment boundary unless explicitly exported.</li>
+                        <li>Submitting a request signals agreement with the published terms of service and privacy policy.</li>
+                        <li>Contact us to request data deletion, extended retention, or custom compliance documentation.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section class="landing-section mini-intake" id="demo-intake" aria-labelledby="mini-intake-title">
+            <div class="mini-intake__header">
+                <h2 class="mini-intake__title" id="mini-intake-title">Request a tailored walkthrough</h2>
+                <p class="mini-intake__subtitle">Share your target workflows so the team can prepare the right datasets, dashboards, and integration notes.</p>
+            </div>
+            {% with form_action=api_url('api_submit_demo_request'), form_success_message='Request received! We will follow up shortly.', form_id='mini-demo-request', prefill_run_id=run_id %}
+                {% include 'components/demo_request_form.html' %}
+            {% endwith %}
+        </section>
+    </main>
+    <script src="{{ url_for('static', path='js/cookie-consent.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+</body>
+</html>

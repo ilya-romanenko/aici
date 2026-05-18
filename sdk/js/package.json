@@ -1,0 +1,22 @@
+{
+  "name": "@aici/sdk",
+  "version": "0.1.0",
+  "description": "JavaScript client for the AI Crypto Index self-serve API",
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "sdk",
+    "api",
+    "crypto",
+    "aici"
+  ],
+  "author": "AI Crypto Index",
+  "license": "MIT"
+}

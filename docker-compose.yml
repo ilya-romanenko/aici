@@ -1,0 +1,83 @@
+services:
+  api:
+    image: ${AICI_WEBAPI_IMAGE:-aici-app:local}
+    build:
+      context: .
+      dockerfile: Dockerfile.webapi
+    env_file:
+      - ./.env
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    ports:
+      - "${AICI_WEBAPI_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    environment:
+      AICI_ENABLE_PIPELINE: "${AICI_ENABLE_PIPELINE:-1}"
+      AICI_RUN_PIPELINE_ON_START: "${AICI_RUN_PIPELINE_ON_START:-never}"
+      AICI_DEV: "${AICI_DEV:-0}"
+      AICI_RUNS_ROOT: "${AICI_RUNS_ROOT:-/app/runs}"
+      AICI_DATA_ROOT: "${AICI_DATA_ROOT:-/app/data}"
+      AICI_PERFORMANCE_AUTO_ENABLED: "${AICI_PERFORMANCE_AUTO_ENABLED:-1}"
+      AICI_PERFORMANCE_POLL_SECONDS: "${AICI_PERFORMANCE_POLL_SECONDS:-3600}"
+      AICI_INDEX_AUTO_POLL_SECONDS: "${AICI_INDEX_AUTO_POLL_SECONDS:-21600}"
+      AICI_INDEX_AUTO_PREFIX: "${AICI_INDEX_AUTO_PREFIX:-auto-classic}"
+      AICI_INDEX_AUTO_PREFIX_CONSERVATIVE: "${AICI_INDEX_AUTO_PREFIX_CONSERVATIVE:-auto-conservative}"
+      AICI_INDEX_AUTO_PREFIX_AGGRESSIVE: "${AICI_INDEX_AUTO_PREFIX_AGGRESSIVE:-auto-aggressive}"
+      AICI_MONTHLY_JOB_LOCK_STALE_SECONDS: "${AICI_MONTHLY_JOB_LOCK_STALE_SECONDS:-21600}"
+      AICI_DAILY_SNAPSHOT_ENABLED: "${AICI_DAILY_SNAPSHOT_ENABLED:-1}"
+      AICI_DAILY_SNAPSHOT_HOUR_UTC: "${AICI_DAILY_SNAPSHOT_HOUR_UTC:-0}"
+      AICI_DAILY_SNAPSHOT_MINUTE_UTC: "${AICI_DAILY_SNAPSHOT_MINUTE_UTC:-0}"
+      AICI_BILLING_REMINDERS_ENABLED: "${AICI_BILLING_REMINDERS_ENABLED:-1}"
+      AICI_BILLING_REMINDER_SECONDS: "${AICI_BILLING_REMINDER_SECONDS:-3600}"
+    volumes:
+      - runs-data:/app/runs
+      - data-cache:/app/data
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  auth-db:
+    image: postgres:15-alpine
+    container_name: ${POSTGRES_CONTAINER_NAME:-aici-auth-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aici_auth}
+      POSTGRES_USER: ${POSTGRES_USER:-aici}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aici_local}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-aici} -d ${POSTGRES_DB:-aici_auth}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    container_name: ${WATCHTOWER_CONTAINER_NAME:-aici-watchtower}
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOCKER_API_VERSION: "1.44"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "${WATCHTOWER_LABEL_ENABLE:-true}"
+      WATCHTOWER_POLL_INTERVAL: "${WATCHTOWER_POLL_INTERVAL:-300}"
+      REPO_USER: "${WATCHTOWER_REPO_USER:-}"
+      REPO_PASS: "${WATCHTOWER_REPO_PASS:-}"
+    profiles:
+      - watchtower
+
+volumes:
+  runs-data:
+  data-cache:
+  auth-db-data:
