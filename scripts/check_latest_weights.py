@@ -1,13 +1,14 @@
 """Быстрый скрипт для проверки запуска расчёта и получения /weights/latest."""
 
+import os
 import time
 from typing import Iterable
 
 import requests
 from requests import Response
 
-API_KEY = "aici_live_Mj_yHkAWF02lmpC33o47pyKZHWHOjIY3IINwXDlIXEc"
-BASE_URL = "http://127.0.0.1:8000/api/v1"
+API_KEY = os.environ["AICI_API_KEY"]
+BASE_URL = os.getenv("AICI_BASE_URL", "http://127.0.0.1:8000/api/v1")
 
 PARAMS = {
     "n_top_coins": 120,
